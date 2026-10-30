@@ -1,0 +1,31 @@
+{% extends "panel/base_panel.html" %}
+{% from "macros.html" import campo %}
+{% from "reservas/_macros.html" import resumen %}
+{% from "panel/_macros.html" import datos_salida %}
+{% block titulo %}{{ accion | capitalize }} salida{% endblock %}
+
+{% block contenido %}
+<p class="miga"><a href="{{ url_for('panel.pasajeros', salida_id=s.salida_id) }}">← Volver a la salida</a></p>
+
+<section class="tarjeta tarjeta--formulario">
+  <h1>{{ accion | capitalize }} la salida</h1>
+  <p><strong>{{ s.ruta_nombre }}</strong> <span class="insignia insignia--{{ s.estado_publico }}">{{ s.estado_publico | estado_publico }}</span></p>
+  {{ datos_salida(s) }}
+  {% if accion == 'suspender' %}
+    <p class="aviso aviso--info">Las {{ s.ocupados }} plaza(s) reservadas siguen como están: cada turista
+      verá el motivo y podrá reprogramar o pedir la devolución.</p>
+  {% elif s.ocupados %}
+    <p class="aviso aviso--error">Tiene {{ s.ocupados }} pasajero(s) con reserva activa: no se puede cancelar.
+      Suspéndela para que cada turista pueda reprogramar o pedir la devolución.</p>
+  {% else %}
+    <p class="aviso aviso--info">No tiene reservas activas. La salida dejará de verse en la web.</p>
+  {% endif %}
+
+  {{ resumen(f, sueltos, "Revisa el motivo") }}
+  <form method="post" novalidate>
+    {{ f.csrf_token }}
+    {{ campo(f.motivo, ayuda="Lo ve el turista. Por ejemplo: alerta naranja de oleaje (SENAMHI).") }}
+    {{ f.enviar(class_='boton') }}
+  </form>
+</section>
+{% endblock %}

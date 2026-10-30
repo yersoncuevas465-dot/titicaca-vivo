@@ -1,0 +1,67 @@
+{% extends "panel/base_panel.html" %}
+{% from "panel/_macros.html" import como_funciona %}
+{% block titulo %}Respaldos{% endblock %}
+
+{% block contenido %}
+<div class="cabeza-pagina">
+  <h1>Respaldos de la base</h1>
+  <form method="post" action="{{ url_for('panel.respaldo_crear') }}">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <button class="boton" type="submit">Crear respaldo ahora</button>
+  </form>
+</div>
+<p class="texto-suave">Copias completas de la base para recuperarla si falla la PC, se daña MySQL o alguien borra algo por error.</p>
+
+{% call como_funciona() %}
+  <li><strong>Crear respaldo ahora</strong> guarda toda la base en un archivo .sql: las 20 tablas con sus datos, las vistas, el procedimiento y los triggers. Los datos salen de una sola «foto» de la base: aunque alguien esté reservando, nada queda a medias.</li>
+  <li>{% if config.RESPALDO_AUTOMATICO %}Mientras el servidor está encendido, crea uno <strong>automático</strong> cada {{ config.RESPALDO_CADA_HORAS }} horas.{% else %}El respaldo automático está apagado (RESPALDO_AUTOMATICO=0 en el .env).{% endif %} Se guardan los {{ config.RESPALDOS_CONSERVAR }} más nuevos.</li>
+  <li><strong>Descargar</strong> baja el archivo: guarda una copia fuera de la PC (USB o nube). Lleva datos personales: no lo compartas.</li>
+  <li><strong>Reporte general</strong> baja reservas, pagos, salidas y hospedajes en Excel, sin documentos ni teléfonos de los turistas.</li>
+  <li>Crear, descargar o restaurar un respaldo queda en la <strong>Bitácora</strong>.</li>
+{% endcall %}
+
+<div class="respaldo-avisos">
+  <section class="tarjeta respaldo-aviso" aria-labelledby="titulo-automatico">
+    <h2 id="titulo-automatico">Respaldo automático</h2>
+    {% if config.RESPALDO_AUTOMATICO %}
+      <p>Encendido: uno cada <strong>{{ config.RESPALDO_CADA_HORAS }} horas</strong> mientras el servidor está prendido, y al arrancar si el último tiene más de {{ config.RESPALDO_CADA_HORAS }} horas.</p>
+    {% else %}
+      <p>Apagado (RESPALDO_AUTOMATICO=0 en el .env).</p>
+    {% endif %}
+    <p class="texto-suave">Carpeta: <code>{{ carpeta }}</code></p>
+  </section>
+  <section class="tarjeta respaldo-aviso respaldo-aviso--restaurar" aria-labelledby="titulo-restaurar">
+    <h2 id="titulo-restaurar">Para restaurar</h2>
+    <p>Restaurar <strong>borra lo que hay en la base</strong> y deja lo del respaldo. Antes, el sistema guarda solo un respaldo «antes de restaurar». Desde la terminal, en la carpeta del proyecto:</p>
+    <p><code>flask bd restaurar respaldos\NOMBRE_DEL_ARCHIVO.sql</code></p>
+    <p class="texto-suave">También se puede con phpMyAdmin: elegir la base → Importar → el archivo.</p>
+  </section>
+</div>
+
+<p class="acciones-fila">
+  <a class="boton boton--secundario" href="{{ url_for('panel.respaldo_reporte') }}">Reporte general (Excel)</a>
+</p>
+
+<div class="tabla-desplazable" role="region" aria-labelledby="titulo-respaldos" tabindex="0">
+  <table class="tabla">
+    <caption id="titulo-respaldos">{{ respaldos | length }} respaldo(s) guardado(s), del más nuevo al más antiguo</caption>
+    <thead>
+      <tr><th scope="col">Archivo</th><th scope="col">Fecha</th><th scope="col">Tipo</th>
+          <th scope="col">Tamaño</th><th scope="col">Acciones</th></tr>
+    </thead>
+    <tbody>
+      {% for r in respaldos %}
+        <tr>
+          <td><code>{{ r.nombre }}</code></td>
+          <td>{{ r.fecha | fecha_hora }}</td>
+          <td><span class="insignia{% if r.tipo == 'Automático' %} insignia--verde{% endif %}">{{ r.tipo }}</span></td>
+          <td>{{ r.kb }} KB</td>
+          <td><a href="{{ url_for('panel.respaldo_descargar', nombre=r.nombre) }}">Descargar<span class="visualmente-oculto"> {{ r.nombre }}</span></a></td>
+        </tr>
+      {% else %}
+        <tr><td colspan="5">Todavía no hay respaldos. Pulsa «Crear respaldo ahora».</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

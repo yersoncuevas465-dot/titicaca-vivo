@@ -1,0 +1,23 @@
+{% extends "panel/base_panel.html" %}
+{% from "macros.html" import campo, resumen_errores %}
+{% from "panel/_macros.html" import como_funciona %}
+{% block titulo %}Abordaje{% endblock %}
+
+{% block contenido %}
+<section class="tarjeta tarjeta--angosta">
+  <h1>Abordaje</h1>
+  <p>Lee el QR del boleto con la cámara del celular: abre esta misma página con la reserva.
+    Si el turista no tiene el boleto, escribe su código.</p>
+  {{ resumen_errores(f) }}
+  <form method="get" novalidate>
+    {{ campo(f.codigo) }}
+    <button class="boton boton--ancho" type="submit">Buscar reserva</button>
+  </form>
+  {% call como_funciona() %}
+    <li>Con la cámara del celular apunta al QR del boleto: abre la reserva aquí mismo. Antes hay que entrar al panel en ese celular.</li>
+    <li>Sin boleto: escribe el código (TV- y 4 letras o números) y pulsa <strong>Buscar reserva</strong>.</li>
+    <li>Revisa el documento de cada persona, desmarca a quien no llegó y pulsa <strong>Confirmar abordaje</strong>.</li>
+    <li>Solo se registra de 60 minutos antes a 15 minutos después del zarpe, una vez por pasajero (RN-12).</li>
+  {% endcall %}
+</section>
+{% endblock %}

@@ -1,0 +1,91 @@
+{% extends "panel/base_panel.html" %}
+{% from "panel/_macros.html" import barra, como_funciona %}
+{% block titulo %}Indicadores{% endblock %}
+
+{% block contenido %}
+<h1>Indicadores</h1>
+{% call como_funciona() %}
+  <li>Elige el periodo (30, 90 o 365 días) y pulsa <strong>Ver</strong>. Cuentan también las salidas que vienen.</li>
+  <li><strong>Ocupación por ruta</strong>, con su puesto: debajo salen las rutas con poca ocupación, para promocionarlas.</li>
+  <li><strong>Ingresos por método de pago</strong> (solo pagos verificados) y <strong>nacionalidades</strong> de los pasajeros.</li>
+  <li><strong>Noches por familia</strong> con el promedio de su comunidad: muestra si la rotación es justa.</li>
+{% endcall %}
+<form method="get" class="filtro">
+  <div class="campo">
+    <label class="campo__etiqueta" for="dias">Periodo</label>
+    <select class="campo__control" id="dias" name="dias">
+      {% for clave, numero in periodos.items() %}
+        <option value="{{ clave }}" {% if clave == dias %}selected{% endif %}>Desde hace {{ numero }} días</option>
+      {% endfor %}
+    </select>
+  </div>
+  <button class="boton boton--secundario" type="submit">Ver</button>
+</form>
+<p class="texto-suave">Salidas desde hace {{ periodos[dias] }} días (también las que vienen). Cada gráfico tiene su tabla con los números.</p>
+
+<section class="bloque" aria-labelledby="titulo-ocupacion">
+  <h2 id="titulo-ocupacion">Ocupación por ruta</h2>
+  <div class="tabla-desplazable" role="region" aria-labelledby="titulo-ocupacion" tabindex="0">
+    <table class="tabla tabla--barras">
+      <thead><tr><th scope="col">Puesto</th><th scope="col">Ruta</th><th scope="col">Salidas</th>
+                 <th scope="col">Pasajeros / cupo</th><th scope="col">Ocupación</th></tr></thead>
+      <tbody>
+        {% for r in ocupacion %}
+          <tr><td>{{ r.puesto }}</td><th scope="row">{{ r.ruta_nombre }}</th><td>{{ r.salidas }}</td>
+              <td>{{ r.ocupados }} / {{ r.cupo }}</td>
+              <td>{{ barra(r.ocupacion, 100) }} {{ r.ocupacion }} %</td></tr>
+        {% else %}<tr><td colspan="5">Sin salidas en el periodo.</td></tr>{% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% if poca %}
+    <p class="aviso aviso--info">Rutas con menos de {{ umbral }} % de ocupación:
+      {% for r in poca %}<strong>{{ r.ruta_nombre }}</strong> ({{ r.ocupacion }} %){% if not loop.last %}, {% endif %}{% endfor %}.</p>
+  {% endif %}
+</section>
+
+<div class="dos-columnas">
+  <section class="bloque" aria-labelledby="titulo-metodos">
+    <h2 id="titulo-metodos">Ingresos por método de pago</h2>
+    <table class="tabla tabla--barras">
+      <thead><tr><th scope="col">Método</th><th scope="col">Pagos</th><th scope="col">Monto</th><th scope="col">Parte</th></tr></thead>
+      <tbody>
+        {% for m in metodos %}
+          <tr><th scope="row">{{ m.metodo | metodo_pago }}</th><td>{{ m.pagos }}</td><td>{{ m.monto | soles }}</td>
+              <td>{{ barra(m.porcentaje, 100) }} {{ m.porcentaje }} %</td></tr>
+        {% else %}<tr><td colspan="4">Sin pagos verificados en el periodo.</td></tr>{% endfor %}
+      </tbody>
+    </table>
+  </section>
+
+  <section class="bloque" aria-labelledby="titulo-paises">
+    <h2 id="titulo-paises">Nacionalidades</h2>
+    <table class="tabla tabla--barras">
+      <thead><tr><th scope="col">País</th><th scope="col">Pasajeros</th><th scope="col">Parte</th></tr></thead>
+      <tbody>
+        {% for p in paises %}
+          <tr><th scope="row">{{ p.nacionalidad | pais }}</th><td>{{ p.pasajeros }}</td>
+              <td>{{ barra(p.porcentaje, 100) }} {{ p.porcentaje }} %</td></tr>
+        {% else %}<tr><td colspan="3">Sin pasajeros en el periodo.</td></tr>{% endfor %}
+      </tbody>
+    </table>
+  </section>
+</div>
+
+<section class="bloque" aria-labelledby="titulo-familias">
+  <h2 id="titulo-familias">Noches por familia (rotación justa)</h2>
+  {% set maximo = (familias | map(attribute='noches') | max) if familias else 0 %}
+  <div class="tabla-desplazable" role="region" aria-labelledby="titulo-familias" tabindex="0">
+    <table class="tabla tabla--barras">
+      <thead><tr><th scope="col">Comunidad</th><th scope="col">Familia</th><th scope="col">Noches</th>
+                 <th scope="col">Promedio de su comunidad</th></tr></thead>
+      <tbody>
+        {% for f in familias %}
+          <tr><td>{{ f.comunidad }}</td><th scope="row">{{ f.nombre_familia }}</th>
+              <td>{{ barra(f.noches, maximo or 1) }} {{ f.noches }}</td><td>{{ f.promedio_comunidad }}</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</section>
+{% endblock %}

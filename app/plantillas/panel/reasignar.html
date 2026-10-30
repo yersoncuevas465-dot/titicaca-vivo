@@ -1,0 +1,27 @@
+{% extends "panel/base_panel.html" %}
+{% from "macros.html" import campo %}
+{% from "reservas/_macros.html" import resumen %}
+{% block titulo %}Reasignar noche{% endblock %}
+
+{% block contenido %}
+<p class="miga"><a href="{{ url_for('panel.hospedajes', desde=n.fecha_noche.isoformat()) }}">← Hospedajes</a></p>
+
+<section class="tarjeta tarjeta--formulario">
+  <h1>Reasignar la noche</h1>
+  <p>Reserva <strong>{{ n.codigo }}</strong> · noche del {{ n.fecha_noche | fecha_larga }} · {{ n.personas }} persona(s)
+    · {{ n.comunidad }}. Hoy la recibe la <strong>{{ n.nombre_familia }}</strong>.</p>
+  {% if candidatas %}
+    <p class="texto-suave">Las familias libres esa noche y con capacidad para el grupo están en el orden de la rotación (RN-10):
+      la primera es la que toca. Puedes elegir otra si hay un motivo (por ejemplo, una familia se enfermó).</p>
+    {{ resumen(f, sueltos, "Revisa la reasignación") }}
+    <form method="post" novalidate>
+      {{ f.csrf_token }}
+      {{ campo(f.familia_id) }}
+      {{ campo(f.motivo, ayuda="Por ejemplo: la familia avisó que no puede recibir esa noche.") }}
+      {{ f.enviar(class_='boton') }}
+    </form>
+  {% else %}
+    <p class="aviso aviso--error">No hay otra familia libre con capacidad para el grupo esa noche.</p>
+  {% endif %}
+</section>
+{% endblock %}

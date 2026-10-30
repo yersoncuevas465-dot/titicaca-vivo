@@ -1,0 +1,40 @@
+{% extends "panel/base_panel.html" %}
+{% block titulo %}{{ cat.titulo }}{% endblock %}
+
+{% block contenido %}
+<p class="miga"><a href="{{ url_for('catalogos.inicio') }}">← Catálogos</a></p>
+<div class="cabeza-pagina">
+  <h1>{{ cat.titulo }}</h1>
+  {% if cat.permite_nuevo %}
+    <a class="boton" href="{{ url_for('catalogos.formulario', nombre=nombre) }}">Agregar</a>
+  {% endif %}
+</div>
+<p class="texto-suave">{{ cat.descripcion }}</p>
+
+<div class="tabla-desplazable" role="region" aria-labelledby="titulo-lista" tabindex="0">
+  <table class="tabla">
+    <caption id="titulo-lista">{{ filas | length }} registro(s)</caption>
+    <thead>
+      <tr>
+        {% for encabezado, _ in cat.columnas %}<th scope="col">{{ encabezado }}</th>{% endfor %}
+        <th scope="col">Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for fila in filas %}
+        <tr>
+          {% for _, valor in cat.columnas %}<td>{{ valor(fila) }}</td>{% endfor %}
+          <td class="acciones-fila">
+            <a href="{{ url_for('catalogos.formulario', nombre=nombre, registro_id=fila.id) }}">Editar</a>
+            {% if cat.enlace_extra %}
+              <a href="{{ url_for(cat.enlace_extra[1], ruta_id=fila.id) }}">{{ cat.enlace_extra[0] }}</a>
+            {% endif %}
+          </td>
+        </tr>
+      {% else %}
+        <tr><td colspan="{{ cat.columnas | length + 1 }}">Todavía no hay registros.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

@@ -1,0 +1,19 @@
+{% extends "panel/base_panel.html" %}
+{% from "panel/_macros.html" import campo_panel %}
+{% from "reservas/_macros.html" import resumen %}
+{% block titulo %}{{ titulo }}{% endblock %}
+
+{% block contenido %}
+<p class="miga"><a href="{{ volver }}">← {{ volver_texto }}</a></p>
+
+<section class="tarjeta tarjeta--formulario">
+  <h1>{{ titulo }}</h1>
+  {% if ayuda %}<p class="texto-suave">{{ ayuda }}</p>{% endif %}
+  {{ resumen(f, sueltos, "Revisa los datos") }}
+  <form method="post" novalidate>
+    {{ f.csrf_token }}
+    {% for c in f %}{{ campo_panel(c) }}{% endfor %}
+    {{ f.enviar(class_='boton') }}
+  </form>
+</section>
+{% endblock %}

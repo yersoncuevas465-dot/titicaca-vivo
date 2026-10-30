@@ -1,0 +1,22 @@
+{% extends "panel/base_panel.html" %}
+{% from "panel/_macros.html" import como_funciona %}
+{% block titulo %}Catálogos{% endblock %}
+
+{% block contenido %}
+<h1>Catálogos</h1>
+<p class="texto-suave">Los datos que usa toda la operación. Lo que se cambia aquí se ve al instante en la web pública.</p>
+{% call como_funciona() %}
+  <li>Elige un catálogo de la lista, y en él <strong>Agregar</strong> o <strong>Editar</strong>.</li>
+  <li>Lo que guardas se ve al instante en la web del turista: no hay datos escritos a mano en las páginas.</li>
+  <li>Nada se borra, se desactiva: así no se pierde la historia de las reservas pasadas.</li>
+  <li>El sistema no deja cambios que rompan algo ya vendido, como bajar la capacidad de una lancha por debajo de un cupo reservado.</li>
+{% endcall %}
+<ul class="lista-limpia catalogos">
+  {% for nombre, cat in catalogos.items() %}
+    <li class="ruta">
+      <h2 class="ruta__nombre"><a href="{{ url_for('catalogos.lista', nombre=nombre) }}">{{ cat.titulo }}</a></h2>
+      <p class="texto-suave">{{ cat.descripcion }}</p>
+    </li>
+  {% endfor %}
+</ul>
+{% endblock %}

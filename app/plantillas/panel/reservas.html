@@ -1,0 +1,56 @@
+{% extends "panel/base_panel.html" %}
+{% from "panel/_macros.html" import como_funciona %}
+{% block titulo %}Reservas{% endblock %}
+
+{% block contenido %}
+<h1>Reservas</h1>
+<p class="texto-suave">
+  {% if q %}{{ filas | length }} reserva(s) para «{{ q }}»{% if filas | length == 50 %} (las 50 de zarpe más cercano){% endif %}.
+  {% else %}Las últimas {{ filas | length }} reservas registradas: web, muelle u oficina y WhatsApp.{% endif %}
+</p>
+
+{% call como_funciona() %}
+  <li>Escribe el código (TV-XXXX), el documento o el celular del titular, o un nombre: del titular o de cualquier pasajero (desde 3 letras).</li>
+  <li>Abre la reserva para ver sus pasajeros, sus pagos, su noche con la familia y todo su historial.</li>
+  {% if current_user.rol == 'operador' %}
+    <li>Para vender a quien llega al muelle o escribe por WhatsApp: <a href="{{ url_for('panel.salidas') }}">Salidas</a> → <strong>Vender</strong> en la salida que elige.</li>
+  {% else %}
+    <li>Como administrador solo miras: la venta, el cobro y el abordaje los hace el operador.</li>
+  {% endif %}
+  <li>«Vencida» quiere decir que no se pagó a tiempo: su lugar ya se liberó.</li>
+{% endcall %}
+
+<form method="get" class="filtro" role="search">
+  <div class="campo">
+    <label class="campo__etiqueta" for="q">Código, documento, celular o nombre</label>
+    <input class="campo__control" type="search" id="q" name="q" value="{{ q }}" maxlength="80" autocomplete="off">
+  </div>
+  <button class="boton boton--secundario" type="submit">Buscar</button>
+  {% if q %}<a class="boton boton--secundario" href="{{ url_for('panel.reservas') }}">Ver las últimas</a>{% endif %}
+</form>
+
+<div class="tabla-desplazable" role="region" aria-labelledby="titulo-reservas" tabindex="0">
+  <table class="tabla">
+    <caption id="titulo-reservas">{% if q %}Resultado de la búsqueda, primero las de zarpe más cercano{% else %}Reservas, de la más nueva a la más antigua{% endif %}</caption>
+    <thead>
+      <tr><th scope="col">Código</th><th scope="col">Titular</th><th scope="col">Salida</th>
+          <th scope="col">Total</th><th scope="col">Canal</th><th scope="col">Estado</th></tr>
+    </thead>
+    <tbody>
+      {% for r in filas %}
+        {% set estado = estado_visible(r) %}
+        <tr>
+          <td class="sin-cortar"><a href="{{ url_for('panel.reserva_detalle', codigo=r.codigo) }}"><strong>{{ r.codigo }}</strong></a></td>
+          <td>{{ r.nombres }} {{ r.apellidos }}<br><span class="texto-suave">{{ r.tipo_documento }} {{ r.numero_documento }}</span></td>
+          <td>{{ r.ruta_nombre }}<br><span class="texto-suave">{{ r.fecha_hora_zarpe | fecha_hora }}</span></td>
+          <td class="sin-cortar">{{ r.total | soles }}</td>
+          <td>{{ canales.get(r.canal, r.canal) }}</td>
+          <td><span class="insignia insignia--reserva-{{ estado }}">{{ estado | estado_reserva }}</span></td>
+        </tr>
+      {% else %}
+        <tr><td colspan="6">{% if q %}Ninguna reserva coincide con «{{ q }}». Revisa el código (TV-XXXX) o prueba con el documento.{% else %}Todavía no hay reservas.{% endif %}</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

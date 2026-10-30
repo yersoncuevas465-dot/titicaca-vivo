@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+
+{% block subnavegacion %}
+<nav class="subnav" aria-label="Panel">
+  <div class="contenedor subnav__fila">
+    {% set actual = request.endpoint or '' %}
+    {% set rol = current_user.rol %}
+    <a href="{{ url_for('panel.inicio') }}"
+       {% if actual == 'panel.inicio' %}aria-current="page"{% endif %}>Resumen</a>
+    {% if rol in ('admin', 'operador') %}
+      <a href="{{ url_for('panel.salidas') }}"
+         {% if actual.startswith('panel.salida') or actual == 'panel.pasajeros' %}aria-current="page"{% endif %}>Salidas</a>
+      <a href="{{ url_for('panel.reservas') }}"
+         {% if actual.startswith('panel.reserva') %}aria-current="page"{% endif %}>Reservas</a>
+    {% endif %}
+    {% if rol in ('operador', 'guia', 'capitan') %}
+      <a href="{{ url_for('panel.abordaje_buscar') }}"
+         {% if actual.startswith('panel.abordaje') %}aria-current="page"{% endif %}>Abordaje</a>
+    {% endif %}
+    {% if rol in ('admin', 'operador') %}
+      <a href="{{ url_for('panel.pagos') }}"
+         {% if actual.startswith('panel.pago') or actual == 'panel.devolucion_atendida' %}aria-current="page"{% endif %}>Pagos</a>
+      <a href="{{ url_for('panel.alertas') }}"
+         {% if actual.startswith('panel.alerta') %}aria-current="page"{% endif %}>Alertas</a>
+      <a href="{{ url_for('panel.hospedajes') }}"
+         {% if actual.startswith('panel.hospedaje') or actual == 'panel.transparencia' %}aria-current="page"{% endif %}>Hospedajes</a>
+      <a href="{{ url_for('panel.resenas') }}"
+         {% if actual.startswith('panel.resena') %}aria-current="page"{% endif %}>Reseñas</a>
+      <a href="{{ url_for('panel.indicadores_panel') }}"
+         {% if actual == 'panel.indicadores_panel' %}aria-current="page"{% endif %}>Indicadores</a>
+      <a href="{{ url_for('catalogos.inicio') }}"
+         {% if actual.startswith('catalogos.') %}aria-current="page"{% endif %}>Catálogos</a>
+    {% endif %}
+    {% if rol == 'admin' %}
+      <a href="{{ url_for('panel.usuarios') }}"
+         {% if actual.startswith('panel.usuario') %}aria-current="page"{% endif %}>Usuarios</a>
+      <a href="{{ url_for('panel.bitacora') }}"
+         {% if actual.startswith('panel.bitacora') %}aria-current="page"{% endif %}>Bitácora</a>
+      <a href="{{ url_for('panel.respaldos') }}"
+         {% if actual.startswith('panel.respaldo') %}aria-current="page"{% endif %}>Respaldos</a>
+    {% endif %}
+    <a href="{{ url_for('panel.mi_cuenta') }}"
+       {% if actual.startswith('panel.mi_') %}aria-current="page"{% endif %}>Mi cuenta</a>
+  </div>
+</nav>
+{% endblock %}
+
+{# D-110: avisa 2 minutos antes de que la sesión se cierre por inactividad y, mientras la
+   persona escribe o hace clic, le avisa al servidor que sigue trabajando. #}
+{% block scripts %}
+<script src="{{ estatico('js/sesion.js') }}" defer
+        data-minutos="{{ config.SESION_INACTIVA_MIN }}" data-url="{{ url_for('panel.sesion_activa') }}"></script>
+{% endblock %}

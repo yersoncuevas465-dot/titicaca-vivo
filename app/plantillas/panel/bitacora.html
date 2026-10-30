@@ -1,0 +1,83 @@
+{% extends "panel/base_panel.html" %}
+{% from "panel/_macros.html" import como_funciona %}
+{% block titulo %}Bitácora{% endblock %}
+
+{% block contenido %}
+<h1>Bitácora</h1>
+<p class="texto-suave">{{ total }} registros{% if periodo %} · {{ periodos[periodo] | lower }}{% endif %} · página {{ pagina }} de {{ paginas }}</p>
+
+{% call como_funciona() %}
+  <li>Cada fila es algo que pasó: cuándo, quién (vacío si fue un turista), qué acción, sobre qué registro, el detalle y la IP.</li>
+  <li>Filtra por acción y por periodo: entradas y salidas del personal, intentos fallidos, cambios de contraseña, pagos, cambios de estado, catálogos...</li>
+  <li><strong>Descargar</strong> baja lo que eliges en un archivo CSV que abre Excel: toda la bitácora o solo los movimientos de las cuentas. La descarga también queda anotada.</li>
+  <li>Los cambios de estado de una salida los anota un trigger de la base: quedan aunque alguien los haga fuera de la app.</li>
+  <li>La app no tiene ninguna opción para editar ni borrar la bitácora.</li>
+{% endcall %}
+
+<form method="get" class="filtro">
+  <div class="campo">
+    <label class="campo__etiqueta" for="accion">Acción</label>
+    <select class="campo__control" id="accion" name="accion">
+      <option value="">Todas</option>
+      {% for a in acciones %}
+        <option value="{{ a }}" {% if a == accion %}selected{% endif %}>{{ a | accion_bitacora }}</option>
+      {% endfor %}
+    </select>
+  </div>
+  <div class="campo">
+    <label class="campo__etiqueta" for="periodo">Periodo</label>
+    <select class="campo__control" id="periodo" name="periodo">
+      <option value="">Todo</option>
+      {% for clave, nombre in periodos.items() %}
+        <option value="{{ clave }}" {% if clave == periodo %}selected{% endif %}>{{ nombre }}</option>
+      {% endfor %}
+    </select>
+  </div>
+  <button class="boton boton--secundario" type="submit">Filtrar</button>
+</form>
+
+<p class="acciones-fila">
+  <span>Descargar en Excel ({{ periodos[periodo] | lower if periodo else 'todo' }}):</span>
+  <a class="boton boton--secundario boton--chico" href="{{ url_for('panel.bitacora_exportar', periodo=periodo, tipo='sesiones') }}">Solo entradas y salidas</a>
+  <a class="boton boton--secundario boton--chico" href="{{ url_for('panel.bitacora_exportar', periodo=periodo) }}">Toda la bitácora</a>
+</p>
+
+<div class="tabla-desplazable" role="region" aria-labelledby="titulo-tabla" tabindex="0">
+  <table class="tabla">
+    <caption id="titulo-tabla">Registros de auditoría, del más reciente al más antiguo</caption>
+    <thead>
+      <tr><th scope="col">Fecha</th><th scope="col">Usuario</th><th scope="col">Acción</th>
+          <th scope="col">Registro</th><th scope="col">Detalle</th><th scope="col">IP</th></tr>
+    </thead>
+    <tbody>
+      {% for f in filas %}
+        <tr>
+          <td>{{ f.creado_en | fecha_hora }}</td>
+          <td>{{ f.nombre_usuario or '—' }}</td>
+          <td>{{ f.accion | accion_bitacora }}<br><code>{{ f.accion }}</code></td>
+          <td>{{ f.tabla_afectada or '' }}{% if f.registro_id %} #{{ f.registro_id }}{% endif %}</td>
+          <td>
+            {% for clave, valor in f.detalle.items() %}
+              <span class="bitacora-dato">{{ clave }}: <strong>{{ valor }}</strong></span>
+            {% endfor %}
+          </td>
+          <td>{{ f.ip or '—' }}</td>
+        </tr>
+      {% else %}
+        <tr><td colspan="6">No hay registros con ese filtro.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+{% if paginas > 1 %}
+<nav class="paginacion" aria-label="Páginas de la bitácora">
+  {% if pagina > 1 %}
+    <a class="boton boton--secundario" href="{{ url_for('panel.bitacora', pagina=pagina - 1, accion=accion, periodo=periodo) }}">Anterior</a>
+  {% endif %}
+  {% if pagina < paginas %}
+    <a class="boton boton--secundario" href="{{ url_for('panel.bitacora', pagina=pagina + 1, accion=accion, periodo=periodo) }}">Siguiente</a>
+  {% endif %}
+</nav>
+{% endif %}
+{% endblock %}

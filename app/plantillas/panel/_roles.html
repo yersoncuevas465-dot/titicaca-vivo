@@ -1,0 +1,37 @@
+{# Qué hace y qué no hace cada rol (docs/matriz-permisos.md). Lo ven cada persona en Mi cuenta
+   y el admin en Usuarios: cada rol ve y hace solo lo suyo. #}
+{% set FUNCIONES = {
+  'admin': {
+    'hace': ['Da de alta al personal, cambia roles y contraseñas, y activa o desactiva cuentas.',
+             'Mantiene los catálogos: rutas, lanchas, tarifas, temporadas, comunidades y familias.',
+             'Revisa la bitácora (y la descarga en Excel) y los indicadores.',
+             'Mira toda la operación del día: salidas, pagos, alertas, hospedajes y reseñas.'],
+    'no_hace': ['No ejecuta la operación: no crea salidas, no verifica pagos, no embarca pasajeros ni suspende salidas. Eso es del operador.']},
+  'operador': {
+    'hace': ['Crea, edita, suspende y cancela salidas, y marca el zarpe.',
+             'Verifica o rechaza los pagos de Yape y Plin, cobra en el muelle y atiende devoluciones.',
+             'Registra las alertas del lago y suspende las salidas afectadas en un solo paso.',
+             'Embarca a los pasajeros con el QR, asigna las familias anfitrionas y modera las reseñas.',
+             'Mantiene los catálogos y ve los indicadores.'],
+    'no_hace': ['No maneja usuarios ni la bitácora: eso es del administrador.']},
+  'guia': {
+    'hace': ['Ve solo las salidas que tiene asignadas y la lista de sus pasajeros.',
+             'Registra el abordaje leyendo el QR del boleto o escribiendo el código.',
+             'Imprime la lista o la envía por WhatsApp para tenerla sin señal.'],
+    'no_hace': ['No ve salidas de otros, ni pagos, ni catálogos. No marca el zarpe.']},
+  'capitan': {
+    'hace': ['Ve solo las salidas que tiene asignadas y la lista de sus pasajeros.',
+             'Descarga el manifiesto (PDF) y registra el abordaje con el QR.',
+             'Marca el zarpe: quien no subió queda como «no se presentó».'],
+    'no_hace': ['No ve salidas de otros, ni pagos, ni catálogos.']},
+} %}
+
+{% macro funciones_rol(rol) %}
+  {% set f = FUNCIONES.get(rol) %}
+  {% if f %}
+    <p class="rol__titulo rol__titulo--hace">Hace</p>
+    <ul class="rol__lista">{% for x in f.hace %}<li>{{ x }}</li>{% endfor %}</ul>
+    <p class="rol__titulo rol__titulo--no">No hace</p>
+    <ul class="rol__lista">{% for x in f.no_hace %}<li>{{ x }}</li>{% endfor %}</ul>
+  {% endif %}
+{% endmacro %}

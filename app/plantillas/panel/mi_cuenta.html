@@ -1,0 +1,90 @@
+{% extends "panel/base_panel.html" %}
+{% from "macros.html" import campo, resumen_errores %}
+{% from "panel/_macros.html" import como_funciona %}
+{% from "panel/_roles.html" import funciones_rol %}
+{% block titulo %}Mi cuenta{% endblock %}
+
+{% block contenido %}
+<h1>Mi cuenta</h1>
+<p class="texto-suave">{{ datos.nombre_completo }} · {{ datos.rol_nombre }}</p>
+
+{% call como_funciona() %}
+  <li>Aquí están tus datos y lo que hace tu rol: cada rol ve y hace solo lo suyo.</li>
+  <li><strong>Cambiar mi contraseña</strong>: escribe la actual y la nueva dos veces. Si tenías la sesión abierta en otro equipo, allí se cierra sola.</li>
+  <li><strong>Correo y celular</strong>: a ese correo llega el código si olvidas tu contraseña. Para cambiarlos se pide tu contraseña actual.</li>
+  <li>Tu nombre, tu usuario y tu rol los cambia el administrador.</li>
+  <li>La sesión se cierra sola tras {{ minutos }} minutos sin actividad; 2 minutos antes aparece un aviso.</li>
+{% endcall %}
+
+{% for mensaje in sueltos %}<p class="aviso aviso--error" role="alert">{{ mensaje }}</p>{% endfor %}
+
+<div class="cuenta">
+  <section class="tarjeta cuenta__bloque" aria-labelledby="titulo-datos">
+    <h2 id="titulo-datos">Tus datos</h2>
+    <dl class="datos">
+      <div><dt>Usuario</dt><dd><code>{{ datos.nombre_usuario }}</code></dd></div>
+      <div><dt>Rol</dt><dd>{{ datos.rol_nombre }}</dd></div>
+      {% if datos.comunidad %}<div><dt>Comunidad</dt><dd>{{ datos.comunidad }}</dd></div>{% endif %}
+      {% if datos.licencia_navegacion %}<div><dt>Licencia de navegación</dt><dd>{{ datos.licencia_navegacion }}</dd></div>{% endif %}
+      <div><dt>Correo</dt><dd>{% if datos.correo %}{{ datos.correo }}{% else %}<strong class="texto-alerta">Sin correo</strong>{% endif %}</dd></div>
+      <div><dt>Celular</dt><dd>{{ datos.telefono or '—' }}</dd></div>
+      <div><dt>Último acceso</dt><dd>{{ datos.ultimo_acceso | fecha_hora or '—' }}</dd></div>
+    </dl>
+    {% if not datos.correo %}
+      <p class="aviso aviso--info">Sin correo no puedes recuperar tu contraseña si la olvidas. Agrégalo abajo, en <a href="#titulo-contacto">Correo y celular</a>.</p>
+    {% endif %}
+  </section>
+
+  <section class="tarjeta cuenta__bloque" aria-labelledby="titulo-rol">
+    <h2 id="titulo-rol">Lo que hace tu rol</h2>
+    {{ funciones_rol(datos.rol) }}
+  </section>
+
+  <section class="tarjeta cuenta__bloque" aria-labelledby="titulo-clave">
+    <h2 id="titulo-clave">Cambiar mi contraseña</h2>
+    {{ resumen_errores(clave) }}
+    <form method="post" action="{{ url_for('panel.mi_contrasena') }}" novalidate>
+      {{ clave.csrf_token }}
+      {{ campo(clave.actual) }}
+      {{ campo(clave.nueva, ayuda=clave.nueva.description) }}
+      {{ campo(clave.repetir) }}
+      {{ clave.enviar(class_='boton') }}
+    </form>
+  </section>
+
+  <section class="tarjeta cuenta__bloque" aria-labelledby="titulo-contacto">
+    <h2 id="titulo-contacto">Correo y celular</h2>
+    {{ resumen_errores(contacto) }}
+    <form method="post" action="{{ url_for('panel.mi_contacto') }}" novalidate>
+      {{ contacto.csrf_token }}
+      {{ campo(contacto.correo, ayuda=contacto.correo.description) }}
+      {{ campo(contacto.telefono, ayuda=contacto.telefono.description) }}
+      {{ campo(contacto.confirmar, ayuda=contacto.confirmar.description) }}
+      {{ contacto.enviar(class_='boton boton--secundario') }}
+    </form>
+  </section>
+</div>
+
+<section class="bloque" aria-labelledby="titulo-movimientos">
+  <h2 id="titulo-movimientos">Tus últimos movimientos</h2>
+  <p class="texto-suave">Entradas, salidas y cambios de tu cuenta. Si ves algo que no hiciste, cambia tu contraseña y avisa al administrador.</p>
+  <div class="tabla-desplazable" role="region" aria-labelledby="titulo-tabla-movimientos" tabindex="0">
+    <table class="tabla">
+      <caption id="titulo-tabla-movimientos">Los {{ movimientos | length }} más recientes</caption>
+      <thead><tr><th scope="col">Fecha</th><th scope="col">Qué pasó</th><th scope="col">Detalle</th><th scope="col">IP</th></tr></thead>
+      <tbody>
+        {% for m in movimientos %}
+          <tr>
+            <td>{{ m.creado_en | fecha_hora }}</td>
+            <td>{{ m.accion | accion_bitacora }}</td>
+            <td>{% for clave_d, valor in m.detalle.items() %}<span class="bitacora-dato">{{ clave_d }}: <strong>{{ valor }}</strong></span>{% endfor %}</td>
+            <td>{{ m.ip or '—' }}</td>
+          </tr>
+        {% else %}
+          <tr><td colspan="4">Todavía no hay movimientos.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</section>
+{% endblock %}

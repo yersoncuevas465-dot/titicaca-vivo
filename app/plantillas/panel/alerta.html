@@ -1,0 +1,65 @@
+{% extends "panel/base_panel.html" %}
+{% from "panel/_macros.html" import campo_panel %}
+{% from "reservas/_macros.html" import resumen %}
+{% from "publico/_mapa.html" import mapa_lago %}
+{% block titulo %}{% if a %}Alerta · {{ a.titulo }}{% else %}Registrar alerta{% endif %}{% endblock %}
+
+{% block contenido %}
+<p class="miga"><a href="{{ url_for('panel.alertas') }}">← Alertas</a></p>
+
+{% if a %}
+<section class="bloque" aria-labelledby="titulo-afectadas">
+  <div class="detalle__cabeza">
+    <h1>{{ a.titulo }}</h1>
+    <span class="insignia insignia--{{ a.nivel }}">{{ a.nivel | nivel_alerta }}</span>
+  </div>
+  <p class="texto-suave">{{ a.tipo | tipo_alerta }} · {{ a.lugar }} · {{ a.fuente }} ·
+    {{ a.vigente_desde | fecha_hora }} a {{ a.vigente_hasta | fecha_hora }}</p>
+
+  <h2 id="titulo-afectadas">Salidas afectadas (RN-11)</h2>
+  {% if a.nivel not in ('naranja', 'rojo') %}
+    <p class="aviso aviso--info">Es una alerta {{ a.nivel | nivel_alerta | lower }}: solo informa. No marca ni suspende salidas.</p>
+  {% elif afectadas %}
+    {% set por_suspender = afectadas | selectattr('estado', 'in', ['programada', 'embarcando']) | list %}
+    <ul class="lista-limpia lista-separada">
+      {% for s in afectadas %}
+        <li><a href="{{ url_for('panel.pasajeros', salida_id=s.salida_id) }}">{{ s.fecha_hora_zarpe | fecha_hora }} · {{ s.ruta_nombre }}</a>
+          <span class="texto-suave">· {{ s.embarcacion_nombre }} · {{ s.ocupados }} pasajero(s)</span>
+          {% if s.estado == 'suspendida' %}<span class="insignia insignia--suspendida">Suspendida</span>{% endif %}</li>
+      {% endfor %}
+    </ul>
+    {% if por_suspender and current_user.rol == 'operador' and a.sin_terminar %}
+      <form method="post" action="{{ url_for('panel.alerta_suspender', alerta_id=a.id) }}" class="acciones">
+        {{ accion.csrf_token }}
+        <button class="boton" type="submit">Suspender las {{ por_suspender | length }} salida(s) en un solo paso</button>
+      </form>
+      <p class="texto-suave">Es una sola transacción: o se suspenden todas, o ninguna. Cada turista verá el motivo
+        y podrá reprogramar o pedir la devolución.</p>
+    {% endif %}
+  {% else %}
+    <p class="aviso aviso--exito">Ninguna salida por venir pasa por este lugar en ese horario.</p>
+  {% endif %}
+</section>
+
+<section class="bloque" aria-labelledby="titulo-donde-rige">
+  <h2 id="titulo-donde-rige">Dónde rige</h2>
+  {{ mapa_lago(mapa, id='mapa-alerta', descripcion=('La alerta es para todo el lago: el agua está teñida y todas las rutas resaltadas.' if not a.comunidad_id else 'La comunidad de la alerta tiene un halo y las rutas que paran ahí van con línea continua.')) }}
+</section>
+{% endif %}
+
+{% if not a %}<h1>Registrar alerta</h1>{% endif %}
+
+{% if current_user.rol == 'operador' %}
+<section class="tarjeta tarjeta--formulario bloque" aria-labelledby="titulo-form-alerta">
+  <h2 id="titulo-form-alerta">{% if a %}Corregir la alerta{% else %}Datos de la alerta{% endif %}</h2>
+  {{ resumen(f, sueltos, "Revisa la alerta") }}
+  <form method="post" action="{{ url_for('panel.alerta_formulario', alerta_id=a.id if a else None) }}" novalidate>
+    {{ f.csrf_token }}
+    {% for c in f %}{{ campo_panel(c) }}{% endfor %}
+    {{ f.enviar(class_='boton') }}
+  </form>
+</section>
+{% elif sueltos %}
+  <div class="resumen-errores" role="alert"><ul>{% for e in sueltos %}<li>{{ e }}</li>{% endfor %}</ul></div>
+{% endif %}
+{% endblock %}

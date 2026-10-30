@@ -1,0 +1,87 @@
+{% extends "panel/base_panel.html" %}
+{% from "panel/_macros.html" import como_funciona %}
+{% block titulo %}Hospedajes{% endblock %}
+
+{% block contenido %}
+<div class="cabeza-pagina">
+  <h1>Hospedajes con familias</h1>
+  <a class="boton boton--secundario" href="{{ url_for('panel.transparencia') }}">Reporte de transparencia</a>
+</div>
+<p class="texto-suave">La familia se asigna por rotación justa (RN-10): la que tuvo menos noches en 30 días, luego
+  la que espera hace más tiempo. Si hay que cambiarla, se reasigna con un motivo que queda en la bitácora.</p>
+
+{% call como_funciona() %}
+  <li>La familia se asigna sola: al confirmar la reserva en el muelle, o al verificar su pago si es Yape o Plin.</li>
+  <li><strong>Reasignar</strong> una noche si la familia no puede: las libres salen en el orden de la rotación (la que toca viene marcada) y el motivo es obligatorio.</li>
+  <li><strong>Asignar familia por rotación</strong> a las reservas con noche que se quedaron sin familia.</li>
+  <li>Cuando el grupo vuelve, <strong>Confirmar que se cumplió</strong>: esa noche cuenta como cumplida en el <strong>Reporte de transparencia</strong>.</li>
+{% endcall %}
+
+{% if errores %}
+  <div class="resumen-errores" role="alert" tabindex="-1"><ul>{% for e in errores %}<li>{{ e }}</li>{% endfor %}</ul></div>
+{% endif %}
+
+{% if sin_familia %}
+<section class="bloque" aria-labelledby="titulo-sin-familia">
+  <h2 id="titulo-sin-familia">Reservas con noche y sin familia</h2>
+  <ul class="lista-limpia lista-separada">
+    {% for r in sin_familia %}
+      <li><strong>{{ r.codigo }}</strong> · {{ r.ruta_nombre }} · {{ r.fecha_hora_zarpe | fecha_corta }} · {{ r.personas }} persona(s)
+        · {{ r.estado | estado_reserva }}
+        {% if puede %}
+          <form method="post" action="{{ url_for('panel.hospedaje_asignar', codigo=r.codigo) }}" class="en-linea">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <button class="boton boton--chico" type="submit">Asignar familia por rotación</button>
+          </form>
+        {% endif %}
+      </li>
+    {% endfor %}
+  </ul>
+</section>
+{% endif %}
+
+<form method="get" class="filtro">
+  <div class="campo">
+    <label class="campo__etiqueta" for="desde">Noches desde</label>
+    <input class="campo__control" type="date" id="desde" name="desde" value="{{ desde.isoformat() }}">
+  </div>
+  <button class="boton boton--secundario" type="submit">Ver</button>
+</form>
+
+<div class="tabla-desplazable" role="region" aria-labelledby="titulo-noches" tabindex="0">
+  <table class="tabla">
+    <caption id="titulo-noches">{{ noches | length }} noche(s) desde el {{ desde | fecha_corta }}</caption>
+    <thead>
+      <tr><th scope="col">Noche</th><th scope="col">Familia</th><th scope="col">Reserva</th>
+          <th scope="col">Personas</th><th scope="col">Pago a la familia</th><th scope="col">Estado</th>
+          <th scope="col">Acciones</th></tr>
+    </thead>
+    <tbody>
+      {% for n in noches %}
+        <tr>
+          <td>{{ n.fecha_noche | fecha_corta }}</td>
+          <td>{{ n.nombre_familia }}<br><span class="texto-suave">{{ n.comunidad }}</span>
+            {% if n.motivo_reasignacion %}<br><span class="texto-suave">Reasignada: {{ n.motivo_reasignacion }}</span>{% endif %}</td>
+          <td>{{ n.codigo }}<br><span class="texto-suave">{{ n.estado_reserva | estado_reserva }}</span></td>
+          <td>{{ n.personas }}</td>
+          <td>{{ n.monto_familia | soles }}</td>
+          <td>{{ n.estado | capitalize }}</td>
+          <td class="acciones-fila">
+            {% if puede and n.estado == 'asignado' and not n.ya_paso %}
+              <a href="{{ url_for('panel.hospedaje_reasignar', hospedaje_id=n.id) }}">Reasignar</a>
+            {% elif puede and n.estado == 'asignado' and n.estado_reserva == 'abordada' %}
+              <form method="post" action="{{ url_for('panel.hospedaje_cumplida', hospedaje_id=n.id) }}">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <input type="hidden" name="desde" value="{{ desde.isoformat() }}">
+                <button class="boton-enlace" type="submit">Confirmar que se cumplió</button>
+              </form>
+            {% endif %}
+          </td>
+        </tr>
+      {% else %}
+        <tr><td colspan="7">No hay noches desde esa fecha.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}
