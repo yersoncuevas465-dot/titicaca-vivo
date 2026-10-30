@@ -1,0 +1,50 @@
+{# Piezas de los formularios de reserva y pago. #}
+{% from "macros.html" import campo %}
+
+{# Resumen de errores: campos de arriba, acompañantes y errores sin campo (cupo, salida...) #}
+{% macro resumen(f, sueltos=[], titulo="Revisa la reserva") %}
+  {% set lista = [] %}
+  {% for c in f if c.errors and c.name not in ('csrf_token', 'acompanantes', 'token_envio') %}
+    {% set _ = lista.append((c.id ~ ('-0' if c.type == 'RadioField' else ''), c.label.text, c.errors[0])) %}
+  {% endfor %}
+  {% if f.acompanantes is defined %}
+    {% for e in f.acompanantes.entries %}
+      {% for c in e.form if c.errors %}
+        {% set _ = lista.append((c.id, t('Acompañante') ~ ' ' ~ loop.index ~ ' · ' ~ c.label.text, c.errors[0])) %}
+      {% endfor %}
+    {% endfor %}
+  {% endif %}
+  {% if lista or sueltos %}
+    <div class="resumen-errores" role="alert" id="resumen-errores" tabindex="-1">
+      <h2 class="resumen-errores__titulo">{{ t(titulo) }}</h2>
+      <ul>
+        {% for mensaje in sueltos %}<li>{{ mensaje }}</li>{% endfor %}
+        {% for id, etiqueta, mensaje in lista %}<li><a href="#{{ id }}">{{ etiqueta }}: {{ mensaje }}</a></li>{% endfor %}
+      </ul>
+    </div>
+  {% endif %}
+{% endmacro %}
+
+{# Grupo de opciones (radio) con legend, error junto al grupo y foco por teclado #}
+{% macro opciones(c, ayuda=None) %}
+  <fieldset class="campo campo--opciones{% if c.errors %} campo--error{% endif %}"
+            {% if c.errors %}aria-describedby="{{ c.id }}-error"{% endif %}>
+    <legend class="campo__etiqueta">{{ c.label.text }}</legend>
+    {% if ayuda %}<p class="campo__ayuda">{{ ayuda }}</p>{% endif %}
+    {% if c.errors %}<p class="campo__error" id="{{ c.id }}-error">{{ c.errors | join(' ') }}</p>{% endif %}
+    {% for opcion in c %}
+      <div class="opcion">{{ opcion() }} {{ opcion.label() }}</div>
+    {% endfor %}
+  </fieldset>
+{% endmacro %}
+
+{# Un acompañante. `numero` es el número que se ve ("Acompañante 2"). #}
+{% macro fila_pasajero(p, numero) %}
+  <fieldset class="pasajero">
+    <legend class="pasajero__titulo">{{ t('Acompañante') }} <span class="pasajero__numero">{{ numero }}</span></legend>
+    <div class="fila-2">{{ campo(p.tipo_documento) }}{{ campo(p.numero_documento) }}</div>
+    <div class="fila-2">{{ campo(p.nombres) }}{{ campo(p.apellidos) }}</div>
+    <div class="fila-2">{{ campo(p.nacionalidad) }}{{ campo(p.tipo_pasajero_id) }}</div>
+    <button type="button" class="boton boton--secundario boton--chico quitar-acompanante" hidden>{{ t('Quitar acompañante') }}</button>
+  </fieldset>
+{% endmacro %}

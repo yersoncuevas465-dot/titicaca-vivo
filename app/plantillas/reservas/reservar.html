@@ -1,0 +1,115 @@
+{% extends "base.html" %}
+{% from "macros.html" import campo, barra_cupos %}
+{% from "reservas/_macros.html" import resumen, opciones, fila_pasajero %}
+{% block titulo %}{{ t('Reservar') }} · {{ s.ruta_nombre }}{% endblock %}
+
+{% block contenido %}
+{% if venta %}
+  <p class="miga"><a href="{{ url_for('panel.pasajeros', salida_id=s.salida_id) }}">← Pasajeros de la salida</a></p>
+{% else %}
+  <p class="miga"><a href="{{ url_for('publico.detalle_salida', salida_id=s.salida_id) }}">← {{ t('Volver a la salida') }}</a></p>
+{% endif %}
+<h1>{{ t('Reservar') }}</h1>
+
+<section class="tarjeta resumen-salida" aria-labelledby="titulo-salida">
+  <h2 id="titulo-salida" class="resumen-salida__ruta">{{ s.ruta_nombre }}</h2>
+  <p>{{ s.fecha_hora_zarpe | fecha_larga | inicial_mayuscula }} · {{ t('zarpa a las {hora}', hora=fuerte(s.fecha_hora_zarpe | hora)) }} · {{ s.muelle_salida }}</p>
+  {{ barra_cupos(s) }}
+  {% if s.incluye_pernocte %}
+    <p class="texto-suave">{{ t('Incluye una noche en casa de una familia anfitriona. La familia se asigna por turnos, para que todas reciban visitantes.') }}</p>
+  {% endif %}
+</section>
+
+{% if not reservable %}
+  <p class="aviso aviso--error">{{ t('Esta salida ya no recibe reservas.') }} ({{ s.estado_publico | estado_publico | lower }})
+    <a href="{{ url_for('publico.salidas') }}">{{ t('Busca otra salida') }}</a>.</p>
+{% else %}
+
+{{ resumen(f, errores_sueltos) }}
+
+<form method="get" id="selector-cantidad" class="selector-cantidad" action="{{ url_for('reservas.reservar', salida_id=s.salida_id) }}">
+  <div class="campo">
+    <label class="campo__etiqueta" for="cantidad-acompanantes">{{ t('¿Cuántos acompañantes viajan contigo?') }}</label>
+    <p class="campo__ayuda" id="cantidad-ayuda">{{ t('Al cambiar la cantidad se vuelve a cargar el formulario vacío.') }}</p>
+    <select class="campo__control" id="cantidad-acompanantes" name="acompanantes" aria-describedby="cantidad-ayuda">
+      {% for n in range(maximo) %}
+        <option value="{{ n }}" {% if n == f.acompanantes.entries | length %}selected{% endif %}>{{ n }}</option>
+      {% endfor %}
+    </select>
+  </div>
+  <button class="boton boton--secundario" type="submit">{{ t('Cambiar') }}</button>
+</form>
+
+{# Con DNI, js/dni.js pide los nombres a /api/dni (el servidor consulta RENIEC) #}
+<form method="post" novalidate class="formulario-reserva"
+      {% if consulta_dni %}data-dni-url="{{ url_for('apis.dni') }}"
+      data-dni-buscando="{{ t('Buscando el DNI en RENIEC…') }}"
+      data-dni-listo="{{ t('Encontrado en RENIEC: {nombre}. Revisa que esté bien.') }}"
+      data-dni-error="{{ t('No pudimos consultar el DNI: escribe los nombres.') }}"{% endif %}>
+  {{ f.csrf_token }}
+  {{ f.token_envio }}
+
+  {# Solo el operador: vende a quien llega al muelle o escribe por WhatsApp (panel, en español) #}
+  {% if venta %}
+  <fieldset class="grupo">
+    <legend>Venta del operador</legend>
+    <div class="campo">
+      <label class="campo__etiqueta" for="canal">Canal</label>
+      <p class="campo__ayuda" id="canal-ayuda">La reserva queda a tu nombre en la bitácora. Si paga ahora en efectivo, elige «En el muelle» abajo y cóbralo desde la ficha de la reserva.</p>
+      <select class="campo__control" id="canal" name="canal" aria-describedby="canal-ayuda">
+        {% for clave, nombre in canales.items() %}
+          <option value="{{ clave }}" {% if clave == canal %}selected{% endif %}>{{ nombre }}</option>
+        {% endfor %}
+      </select>
+    </div>
+  </fieldset>
+  {% endif %}
+
+  <fieldset class="grupo">
+    <legend>{{ t('Titular de la reserva') }}</legend>
+    {% if consulta_dni %}
+      <p class="campo__ayuda">{{ t('Con DNI peruano, escribe primero el número: los nombres se completan solos (RENIEC). Revísalos antes de confirmar.') }}</p>
+    {% endif %}
+    <div class="fila-2">{{ campo(f.titular_tipo_documento) }}{{ campo(f.titular_numero_documento) }}</div>
+    <div class="fila-2">{{ campo(f.titular_nombres) }}{{ campo(f.titular_apellidos) }}</div>
+    {{ campo(f.titular_nacionalidad, ayuda=t('Empieza a escribir tu país y elígelo de la lista (Perú = PE).')) }}
+    <div class="fila-2">
+      {{ campo(f.telefono, ayuda=t('Celular peruano de 9 dígitos o con código de país (+33…).')) }}
+      {{ campo(f.correo, ayuda=t('Deja al menos un teléfono o un correo.')) }}
+    </div>
+    <div class="campo campo--check">
+      {{ f.titular_viaja() }} {{ f.titular_viaja.label() }}
+    </div>
+    {{ campo(f.titular_tipo_pasajero_id, ayuda=t('Si viajas, elige tu tipo de pasajero (se verifica con tu documento en el muelle).')) }}
+  </fieldset>
+
+  <fieldset class="grupo">
+    <legend>{{ t('Acompañantes') }}</legend>
+    <div id="acompanantes" data-maximo="{{ maximo - 1 }}">
+      {% for e in f.acompanantes.entries %}{{ fila_pasajero(e.form, loop.index) }}{% endfor %}
+    </div>
+    <button type="button" class="boton boton--secundario" id="agregar-acompanante" hidden>+ {{ t('Agregar acompañante') }}</button>
+  </fieldset>
+
+  <fieldset class="grupo">
+    <legend>{{ t('Pago') }}</legend>
+    {{ opciones(f.metodo_pago, ayuda=t('Con Yape o Plin guardamos tu lugar {minutos} minutos para que reportes el pago. Si pagas en el muelle, tu reserva queda confirmada y pagas antes de subir.', minutos=minutos_pago)) }}
+  </fieldset>
+
+  <details class="precios-detalle">
+    <summary>{{ t('Precios por persona en esta fecha') }}</summary>
+    <ul class="lista-limpia">
+      {% for p in precios %}<li>{{ p.nombre }}: <strong>{{ p.precio | soles }}</strong>{% if cambio %} <span class="texto-suave">(≈ {{ p.precio | dolares(cambio) }})</span>{% endif %}</li>{% endfor %}
+    </ul>
+    {% if cambio %}<p class="texto-suave">{{ t('En dólares, con el tipo de cambio de SUNAT del {fecha} (S/ {venta} por dólar). Es referencial: se paga en soles.', fecha=cambio.fecha | fecha_corta, venta=cambio.venta) }}</p>{% endif %}
+  </details>
+
+  {{ f.enviar(class_='boton boton--ancho') }}
+</form>
+
+<template id="plantilla-acompanante">{{ fila_pasajero(plantilla, '__N__') }}</template>
+<datalist id="paises">{% for codigo, nombre in paises %}<option value="{{ codigo }}">{{ nombre }}</option>{% endfor %}</datalist>
+<script src="{{ estatico('js/reservar.js') }}" defer></script>
+{% if consulta_dni %}<script src="{{ estatico('js/dni.js') }}" defer></script>{% endif %}
+{% endif %}
+{% endblock %}

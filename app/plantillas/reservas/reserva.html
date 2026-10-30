@@ -1,0 +1,129 @@
+{% extends "base.html" %}
+{% block titulo %}{{ t('Reserva {codigo}', codigo=r.codigo) }}{% endblock %}
+
+{% block contenido %}
+<header class="detalle__cabeza">
+  <h1>{{ t('Reserva {codigo}', codigo=r.codigo) }}</h1>
+  {% set estado = estado_visible(r) %}
+  <span class="insignia insignia--reserva-{{ estado }}">{{ estado | estado_reserva }}</span>
+</header>
+
+{% if not acceso %}
+  <p class="aviso aviso--info">{{ t('Por tu privacidad, los datos personales se ven ocultos.') }}
+    <a href="{{ url_for('reservas.mi_reserva', codigo=r.codigo) }}">{{ t('Identifícate con el documento del titular') }}</a> {{ t('para verlos completos.') }}</p>
+{% endif %}
+
+{% if r.salida_estado == 'suspendida' %}
+  <section class="aviso aviso--error" aria-labelledby="titulo-suspendida">
+    <h2 id="titulo-suspendida" class="aviso__titulo">{{ t('Tu salida está suspendida') }}</h2>
+    <p>{{ r.motivo_estado or t('por seguridad en el lago') }}</p>
+    {% if puede_reprogramar %}
+      <p>{{ t('Puedes pasar tu reserva a otra salida de la misma ruta, o pedir la devolución de tu dinero.') }}</p>
+      {% if acceso %}
+        <p><a class="boton" href="{{ url_for('reservas.reprogramar', codigo=r.codigo) }}">{{ t('Reprogramar o pedir la devolución') }}</a></p>
+      {% else %}
+        <p><a href="{{ url_for('reservas.mi_reserva', codigo=r.codigo) }}">{{ t('Identifícate para reprogramar') }}</a></p>
+      {% endif %}
+    {% endif %}
+  </section>
+{% endif %}
+
+{% if r.estado == 'pendiente_pago' %}
+  {% set saldo = r.total - r.pagado - r.reportado %}
+  {% if r.vigente and saldo <= 0 %}
+    <p class="aviso aviso--exito"><strong>{{ t('Recibimos tu reporte de pago.') }}</strong>
+      {{ t('La agencia lo está verificando; tu lugar está guardado hasta el {plazo}.', plazo=r.vence_en | fecha_hora) }}</p>
+  {% elif r.vigente %}
+    <section class="aviso aviso--info pago-pendiente" aria-labelledby="titulo-pago-pendiente">
+      <h2 id="titulo-pago-pendiente">{{ t('Falta tu pago') }}</h2>
+      <p>{{ t('Guardamos tu lugar hasta el {plazo}.', plazo=fuerte(r.vence_en | fecha_hora)) }}
+        {{ t('Paga {monto} por {metodo}', monto=saldo | soles, metodo=r.metodo_pago_elegido | metodo_pago) }}
+        {% if r.metodo_pago_elegido == 'yape' and config.YAPE_NUMERO %}{{ t('al') }} <strong>{{ config.YAPE_NUMERO }}</strong>{% endif %}
+        {% if r.metodo_pago_elegido == 'plin' and config.PLIN_NUMERO %}{{ t('al') }} <strong>{{ config.PLIN_NUMERO }}</strong>{% endif %}
+        {% if config.TITULAR_COBRO %}({{ config.TITULAR_COBRO }}){% endif %}
+        {{ t('y luego repórtalo aquí.') }}</p>
+      {% if acceso %}<p><a class="boton" href="{{ url_for('reservas.pago', codigo=r.codigo) }}">{{ t('Reportar mi pago') }}</a></p>{% endif %}
+    </section>
+  {% else %}
+    <p class="aviso aviso--error">{{ t('El plazo para pagar ya pasó y el lugar se liberó. Puedes hacer una reserva nueva.') }}</p>
+  {% endif %}
+{% endif %}
+
+{% if puede_resenar %}
+  <p class="aviso aviso--exito">{{ t('¿Cómo te fue en el lago?') }}
+    {% if acceso %}<a href="{{ url_for('reservas.resena', codigo=r.codigo) }}">{{ t('Cuéntanos tu viaje') }}</a>
+    {% else %}<a href="{{ url_for('reservas.mi_reserva', codigo=r.codigo) }}">{{ t('Identifícate para dejar tu opinión') }}</a>{% endif %}</p>
+{% endif %}
+
+<div class="dos-columnas bloque">
+  <section aria-labelledby="titulo-viaje">
+    <h2 id="titulo-viaje">{{ t('Tu viaje') }}</h2>
+    <p class="salida__ruta"><a href="{{ url_for('publico.detalle_salida', salida_id=r.salida_id) }}">{{ r.ruta_nombre }}</a></p>
+    <dl class="datos">
+      <div><dt>{{ t('Fecha') }}</dt><dd>{{ r.fecha_hora_zarpe | fecha_larga }}</dd></div>
+      <div><dt>{{ t('Zarpe') }}</dt><dd>{{ r.fecha_hora_zarpe | hora }}</dd></div>
+      <div><dt>{{ t('Vuelve') }}</dt><dd>{{ r.fecha_hora_retorno | fecha_hora }}</dd></div>
+      <div><dt>{{ t('Sale de') }}</dt><dd>{{ r.muelle_salida }}</dd></div>
+      <div><dt>{{ t('Lancha') }}</dt><dd>{{ r.embarcacion_nombre }}</dd></div>
+    </dl>
+    {% for h in hospedajes %}
+      <p class="aviso aviso--exito">{{ t('Noche del {fecha}: te recibe la {familia} en {comunidad}.', fecha=h.fecha_noche | fecha_larga,
+        familia=fuerte(h.nombre_familia), comunidad=h.comunidad) }}</p>
+    {% endfor %}
+  </section>
+
+  <section aria-labelledby="titulo-titular">
+    <h2 id="titulo-titular">{{ t('Titular') }}</h2>
+    <dl class="datos">
+      <div><dt>{{ t('Nombre') }}</dt><dd>{% if acceso %}{{ r.nombres }} {{ r.apellidos }}{% else %}{{ r.nombres | oculta_nombre }} {{ r.apellidos | oculta_nombre }}{% endif %}</dd></div>
+      <div><dt>{{ r.tipo_documento }}</dt><dd>{% if acceso %}{{ r.numero_documento }}{% else %}{{ r.numero_documento | oculta_documento }}{% endif %}</dd></div>
+      {% if r.telefono %}<div><dt>{{ t('Teléfono') }}</dt><dd>{% if acceso %}{{ r.telefono }}{% else %}{{ r.telefono | oculta_telefono }}{% endif %}</dd></div>{% endif %}
+      {% if r.correo %}<div><dt>{{ t('Correo') }}</dt><dd>{% if acceso %}{{ r.correo }}{% else %}{{ r.correo | oculta_correo }}{% endif %}</dd></div>{% endif %}
+    </dl>
+  </section>
+</div>
+
+<section class="bloque" aria-labelledby="titulo-pasajeros">
+  <h2 id="titulo-pasajeros">{{ t('Pasajeros ({n})', n=pasajeros | length) }}</h2>
+  <div class="tabla-desplazable" role="region" aria-labelledby="titulo-pasajeros" tabindex="0">
+    <table class="tabla">
+      <thead><tr><th scope="col">{{ t('Nombre') }}</th><th scope="col">{{ t('Documento') }}</th><th scope="col">{{ t('Tipo') }}</th><th scope="col">{{ t('Precio') }}</th></tr></thead>
+      <tbody>
+        {% for p in pasajeros %}
+          <tr>
+            <td>{% if acceso %}{{ p.nombres }} {{ p.apellidos }}{% else %}{{ p.nombres | oculta_nombre }} {{ p.apellidos | oculta_nombre }}{% endif %}</td>
+            <td>{{ p.tipo_documento }} {% if acceso %}{{ p.numero_documento }}{% else %}{{ p.numero_documento | oculta_documento }}{% endif %}</td>
+            <td>{{ p.tipo }}</td>
+            <td>{{ p.precio_aplicado | soles }}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+      <tfoot>
+        <tr><th scope="row" colspan="3">{{ t('Total') }}</th><td><strong>{{ r.total | soles }}</strong></td></tr>
+        {% if r.pagado %}<tr><th scope="row" colspan="3">{{ t('Pagado (verificado)') }}</th><td>{{ r.pagado | soles }}</td></tr>{% endif %}
+        {% if r.reportado %}<tr><th scope="row" colspan="3">{{ t('Reportado, por verificar') }}</th><td>{{ r.reportado | soles }}</td></tr>{% endif %}
+      </tfoot>
+    </table>
+  </div>
+</section>
+
+{% if acceso and pagos %}
+<section class="bloque" aria-labelledby="titulo-pagos">
+  <h2 id="titulo-pagos">{{ t('Pagos') }}</h2>
+  <ul class="lista-limpia lista-separada">
+    {% for p in pagos %}
+      <li>{{ p.metodo | metodo_pago }} · {{ p.monto | soles }}{% if p.numero_operacion %} · {{ t('operación') }} {{ p.numero_operacion }}{% endif %}
+        · <strong>{{ p.estado | estado_pago }}</strong>{% if p.observacion and p.estado == 'rechazado' %} ({{ p.observacion }}){% endif %}</li>
+    {% endfor %}
+  </ul>
+</section>
+{% endif %}
+
+<p class="acciones">
+  {% if con_boleto %}
+    <a class="boton" href="{{ url_for('reservas.boleto', codigo=r.codigo) }}">{{ t('Ver mi boleto con QR') }}</a>
+  {% endif %}
+  <a class="boton boton--secundario" href="{{ url_for('publico.salidas') }}">{{ t('Ver otras salidas') }}</a>
+</p>
+<p class="texto-suave">{{ t('Guarda tu código {codigo}: con él y el documento del titular puedes volver a ver esta reserva desde "Mi reserva".', codigo=fuerte(r.codigo)) }}</p>
+{% endblock %}

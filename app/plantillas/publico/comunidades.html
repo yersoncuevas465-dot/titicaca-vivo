@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% from "macros_publico.html" import imagen_comunidad %}
+{% from "publico/_mapa.html" import mapa_lago %}
+{% block titulo %}{{ t('Comunidades del lago') }}{% endblock %}
+
+{% block contenido %}
+<h1>{{ t('Comunidades') }}</h1>
+<p class="texto-suave">{{ t('Cada comunidad organiza su turismo. Al reservar una ruta con noche, la familia anfitriona se asigna por turnos, para que todas reciban visitantes.') }}</p>
+
+<div class="dos-columnas bloque">
+  {{ mapa_lago(mapa) }}
+  <ul class="lista-limpia comunidades comunidades--una">
+    {% for c in comunidades %}
+      <li class="comunidad-tarjeta comunidad-tarjeta--fila">
+        {{ imagen_comunidad(c, 'foto--miniatura') }}
+        <div>
+          <h2 class="comunidad-tarjeta__nombre"><a class="enlace-tarjeta" href="{{ url_for('publico.detalle_comunidad', slug=c.slug) }}">{{ c.nombre }}</a></h2>
+          <p class="texto-suave">{{ c.distrito }} · {{ c.idioma_originario | idioma }} · {{ c.senal | senal }}</p>
+          <p class="texto-suave">
+            {% if c.familias == 1 %}{{ t('1 familia anfitriona') }}{% elif c.familias %}{{ t('{n} familias anfitrionas', n=c.familias) }}{% else %}{{ t('Sin familias anfitrionas registradas') }}{% endif %}
+            {% if c.rutas == 1 %}· {{ t('en 1 ruta') }}{% elif c.rutas %}· {{ t('en {n} rutas', n=c.rutas) }}{% endif %}
+          </p>
+        </div>
+      </li>
+    {% endfor %}
+  </ul>
+</div>
+{% endblock %}

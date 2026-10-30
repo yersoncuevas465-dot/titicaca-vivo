@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+{% from "macros_publico.html" import tarjeta_salida %}
+{% block titulo %}{{ t('Salidas del {fecha}', fecha=fecha | fecha_larga) }}{% endblock %}
+
+{% block contenido %}
+<h1>{{ t('Salidas') }}</h1>
+
+{% if errores %}
+  <div class="resumen-errores" role="alert" id="resumen-errores">
+    <h2 class="resumen-errores__titulo">{{ t('Revisa la búsqueda') }}</h2>
+    <ul>
+      {% for campo, mensaje in errores.items() %}<li><a href="#{{ campo }}">{{ t(mensaje) }}</a></li>{% endfor %}
+    </ul>
+  </div>
+{% endif %}
+
+<form method="get" class="filtro" action="{{ url_for('publico.salidas') }}">
+  <div class="campo{% if errores.fecha %} campo--error{% endif %}">
+    <label class="campo__etiqueta" for="fecha">{{ t('Fecha') }}</label>
+    {% if errores.fecha %}<p class="campo__error" id="fecha-error">{{ t(errores.fecha) }}</p>{% endif %}
+    <input class="campo__control" type="date" id="fecha" name="fecha"
+           value="{{ texto_fecha if errores.fecha else fecha.isoformat() }}"
+           {% if errores.fecha %}aria-invalid="true" aria-describedby="fecha-error"{% endif %}>
+  </div>
+  <div class="campo{% if errores.ruta %} campo--error{% endif %}">
+    <label class="campo__etiqueta" for="ruta">{{ t('Ruta') }}</label>
+    {% if errores.ruta %}<p class="campo__error" id="ruta-error">{{ t(errores.ruta) }}</p>{% endif %}
+    <select class="campo__control" id="ruta" name="ruta"
+            {% if errores.ruta %}aria-invalid="true" aria-describedby="ruta-error"{% endif %}>
+      <option value="">{{ t('Todas las rutas') }}</option>
+      {% for r in rutas %}
+        <option value="{{ r.codigo }}" {% if r.codigo == codigo_ruta %}selected{% endif %}>{{ r.nombre }}</option>
+      {% endfor %}
+    </select>
+  </div>
+  <button class="boton" type="submit">{{ t('Buscar') }}</button>
+</form>
+
+<nav aria-label="{{ t('Próximos días') }}" class="dias">
+  <ul class="lista-limpia dias__lista">
+    {% for dia, cantidad in dias %}
+      <li>
+        <a class="dia{% if dia == fecha %} dia--actual{% endif %}{% if not cantidad %} dia--vacio{% endif %}"
+           href="{{ url_for('publico.salidas', fecha=dia.isoformat(), ruta=codigo_ruta) }}"
+           {% if dia == fecha %}aria-current="date"{% endif %}>
+          <span class="dia__nombre">{% if dia == hoy %}{{ t('Hoy') }}{% else %}{{ dia | fecha_corta }}{% endif %}</span>
+          <span class="dia__cantidad">{{ t('{n} salida', n=cantidad) if cantidad == 1 else t('{n} salidas', n=cantidad) }}</span>
+          {% if feriados.get(dia) %}<span class="dia__feriado">{{ t('Feriado') }}</span>{% endif %}
+        </a>
+      </li>
+    {% endfor %}
+  </ul>
+</nav>
+
+<section aria-labelledby="titulo-lista" class="bloque">
+  <h2 id="titulo-lista">{{ fecha | fecha_larga | inicial_mayuscula }}</h2>
+  {% if feriados.get(fecha) %}
+    <p class="aviso aviso--info">{{ t('Feriado: {nombre}. Suele haber más turistas: reserva con tiempo.', nombre=feriados.get(fecha)) }}</p>
+  {% endif %}
+  {% if salidas %}
+    <ul class="lista-limpia salidas">
+      {% for s in salidas %}{{ tarjeta_salida(s) }}{% endfor %}
+    </ul>
+  {% elif codigo_ruta %}
+    <p class="aviso aviso--info">{{ t('No hay salidas para esta fecha y esta ruta. Prueba con otro día.') }}</p>
+  {% else %}
+    <p class="aviso aviso--info">{{ t('No hay salidas para esta fecha. Prueba con otro día.') }}</p>
+  {% endif %}
+</section>
+{% endblock %}

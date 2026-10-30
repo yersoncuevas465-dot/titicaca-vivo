@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block titulo %}{{ t('Boleto') }} {{ r.codigo }}{% endblock %}
+
+{% block contenido %}
+<p class="miga no-imprimir"><a href="{{ url_for('reservas.ver', codigo=r.codigo) }}">← {{ t('Volver a la reserva') }}</a></p>
+
+<article class="boleto" aria-labelledby="titulo-boleto">
+  <header class="boleto__cabeza">
+    <img src="{{ estatico('img/logo-negativo.svg') }}" width="210" height="60" alt="Titicaca Vivo">
+    <p class="boleto__tipo">{{ t('Pase de abordar') }}</p>
+  </header>
+  <div class="boleto__cuerpo">
+    <div class="boleto__datos">
+      <p class="boleto__etiqueta">{{ t('Código de reserva') }}</p>
+      <h1 id="titulo-boleto" class="boleto__codigo">{{ r.codigo }}</h1>
+      <p class="boleto__ruta">{{ r.ruta_nombre }}</p>
+      <dl class="datos">
+        <div><dt>{{ t('Fecha') }}</dt><dd>{{ r.fecha_hora_zarpe | fecha_larga }}</dd></div>
+        <div><dt>{{ t('Zarpe') }}</dt><dd><strong>{{ r.fecha_hora_zarpe | hora }}</strong></dd></div>
+        <div><dt>{{ t('Sale de') }}</dt><dd>{{ r.muelle_salida }}</dd></div>
+        <div><dt>{{ t('Lancha') }}</dt><dd>{{ r.embarcacion_nombre }}</dd></div>
+        <div><dt>{{ t('Estado') }}</dt><dd>{{ estado_visible(r) | estado_reserva }}</dd></div>
+      </dl>
+    </div>
+    <div class="boleto__qr">
+      {{ qr_svg }}
+      <p class="texto-suave">{{ t('Lo lee el guía o el capitán al subir') }}</p>
+    </div>
+  </div>
+  <div class="boleto__pasajeros">
+    <h2>{{ t('Pasajeros ({n})', n=pasajeros | length) }}</h2>
+    <ul class="lista-limpia">
+      {% for p in pasajeros %}
+        <li>{{ p.nombres }} {{ p.apellidos }} <span class="texto-suave">· {{ p.tipo }} · {{ p.tipo_documento }} ···{{ p.numero_documento[-3:] }}</span></li>
+      {% endfor %}
+    </ul>
+  </div>
+  <footer class="boleto__pie">
+    {{ t('Total {total}', total=r.total | soles) }} · {{ t('Preséntate en el muelle 30 minutos antes del zarpe con tu documento.') }}
+  </footer>
+</article>
+
+<p class="acciones no-imprimir">
+  <a class="boton" href="{{ url_for('reservas.boleto', codigo=r.codigo, formato='pdf') }}">{{ t('Descargar PDF') }}</a>
+</p>
+<p class="texto-suave no-imprimir">{{ t('Consejo: en las islas la señal es débil. Descarga el PDF o toma una captura antes de salir de Puno.') }}</p>
+{% endblock %}

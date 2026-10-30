@@ -1,0 +1,118 @@
+{% extends "base.html" %}
+{% from "macros.html" import barra_cupos, clima_zarpe %}
+{% from "macros_publico.html" import tarjeta_alerta %}
+{% from "publico/_mapa.html" import mapa_lago %}
+{% block titulo %}{{ s.ruta_nombre }} · {{ s.fecha_hora_zarpe | fecha_corta }}{% endblock %}
+
+{% block contenido %}
+<p class="miga"><a href="{{ url_for('publico.salidas', fecha=s.fecha_hora_zarpe.date().isoformat()) }}">← {{ t('Salidas del {fecha}', fecha=s.fecha_hora_zarpe | fecha_larga) }}</a></p>
+
+<article class="detalle" aria-labelledby="titulo-salida">
+  <header class="detalle__cabeza">
+    <h1 id="titulo-salida">{{ s.ruta_nombre }}</h1>
+    <span class="insignia insignia--{{ s.estado_publico }}">{{ s.estado_publico | estado_publico }}</span>
+  </header>
+  <p class="detalle__fecha">{{ t('{fecha}, zarpa a las {hora} y vuelve el {vuelta}.', fecha=s.fecha_hora_zarpe | fecha_larga | inicial_mayuscula,
+     hora=fuerte(s.fecha_hora_zarpe | hora), vuelta=s.fecha_hora_retorno | fecha_hora) }}</p>
+  {% if feriado %}
+    <p class="aviso aviso--info">{{ t('Ese día es feriado ({nombre}): suele haber más turistas, reserva con tiempo.', nombre=feriado) }}</p>
+  {% endif %}
+
+  {% if s.estado_publico == 'suspendida' and s.motivo_estado %}
+    <p class="aviso aviso--error"><strong>{{ t('Salida suspendida:') }}</strong> {{ s.motivo_estado }}</p>
+  {% endif %}
+
+  {% if alertas %}
+  <section class="bloque" aria-labelledby="titulo-alertas-salida">
+    <h2 id="titulo-alertas-salida">{{ t('Alertas que afectan esta salida') }}</h2>
+    <ul class="lista-limpia">{% for a in alertas %}{{ tarjeta_alerta(a, mostrar_desde=true) }}{% endfor %}</ul>
+  </section>
+  {% endif %}
+
+  <div class="dos-columnas bloque">
+    <section aria-labelledby="titulo-cupos">
+      <h2 id="titulo-cupos">{{ t('Lugares') }}</h2>
+      {{ barra_cupos(s) }}
+      <dl class="datos">
+        <div><dt>{{ t('Lancha') }}</dt><dd>{{ s.embarcacion_nombre }}</dd></div>
+        <div><dt>{{ t('Sale de') }}</dt><dd>{{ s.muelle_salida }}</dd></div>
+        <div><dt>{{ t('Duración') }}</dt><dd>{{ s.duracion_horas | duracion }}</dd></div>
+      </dl>
+      {% if puede_reservar and s.estado_publico in ('disponible', 'pocos_cupos') %}
+        <p><a class="boton boton--ancho" href="{{ url_for('reservas.reservar', salida_id=s.salida_id) }}">{{ t('Reservar') }}</a></p>
+      {% elif s.estado_publico in ('disponible', 'pocos_cupos') %}
+        <p class="aviso aviso--info">{{ t('La reserva en línea estará disponible muy pronto.') }}</p>
+      {% endif %}
+    </section>
+
+    <section aria-labelledby="titulo-recorrido">
+      <h2 id="titulo-recorrido">{{ t('Recorrido') }}</h2>
+      {% if s.ruta_descripcion %}<p>{{ s.ruta_descripcion }}</p>{% endif %}
+      <ol class="paradas">
+        {% for p in paradas %}
+          <li>
+            <a href="{{ url_for('publico.detalle_comunidad', slug=p.slug) }}">{{ p.nombre }}</a>
+            <span class="texto-suave">· {{ p.idioma_originario | idioma }}
+              {% if p.es_pernocte %}· <strong>{{ t('noche con una familia') }}</strong>{% else %}· {{ p.minutos_estadia }} min{% endif %}</span>
+          </li>
+        {% endfor %}
+      </ol>
+      {% if mapa.recorrido %}
+        {{ mapa_lago(mapa, id='mapa-salida', descripcion=t('Las paradas numeradas son el orden de visita. Las demás rutas se ven tenues.'), mostrar_recorrido=False) }}
+      {% endif %}
+    </section>
+  </div>
+
+  {% if clima %}{{ clima_zarpe(clima) }}{% endif %}
+
+  <section class="bloque" aria-labelledby="titulo-precios">
+    <h2 id="titulo-precios">{{ t('Precios por persona') }}</h2>
+    {% if precios %}
+      {% set temporada = precios[0].temporada %}
+      {% if temporada %}
+        <p class="aviso aviso--info">{{ t('Esta fecha cae en la temporada {temporada}: los precios incluyen un recargo de {recargo} %.',
+          temporada=fuerte(temporada), recargo=precios[0].recargo_porcentaje | round(2)) }}</p>
+      {% endif %}
+      <div class="tabla-desplazable" role="region" aria-labelledby="titulo-precios" tabindex="0">
+        <table class="tabla">
+          <thead><tr><th scope="col">{{ t('Pasajero') }}</th><th scope="col">{{ t('Edad') }}</th><th scope="col">{{ t('Precio') }}</th>
+            {% if cambio %}<th scope="col">{{ t('En dólares') }}</th>{% endif %}</tr></thead>
+          <tbody>
+            {% for p in precios %}
+              <tr>
+                <th scope="row">{{ p.nombre }}</th>
+                <td>{% if p.edad_maxima %}{{ t('{min} a {max} años', min=p.edad_minima, max=p.edad_maxima) }}{% else %}{{ t('{min} años o más', min=p.edad_minima) }}{% endif %}</td>
+                <td><strong>{{ p.precio | soles }}</strong></td>
+                {% if cambio %}<td>≈ {{ p.precio | dolares(cambio) }}</td>{% endif %}
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      <p class="texto-suave">{{ t('El tipo de pasajero se verifica con el documento en el muelle.') }}</p>
+      {% if cambio %}
+        <p class="texto-suave">{{ t('En dólares, con el tipo de cambio de SUNAT del {fecha} (S/ {venta} por dólar). Es referencial: se paga en soles.', fecha=cambio.fecha | fecha_corta, venta=cambio.venta) }}</p>
+      {% endif %}
+    {% else %}
+      <p class="aviso aviso--info">{{ t('Esta salida todavía no tiene precios publicados.') }}</p>
+    {% endif %}
+  </section>
+
+  {% if opiniones %}
+  <section class="bloque" aria-labelledby="titulo-opiniones">
+    <h2 id="titulo-opiniones">{{ t('Opiniones de quienes hicieron esta ruta') }}</h2>
+    <p><span class="estrellas" aria-hidden="true">★</span>
+      {{ t('{promedio} de 5 · {total} opiniones', promedio=opiniones[0].promedio | round(1), total=opiniones[0].total) }}</p>
+    <ul class="lista-limpia opiniones">
+      {% for o in opiniones %}
+        <li class="opinion">
+          <p><span class="estrellas" role="img" aria-label="{{ t('{n} de 5 estrellas', n=o.puntuacion) }}">{{ '★' * o.puntuacion }}{{ '☆' * (5 - o.puntuacion) }}</span></p>
+          {% if o.comentario %}<p lang="{{ o.idioma }}">{{ o.comentario }}</p>{% endif %}
+          <p class="texto-suave">{{ t('Turista de {pais} · {fecha}', pais=o.nacionalidad | pais, fecha=o.fecha_hora_zarpe | mes_y_anio) }}</p>
+        </li>
+      {% endfor %}
+    </ul>
+  </section>
+  {% endif %}
+</article>
+{% endblock %}

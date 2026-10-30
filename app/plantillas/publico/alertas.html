@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% from "macros_publico.html" import tarjeta_alerta %}
+{% block titulo %}{{ t('Alertas del lago') }}{% endblock %}
+
+{% block contenido %}
+<h1>{{ t('Alertas del lago') }}</h1>
+<p class="texto-suave">{{ t('Avisos de SENAMHI, de la Capitanía de Puerto, de la agencia y de las comunidades. Con alerta naranja o roja, las salidas afectadas pueden suspenderse.') }}</p>
+
+<section class="bloque" aria-labelledby="titulo-vigentes">
+  <h2 id="titulo-vigentes">{{ t('Vigentes ahora') }}</h2>
+  {% if grupos.vigente %}
+    <ul class="lista-limpia">{% for a in grupos.vigente %}{{ tarjeta_alerta(a, mostrar_desde=true) }}{% endfor %}</ul>
+  {% else %}
+    <p class="aviso aviso--exito">{{ t('No hay alertas vigentes. ¡Buen día para navegar!') }}</p>
+  {% endif %}
+</section>
+
+{% if grupos.proxima %}
+<section class="bloque" aria-labelledby="titulo-proximas">
+  <h2 id="titulo-proximas">{{ t('Próximas') }}</h2>
+  <ul class="lista-limpia">{% for a in grupos.proxima %}{{ tarjeta_alerta(a, mostrar_desde=true) }}{% endfor %}</ul>
+</section>
+{% endif %}
+
+{% if grupos.pasada %}
+<section class="bloque" aria-labelledby="titulo-pasadas">
+  <h2 id="titulo-pasadas">{{ t('De los últimos 30 días') }}</h2>
+  <ul class="lista-limpia alertas--pasadas">{% for a in grupos.pasada %}{{ tarjeta_alerta(a, mostrar_desde=true) }}{% endfor %}</ul>
+</section>
+{% endif %}
+{% endblock %}

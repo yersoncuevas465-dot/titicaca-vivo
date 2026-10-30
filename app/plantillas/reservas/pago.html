@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% from "macros.html" import campo %}
+{% from "reservas/_macros.html" import resumen, opciones %}
+{% block titulo %}{{ t('Reportar pago') }} · {{ r.codigo }}{% endblock %}
+
+{% block contenido %}
+<p class="miga"><a href="{{ url_for('reservas.ver', codigo=r.codigo) }}">← {{ t('Volver a la reserva {codigo}', codigo=r.codigo) }}</a></p>
+
+<section class="tarjeta tarjeta--angosta">
+  <h1>{{ t('Reportar mi pago') }}</h1>
+  <p>{{ t('Falta pagar {saldo}. Tienes hasta el {plazo}.', saldo=fuerte(saldo | soles), plazo=fuerte(r.vence_en | fecha_hora)) }}</p>
+  <dl class="datos">
+    {% if config.YAPE_NUMERO %}<div><dt>Yape</dt><dd>{{ config.YAPE_NUMERO }}</dd></div>{% endif %}
+    {% if config.PLIN_NUMERO %}<div><dt>Plin</dt><dd>{{ config.PLIN_NUMERO }}</dd></div>{% endif %}
+    {% if config.TITULAR_COBRO %}<div><dt>{{ t('A nombre de') }}</dt><dd>{{ config.TITULAR_COBRO }}</dd></div>{% endif %}
+  </dl>
+  <p class="texto-suave">{{ t('Paga desde tu app y copia aquí el número de operación. La agencia lo verifica y tu reserva pasa a "Pagada".') }}</p>
+
+  {{ resumen(f, errores_sueltos, "Revisa el pago") }}
+  <form method="post" novalidate>
+    {{ f.csrf_token }}
+    {{ opciones(f.metodo) }}
+    {{ campo(f.monto) }}
+    {{ campo(f.numero_operacion, ayuda=t('Lo ves en el comprobante de Yape o Plin.')) }}
+    {{ f.enviar(class_='boton boton--ancho') }}
+  </form>
+</section>
+{% endblock %}

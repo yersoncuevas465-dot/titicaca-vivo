@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 120" role="img" aria-labelledby="tv-neg-t">
+  <title id="tv-neg-t">Titicaca Vivo · Turismo lacustre y vivencial · Puno</title>
+  <defs><clipPath id="tv-neg-c"><circle cx="60" cy="60" r="52"/></clipPath></defs>
+  <circle cx="60" cy="60" r="58" fill="#572B44"/>
+  <g clip-path="url(#tv-neg-c)">
+    <path d="M60 39V33M73.5 42.6l3-5.2M46.5 42.6l-3-5.2M83.4 52.5l5.2-3M36.6 52.5l-5.2-3" stroke="#C27A52" stroke-width="4" stroke-linecap="round"/>
+    <path d="M38 66a22 22 0 0 1 44 0z" fill="#C27A52"/>
+    <path d="M4 66 12 60 21 54 28 58 34 56.5 42 62 50 63.5 60 62.5 70 63.5 79 61 86 57 97 52.5 105 57 110 56 116 66z" fill="#2A1220"/>
+    <path d="M17 59C24 66 30 76 42 78H78C90 76 96 66 103 59 101 72 93 85 80 85H40C27 85 19 72 17 59z" fill="#F5E9DC"/>
+    <path d="M36 81.5H84" stroke="#572B44" stroke-width="1.6" stroke-linecap="round"/>
+    <path d="M27 95q5.5-4 11 0t11 0 11 0 11 0 11 0 11 0M39 104q5.5-4 11 0t11 0 11 0 11 0" fill="none" stroke="#FEF9F3" stroke-width="3" stroke-linecap="round"/>
+  </g>
+  <circle cx="60" cy="60" r="52" fill="none" stroke="#F5E9DC" stroke-width="1.5"/>
+  <text x="136" y="58" font-family="Georgia, 'Times New Roman', serif" font-size="42" font-weight="700" fill="#FEF9F3" textLength="280" lengthAdjust="spacing">Titicaca <tspan fill="#C27A52" font-style="italic">Vivo</tspan></text>
+  <path d="M137 74H264v-4h5v-4h8v4h5v4H415" fill="none" stroke="#C27A52" stroke-width="1.6"/>
+  <text x="137" y="94" font-family="'Segoe UI', system-ui, -apple-system, Roboto, Arial, sans-serif" font-size="10.5" letter-spacing="1.8" fill="#F5E9DC" textLength="278" lengthAdjust="spacing">TURISMO LACUSTRE Y VIVENCIAL · PUNO</text>
+</svg>

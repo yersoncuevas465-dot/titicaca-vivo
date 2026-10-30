@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="320" viewBox="0 0 1200 320" preserveAspectRatio="xMidYMax slice">
+  <!-- Fondo de la portada: amanecer sobre el lago, cerros y totorales. Dibujo propio. -->
+  <circle cx="930" cy="150" r="64" fill="#C27A52" opacity=".28"/>
+  <circle cx="930" cy="150" r="100" fill="#C27A52" opacity=".08"/>
+  <path d="M0 230l120-70 80 34 120-84 110 96 80-46 120 70 100-60 120 80 110-50 130 60 110-40v160H0z" fill="#572B44" opacity=".13"/>
+  <path d="M0 262l160-38 120 22 160-34 140 30 150-26 140 28 160-22 170 30v98H0z" fill="#572B44" opacity=".10"/>
+  <g stroke="#572B44" stroke-width="4" stroke-linecap="round" opacity=".18">
+    <path d="M40 320v-70M58 320v-92M76 320v-60M1120 320v-80M1138 320v-104M1156 320v-66"/>
+  </g>
+</svg>

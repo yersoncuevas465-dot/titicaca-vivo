@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="500" viewBox="0 0 800 500">
+  <!-- Marca de agua de la página: sol, cerros, lago y una balsa de totora. Dibujo propio. -->
+  <g opacity=".11">
+    <circle cx="560" cy="170" r="70" fill="#C27A52"/>
+    <g stroke="#C27A52" stroke-width="6" stroke-linecap="round">
+      <path d="M560 70v-28M490 100l-20-20M630 100l20-20M460 170h-28M660 170h28"/>
+    </g>
+    <path d="M0 300l90-70 60 30 90-80 80 90 60-40 90 60 70-50 90 70 80-40 90 60v110H0z" fill="#572B44"/>
+    <g fill="none" stroke="#572B44" stroke-width="6" stroke-linecap="round">
+      <path d="M40 360q25-14 50 0t50 0 50 0M520 380q25-14 50 0t50 0 50 0 50 0M300 450q25-14 50 0t50 0 50 0"/>
+    </g>
+    <path d="M250 392c22 26 52 38 110 38h120c58 0 88-12 110-38-6 44-48 70-110 70H360c-62 0-104-26-110-70z" fill="#572B44"/>
+    <path d="M300 410c40 14 200 14 240 0" fill="none" stroke="#C27A52" stroke-width="5"/>
+    <g stroke="#572B44" stroke-width="5" stroke-linecap="round">
+      <path d="M680 470v-90M700 470v-110M720 470v-80M80 480v-80M100 480v-100M120 480v-70"/>
+    </g>
+  </g>
+</svg>

@@ -1,0 +1,69 @@
+{# Macros de formulario accesibles: label, error junto al campo y resumen arriba. #}
+
+{% macro resumen_errores(formulario, error_general=None) %}
+  {% set con_error = formulario.errors | reject('equalto', 'csrf_token') | list %}
+  {% if error_general or con_error %}
+    <div class="resumen-errores" role="alert" tabindex="-1" id="resumen-errores">
+      <h2 class="resumen-errores__titulo">{{ t('Revisa el formulario') }}</h2>
+      <ul>
+        {% if error_general %}<li>{{ error_general }}</li>{% endif %}
+        {% for nombre in con_error %}
+          {% for mensaje in formulario[nombre].errors %}
+            <li><a href="#{{ formulario[nombre].id }}">{{ formulario[nombre].label.text }}: {{ mensaje }}</a></li>
+          {% endfor %}
+        {% endfor %}
+      </ul>
+    </div>
+  {% endif %}
+{% endmacro %}
+
+{% macro campo(c, ayuda=None) %}
+  {% set id_error = c.id ~ '-error' %}
+  {% set id_ayuda = c.id ~ '-ayuda' %}
+  {% set descrita = ([id_ayuda] if ayuda else []) + ([id_error] if c.errors else []) %}
+  <div class="campo{% if c.errors %} campo--error{% endif %}">
+    {{ c.label(class_='campo__etiqueta') }}
+    {% if ayuda %}<p class="campo__ayuda" id="{{ id_ayuda }}">{{ ayuda }}</p>{% endif %}
+    {% if c.errors %}
+      <p class="campo__error" id="{{ id_error }}">{{ c.errors | join(' ') }}</p>
+    {% endif %}
+    {% set atributos = {'class_': 'campo__control'} %}
+    {% if c.errors %}{% set _ = atributos.update({'aria-invalid': 'true'}) %}{% endif %}
+    {% if descrita %}{% set _ = atributos.update({'aria-describedby': descrita | join(' ')}) %}{% endif %}
+    {{ c(**atributos) }}
+  </div>
+{% endmacro %}
+
+{# Barra de cupos: amarilla con 3 libres o menos (RN-08) y roja cuando está llena #}
+{% macro barra_cupos(s) %}
+  <label class="cupos">
+    <span>{{ t('{ocupados} de {cupo} lugares ocupados', ocupados=s.ocupados, cupo=s.cupo) }} · <strong>{{ t('{libres} libres', libres=s.libres) }}</strong></span>
+    <meter min="0" max="{{ s.cupo }}" low="{{ s.cupo - 3.5 }}" high="{{ s.cupo - 0.5 }}"
+           optimum="0" value="{{ s.ocupados }}">{{ s.ocupados }}/{{ s.cupo }}</meter>
+  </label>
+{% endmacro %}
+
+{# Clima a la hora del zarpe (Open-Meteo, servicios/clima.py). Es una referencia: lo que suspende
+   una salida es la alerta oficial que registra el operador (RN-11). #}
+{% macro clima_zarpe(c, id='titulo-clima', para_personal=False) %}
+  <section class="tarjeta clima bloque" aria-labelledby="{{ id }}">
+    <h2 id="{{ id }}">{{ t('El clima para el zarpe') }}</h2>
+    <p class="clima__resumen"><span class="clima__icono" aria-hidden="true">{{ c.icono }}</span>
+      <strong class="clima__temperatura">{{ c.temperatura }} °C</strong> · {{ t(c.cielo) }}</p>
+    <dl class="datos">
+      <div><dt>{{ t('Viento') }}</dt><dd>{{ t('{viento} km/h, ráfagas de {rafagas} km/h', viento=c.viento, rafagas=c.rafagas) }}</dd></div>
+      <div><dt>{{ t('Probabilidad de lluvia') }}</dt><dd>{{ c.lluvia }} %</dd></div>
+      {% if c.amanecer %}
+        <div><dt>{{ t('Sol') }}</dt><dd>{{ t('sale a las {amanecer} y se pone a las {atardecer}', amanecer=c.amanecer | hora, atardecer=c.atardecer | hora) }}</dd></div>
+      {% endif %}
+    </dl>
+    {% if c.fuerte and para_personal %}
+      <p class="aviso aviso--error">Ráfagas de {{ c.rafagas }} km/h: revisa los avisos de SENAMHI y de la Capitanía antes del zarpe y, si dan alerta, regístrala en Alertas.</p>
+    {% elif c.fuerte %}
+      <p class="aviso aviso--info">{{ t('Se espera viento fuerte. Si SENAMHI o la Capitanía dan una alerta, la salida se suspende y podrás reprogramar o pedir la devolución.') }}</p>
+    {% endif %}
+    <p class="texto-suave clima__fuente">{{ t('Pronóstico para la bahía de Puno a las {hora}, de', hora=c.hora | hora) }}
+      <a href="https://open-meteo.com/" rel="noopener noreferrer">Open-Meteo</a>.
+      {{ t('Es una referencia: la salida la confirman las alertas oficiales.') }}</p>
+  </section>
+{% endmacro %}

@@ -1,0 +1,47 @@
+{# Piezas de las páginas públicas. Todos los datos llegan desde la base (nivel Plata). #}
+{% from "macros.html" import barra_cupos %}
+
+{% macro tarjeta_salida(s, con_fecha=false) %}
+  <li class="salida{% if s.afectada_por_alerta %} salida--alerta{% endif %}">
+    <div class="salida__cabeza">
+      <span class="salida__hora">{% if con_fecha %}{{ s.fecha_hora_zarpe | fecha_hora }}{% else %}{{ s.fecha_hora_zarpe | hora }}{% endif %}</span>
+      <span class="insignia insignia--{{ s.estado_publico }}">{{ s.estado_publico | estado_publico }}</span>
+    </div>
+    <h3 class="salida__ruta">
+      <a class="enlace-tarjeta" href="{{ url_for('publico.detalle_salida', salida_id=s.salida_id) }}">{{ s.ruta_nombre }}</a>
+    </h3>
+    <p class="texto-suave">{{ t('Vuelve {cuando}', cuando=s.fecha_hora_retorno | fecha_hora) }}{% if s.incluye_pernocte %} · {{ t('con noche en casa de una familia') }}{% endif %}</p>
+    {% if s.afectada_por_alerta %}
+      <p class="salida__aviso">⚠ {{ t('Hay una alerta en el lago para este horario') }}</p>
+    {% endif %}
+    {{ barra_cupos(s) }}
+  </li>
+{% endmacro %}
+
+{% macro tarjeta_alerta(a, mostrar_desde=false) %}
+  <li class="alerta alerta--{{ a.nivel }}">
+    <p class="alerta__titulo">
+      <span class="insignia insignia--{{ a.nivel }}">{{ a.nivel | nivel_alerta }}</span>
+      <strong>{{ a.titulo }}</strong>
+    </p>
+    <p class="texto-suave">
+      {{ a.tipo | tipo_alerta }} ·
+      {% if a.slug %}<a href="{{ url_for('publico.detalle_comunidad', slug=a.slug) }}">{{ a.lugar }}</a>{% else %}{{ a.lugar }}{% endif %}
+      · {{ t('Fuente: {fuente}', fuente=a.fuente) }} ·
+      {% if mostrar_desde %}{{ t('desde {fecha}', fecha=a.vigente_desde | fecha_hora) }} {% endif %}{{ t('hasta {fecha}', fecha=a.vigente_hasta | fecha_hora) }}
+    </p>
+    {% if a.descripcion %}<p>{{ a.descripcion }}</p>{% endif %}
+  </li>
+{% endmacro %}
+
+{% macro imagen_comunidad(c, clase='') %}
+  {% set foto = foto_comunidad(c.slug) %}
+  <figure class="foto {{ clase }}">
+    {% if foto %}
+      <img src="{{ estatico(foto) }}" alt="{{ t('Vista de {nombre}', nombre=c.nombre) }}" width="640" height="400" loading="lazy" decoding="async">
+      {% if c.foto_credito %}<figcaption class="foto__credito">{{ c.foto_credito }}</figcaption>{% endif %}
+    {% else %}
+      <img src="{{ estatico('img/comunidad-ilustracion.svg') }}" alt="" width="640" height="400" loading="lazy">
+    {% endif %}
+  </figure>
+{% endmacro %}

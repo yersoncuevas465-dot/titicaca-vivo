@@ -1,0 +1,4 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="120" height="24" viewBox="0 0 120 24">
+  <!-- Una ola que se repite a lo ancho (portada y pie de página). -->
+  <path d="M0 24V12q15-10 30 0t30 0 30 0 30 0v12z" fill="#572B44"/>
+</svg>

@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% from "macros.html" import campo, resumen_errores %}
+{% from "autenticacion/_acceso.html" import panel_marca %}
+{% block titulo %}Entrar al panel{% endblock %}
+
+{% block contenido %}
+<div class="acceso">
+  <section class="tarjeta acceso__tarjeta" aria-labelledby="titulo-entrar">
+    <img class="tarjeta__sello" src="{{ estatico('img/logo-isotipo.svg') }}" width="72" height="72" alt="">
+    <h1 id="titulo-entrar">Entrar al panel</h1>
+    <p class="texto-suave acceso__intro">Solo para el personal de la agencia. Si eres turista, consulta tu reserva con tu código en <a href="{{ url_for('reservas.mi_reserva') }}">Mi reserva</a>.</p>
+
+    {{ resumen_errores(formulario, error_general) }}
+
+    <form method="post" novalidate>
+      {{ formulario.csrf_token }}
+      {{ campo(formulario.nombre_usuario) }}
+      {{ campo(formulario.contrasena) }}
+      <p class="acceso__olvido"><a href="{{ url_for('autenticacion.recuperar') }}">¿Olvidaste tu contraseña?</a></p>
+      {{ formulario.enviar(class_='boton boton--ancho') }}
+    </form>
+    <p class="acceso__nota">Por seguridad, la sesión se cierra sola tras {{ minutos }} minutos sin actividad, y después de 5 intentos fallidos se bloquean los ingresos por 15 minutos.</p>
+  </section>
+
+  {% call panel_marca('Panel de la agencia') %}
+    <li>Salidas, pagos, abordaje con QR y alertas del lago en un solo lugar.</li>
+    <li>Cada rol ve y hace solo lo suyo: administrador, operador, guía y capitán.</li>
+    <li>Todo queda en la bitácora: quién hizo qué, cuándo y desde dónde.</li>
+  {% endcall %}
+</div>
+{% endblock %}
