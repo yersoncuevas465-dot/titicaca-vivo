@@ -1,0 +1,105 @@
+{% extends "panel/base_panel.html" %}
+{% from "panel/_macros.html" import como_funciona %}
+{% block titulo %}Pagos por verificar{% endblock %}
+
+{% block contenido %}
+<h1>Pagos por verificar</h1>
+<p class="texto-suave">{{ pagos | length }} pago(s) esperan. Busca en la app de Yape o Plin de la agencia el
+  número de operación y el monto. Si coinciden, verifica; si no, rechaza y escribe el motivo
+  (el turista lo verá en su reserva).</p>
+
+{% call como_funciona() %}
+  <li>Cada tarjeta es un pago que el turista reportó desde «Mi reserva»: método, monto y número de operación.</li>
+  <li>Busca esa operación en la app de Yape o Plin de la agencia.</li>
+  <li>Si coincide, <strong>Verificar</strong>. Cuando lo verificado cubre el total, la reserva pasa a «pagada» y, si tiene noche, se asigna la familia por rotación.</li>
+  <li>Si no coincide, escribe el motivo y <strong>Rechazar</strong>: el turista lo ve en su reserva y tiene otra vez 2 horas para pagar.</li>
+  <li>Más abajo están las devoluciones pedidas por salidas suspendidas y los últimos pagos revisados.</li>
+{% endcall %}
+
+{% if pagos %}
+<ul class="lista-limpia pagos">
+  {% for p in pagos %}
+    {% set falta = p.total - p.pagado %}
+    <li class="pago tarjeta" id="pago-{{ p.id }}">
+      <h2 class="pago__titulo">{{ p.metodo | metodo_pago }} · {{ p.monto | soles }} · operación <code>{{ p.numero_operacion }}</code></h2>
+      <dl class="datos datos--panel">
+        <div><dt>Reserva</dt><dd>{{ p.codigo }} · <span class="insignia insignia--reserva-{{ p.estado_reserva }}">{{ p.estado_reserva | estado_reserva }}</span></dd></div>
+        <div><dt>Titular</dt><dd>{{ p.nombres }} {{ p.apellidos }}{% if p.telefono %} · {{ p.telefono }}{% endif %}</dd></div>
+        <div><dt>Salida</dt><dd>{{ p.ruta_nombre }} · {{ p.fecha_hora_zarpe | fecha_hora }}</dd></div>
+        <div><dt>Total · ya verificado</dt><dd>{{ p.total | soles }} · {{ p.pagado | soles }} (falta {{ falta | soles }})</dd></div>
+        <div><dt>Reportado</dt><dd>{{ p.reportado_en | fecha_hora }}</dd></div>
+        <div><dt>Lugar guardado hasta</dt><dd>{% if p.vigente %}{{ p.vence_en | fecha_hora }}{% else %}<strong class="texto-alerta">Venció</strong>{% endif %}</dd></div>
+      </dl>
+      {% if errores[p.id] %}<p class="campo__error" role="alert">{{ errores[p.id] }}</p>{% endif %}
+      {% if puede_revisar %}
+        <div class="pago__acciones">
+          <form method="post" action="{{ url_for('panel.pago_verificar', pago_id=p.id) }}">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <button class="boton" type="submit">Verificar</button>
+          </form>
+          <form method="post" action="{{ url_for('panel.pago_rechazar', pago_id=p.id) }}" class="pago__rechazo">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <label class="campo__etiqueta" for="observacion-{{ p.id }}">Motivo del rechazo</label>
+            <input class="campo__control" type="text" name="observacion" id="observacion-{{ p.id }}" maxlength="255"
+                   {% if errores[p.id] %}aria-invalid="true"{% endif %}>
+            <button class="boton boton--secundario" type="submit">Rechazar</button>
+          </form>
+        </div>
+      {% endif %}
+    </li>
+  {% endfor %}
+</ul>
+{% else %}
+  <p class="aviso aviso--exito">No hay pagos por verificar.</p>
+{% endif %}
+
+<section class="bloque" aria-labelledby="titulo-devoluciones">
+  <h2 id="titulo-devoluciones">Devoluciones por atender</h2>
+  {% if devoluciones %}
+    <p class="texto-suave">El turista pidió la devolución porque su salida se suspendió. El reembolso se hace a mano
+      (Yape, Plin o en la oficina); aquí se deja constancia de cómo se hizo.</p>
+    <ul class="lista-limpia pagos">
+      {% for d in devoluciones %}
+        <li class="tarjeta pago" id="devolucion-{{ d.reserva_id }}">
+          <p><strong>{{ d.codigo }}</strong> · {{ d.nombres }} {{ d.apellidos }}{% if d.telefono %} · {{ d.telefono }}{% endif %}
+            · pedida el {{ d.creado_en | fecha_hora }} · <strong>devolver {{ d.pagado | soles }}</strong></p>
+          {% if errores_devolucion[d.reserva_id] %}<p class="campo__error" role="alert">{{ errores_devolucion[d.reserva_id] }}</p>{% endif %}
+          {% if puede_revisar %}
+            <form method="post" action="{{ url_for('panel.devolucion_atendida', reserva_id=d.reserva_id) }}" class="pago__rechazo">
+              <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+              <label class="campo__etiqueta" for="nota-{{ d.reserva_id }}">¿Cómo se devolvió?</label>
+              <input class="campo__control" type="text" name="nota" id="nota-{{ d.reserva_id }}" maxlength="255"
+                     {% if errores_devolucion[d.reserva_id] %}aria-invalid="true"{% endif %}>
+              <button class="boton boton--secundario" type="submit">Marcar como devuelta</button>
+            </form>
+          {% endif %}
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p class="aviso aviso--exito">No hay devoluciones pendientes.</p>
+  {% endif %}
+</section>
+
+<section class="bloque" aria-labelledby="titulo-revisados">
+  <h2 id="titulo-revisados">Últimos revisados</h2>
+  <div class="tabla-desplazable" role="region" aria-labelledby="titulo-revisados" tabindex="0">
+    <table class="tabla">
+      <thead><tr><th scope="col">Cuándo</th><th scope="col">Reserva</th><th scope="col">Pago</th>
+                 <th scope="col">Estado</th><th scope="col">Quién</th><th scope="col">Observación</th></tr></thead>
+      <tbody>
+        {% for p in revisados %}
+          <tr>
+            <td>{{ p.verificado_en | fecha_hora }}</td>
+            <td>{{ p.codigo }}</td>
+            <td>{{ p.metodo | metodo_pago }} · {{ p.monto | soles }}{% if p.numero_operacion %} · {{ p.numero_operacion }}{% endif %}</td>
+            <td>{{ p.estado | estado_pago }}</td>
+            <td>{{ p.nombre_usuario or '—' }}</td>
+            <td>{{ p.observacion or '' }}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</section>
+{% endblock %}

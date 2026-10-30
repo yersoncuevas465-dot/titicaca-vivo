@@ -1,0 +1,57 @@
+{# Piezas del panel (F5). #}
+{% from "macros.html" import campo %}
+{% from "reservas/_macros.html" import opciones %}
+
+{# Muestra cualquier campo con su etiqueta, ayuda y error, según su tipo #}
+{% macro campo_panel(c) %}
+  {% if c.type == 'BooleanField' %}
+    <div class="campo{% if c.errors %} campo--error{% endif %}">
+      {% if c.errors %}<p class="campo__error" id="{{ c.id }}-error">{{ c.errors | join(' ') }}</p>{% endif %}
+      {% set atributos = {} %}
+      {% if c.errors %}{% set _ = atributos.update({'aria-describedby': c.id ~ '-error'}) %}{% endif %}
+      <div class="campo--check">{{ c(**atributos) }} {{ c.label() }}</div>
+    </div>
+  {% elif c.type == 'CasillasMultiples' %}
+    <fieldset class="campo campo--opciones{% if c.errors %} campo--error{% endif %}" id="{{ c.id }}">
+      <legend class="campo__etiqueta">{{ c.label.text }}</legend>
+      {% if c.errors %}<p class="campo__error">{{ c.errors | join(' ') }}</p>{% endif %}
+      {% for opcion in c %}<div class="opcion">{{ opcion() }} {{ opcion.label() }}</div>{% endfor %}
+    </fieldset>
+  {% elif c.type == 'RadioField' %}
+    {{ opciones(c) }}
+  {% elif c.type not in ('HiddenField', 'CSRFTokenField', 'SubmitField') %}
+    {{ campo(c, ayuda=(c.description or None)) }}
+  {% endif %}
+{% endmacro %}
+
+{# Datos de una salida para el personal (lancha, capitán, guía y cupos) #}
+{% macro datos_salida(s) %}
+  <dl class="datos datos--panel">
+    <div><dt>Zarpe</dt><dd>{{ s.fecha_hora_zarpe | fecha_larga | capitalize }}, {{ s.fecha_hora_zarpe | hora }}</dd></div>
+    <div><dt>Retorno</dt><dd>{{ s.fecha_hora_retorno | fecha_hora }}</dd></div>
+    <div><dt>Lancha</dt><dd>{{ s.embarcacion_nombre }} · {{ s.matricula }}</dd></div>
+    <div><dt>Capitán</dt><dd>{{ s.capitan }}</dd></div>
+    <div><dt>Guía</dt><dd>{{ s.guia or 'Sin guía' }}</dd></div>
+    <div><dt>Ocupados</dt><dd>{{ s.ocupados }} de {{ s.cupo }} · {{ s.libres }} libres</dd></div>
+  </dl>
+{% endmacro %}
+
+{# «¿Cómo funciona?»: los pasos de la página, plegados para no estorbar. Sin JavaScript:
+   <details> se abre y se cierra solo, también con el teclado. Uso:
+   {% call como_funciona() %}<li>Paso 1</li><li>Paso 2</li>{% endcall %} #}
+{% macro como_funciona(titulo='¿Cómo funciona esta página?') %}
+  <details class="guia no-imprimir">
+    <summary>{{ titulo }}</summary>
+    <ol class="guia__pasos">{{ caller() }}</ol>
+  </details>
+{% endmacro %}
+
+{# Barra horizontal en SVG (la CSP no deja estilos en línea): el ancho va como atributo del rect.
+   Es decorativa (aria-hidden): el número está al lado, en la tabla. #}
+{% macro barra(valor, maximo) %}
+  {%- set ancho = ((valor or 0) / (maximo or 1) * 100) | round(1) -%}
+  <svg class="barra" viewBox="0 0 100 8" preserveAspectRatio="none" aria-hidden="true" focusable="false">
+    <rect class="barra__fondo" width="100" height="8" rx="2"/>
+    <rect class="barra__valor" width="{{ [ancho, 100] | min }}" height="8" rx="2"/>
+  </svg>
+{%- endmacro %}

@@ -1,0 +1,46 @@
+{% extends "panel/base_panel.html" %}
+{% from "panel/_macros.html" import como_funciona %}
+{% block titulo %}Reseñas{% endblock %}
+
+{% block contenido %}
+<h1>Reseñas</h1>
+<p class="texto-suave">Solo las deja un turista que abordó, cuando su viaje terminó (RN-13). Se publican después de revisarlas:
+  se rechaza lo ofensivo, la publicidad o los datos personales.</p>
+
+{% call como_funciona() %}
+  <li>El turista opina desde «Mi reserva»: solo si abordó, después de volver y una vez por reserva.</li>
+  <li>Lee cada reseña pendiente: <strong>Publicar</strong> si está bien; <strong>Rechazar</strong> si es ofensiva, es publicidad o trae datos personales.</li>
+  <li>Las publicadas salen en el detalle de cada salida con el promedio de la ruta, el país y el mes del viaje, sin nombres.</li>
+{% endcall %}
+
+{% if errores %}
+  <div class="resumen-errores" role="alert" tabindex="-1"><ul>{% for e in errores %}<li>{{ e }}</li>{% endfor %}</ul></div>
+{% endif %}
+
+<ul class="lista-limpia pagos">
+  {% for r in resenas %}
+    <li class="tarjeta pago">
+      <p><span class="estrellas" aria-label="{{ r.puntuacion }} de 5 estrellas">{{ '★' * r.puntuacion }}{{ '☆' * (5 - r.puntuacion) }}</span>
+        <span class="insignia">{{ r.estado | capitalize }}</span>
+        <span class="texto-suave">· {{ r.codigo }} · {{ r.ruta_nombre }} · {{ r.fecha_hora_zarpe | fecha_corta }} · {{ r.nacionalidad | pais }}
+          · {{ 'inglés' if r.idioma == 'en' else 'español' }}</span></p>
+      {% if r.comentario %}<p lang="{{ r.idioma }}">{{ r.comentario }}</p>{% endif %}
+      {% if r.moderada_por %}<p class="texto-suave">Moderada por {{ r.moderada_por }}</p>{% endif %}
+      {% if puede and r.estado == 'pendiente' %}
+        <div class="acciones">
+          <form method="post" action="{{ url_for('panel.resena_moderar', resena_id=r.id, decision='publicada') }}">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <button class="boton" type="submit">Publicar</button>
+          </form>
+          <form method="post" action="{{ url_for('panel.resena_moderar', resena_id=r.id, decision='rechazada') }}">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <button class="boton boton--secundario" type="submit">Rechazar</button>
+          </form>
+        </div>
+      {% endif %}
+    </li>
+  {% else %}
+    <li class="aviso aviso--info">Todavía no hay reseñas.</li>
+  {% endfor %}
+</ul>
+{% endblock %}

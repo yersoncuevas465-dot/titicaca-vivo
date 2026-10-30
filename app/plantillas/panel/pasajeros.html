@@ -1,0 +1,106 @@
+{% extends "panel/base_panel.html" %}
+{% from "panel/_macros.html" import datos_salida, como_funciona %}
+{% from "macros.html" import clima_zarpe %}
+{% block titulo %}Pasajeros · {{ s.ruta_nombre }}{% endblock %}
+
+{% block contenido %}
+<p class="miga">
+  {% if current_user.rol in ('admin', 'operador') %}
+    <a href="{{ url_for('panel.salidas', fecha=s.fecha_hora_zarpe.date().isoformat()) }}">← Salidas del {{ s.fecha_hora_zarpe | fecha_corta }}</a>
+  {% else %}<a href="{{ url_for('panel.inicio') }}">← Mis salidas</a>{% endif %}
+</p>
+
+<div class="detalle__cabeza">
+  <h1>{{ s.ruta_nombre }}</h1>
+  <span class="insignia insignia--{{ s.estado_publico }}">{{ s.estado_publico | estado_publico }}</span>
+</div>
+{% if s.motivo_estado %}<p class="aviso aviso--info">Motivo: {{ s.motivo_estado }}</p>{% endif %}
+{{ datos_salida(s) }}
+{% if clima %}{{ clima_zarpe(clima, para_personal=true) }}{% endif %}
+
+{# La guía muestra solo los pasos que puede hacer quien mira (los mismos permisos que los botones) #}
+{% call como_funciona() %}
+  <li>Los pasajeros salen agrupados por reserva, con su estado y lo que falta pagar.</li>
+  {% if puede.vender %}
+    <li><strong>Vender</strong> registra la reserva de quien llega al muelle o escribe por WhatsApp, con el canal y a tu nombre en la bitácora.</li>
+  {% endif %}
+  <li><strong>Manifiesto (PDF)</strong> para la Capitanía; <strong>Lista para imprimir</strong> sirve sin señal; <strong>Lista para WhatsApp</strong> arma el mensaje sin documentos ni teléfonos.</li>
+  {% if puede.abordaje %}
+    <li><strong>Abordaje</strong>, en cada reserva, registra quién subió: de 60 minutos antes a 15 minutos después del zarpe, una vez por pasajero (RN-12).</li>
+  {% endif %}
+  {% if puede.zarpe or puede.zarpe_desde %}
+    <li><strong>Marcar zarpe</strong> aparece desde 60 minutos antes: las reservas sin nadie a bordo quedan como «no se presentó».</li>
+  {% endif %}
+  {% if current_user.rol == 'admin' %}
+    <li>Como administrador solo miras: la operación de la salida la hace el operador.</li>
+  {% endif %}
+{% endcall %}
+
+{% if errores %}
+  <div class="resumen-errores" role="alert" tabindex="-1" id="resumen-errores">
+    <ul>{% for e in errores %}<li>{{ e }}</li>{% endfor %}</ul>
+  </div>
+{% endif %}
+
+<div class="acciones acciones--panel">
+  {% if puede.vender %}<a class="boton boton--chico" href="{{ url_for('reservas.reservar', salida_id=s.salida_id) }}">Vender (muelle o WhatsApp)</a>{% endif %}
+  <a class="boton boton--secundario boton--chico" href="{{ url_for('panel.pasajeros', salida_id=s.salida_id, formato='pdf') }}">Manifiesto (PDF)</a>
+  <a class="boton boton--secundario boton--chico" href="{{ url_for('panel.pasajeros', salida_id=s.salida_id, formato='imprimir') }}">Lista para imprimir</a>
+  <a class="boton boton--secundario boton--chico" href="{{ url_for('panel.pasajeros', salida_id=s.salida_id, formato='whatsapp') }}">Lista para WhatsApp</a>
+  {% if puede.editar %}<a class="boton boton--secundario boton--chico" href="{{ url_for('panel.salida_editar', salida_id=s.salida_id) }}">Editar</a>{% endif %}
+  {% if puede.suspender %}<a class="boton boton--secundario boton--chico" href="{{ url_for('panel.salida_estado', salida_id=s.salida_id, accion='suspender') }}">Suspender</a>{% endif %}
+  {% if puede.cancelar %}<a class="boton boton--secundario boton--chico" href="{{ url_for('panel.salida_estado', salida_id=s.salida_id, accion='cancelar') }}">Cancelar</a>{% endif %}
+  {% if puede.zarpe %}
+    <form method="post" action="{{ url_for('panel.salida_zarpe', salida_id=s.salida_id) }}">
+      {{ accion.csrf_token }}
+      <button class="boton boton--chico" type="submit">Marcar zarpe</button>
+    </form>
+  {% endif %}
+</div>
+{% if puede.zarpe %}
+  <p class="texto-suave">Al marcar el zarpe, las reservas sin nadie a bordo quedan como «no se presentó».
+    Se puede marcar desde 60 minutos antes de la hora programada.</p>
+{% elif puede.zarpe_desde %}
+  <p class="texto-suave">El zarpe se podrá marcar desde el {{ puede.zarpe_desde | fecha_hora }}
+    (60 minutos antes de la hora programada).</p>
+{% endif %}
+
+<section class="bloque" aria-labelledby="titulo-pasajeros">
+  <h2 id="titulo-pasajeros">Pasajeros: {{ pasajeros | length }} · abordaron {{ abordaron }}</h2>
+  <div class="tabla-desplazable" role="region" aria-labelledby="titulo-pasajeros" tabindex="0">
+    <table class="tabla">
+      <caption class="visualmente-oculto">Pasajeros agrupados por reserva</caption>
+      <thead>
+        <tr><th scope="col">Pasajero</th><th scope="col">Documento</th><th scope="col">País</th>
+            <th scope="col">Tipo</th><th scope="col">Abordó</th></tr>
+      </thead>
+      {% for codigo, grupo in pasajeros | groupby('codigo') %}
+        {% set r = grupo[0] %}
+        {% set saldo = r.total - r.pagado %}
+        <tbody>
+          <tr class="tabla__grupo">
+            <th scope="rowgroup" colspan="5">
+              <span class="tabla__codigo">{{ codigo }}</span>
+              · {{ r.titular_nombres }} {{ r.titular_apellidos }}{% if r.titular_telefono %} · {{ r.titular_telefono }}{% endif %}
+              · <span class="insignia insignia--reserva-{{ r.estado_reserva }}">{{ r.estado_reserva | estado_reserva }}</span>
+              {% if r.estado_reserva != 'pendiente_pago' and saldo > 0 %}<strong class="texto-alerta">· falta pagar {{ saldo | soles }}</strong>{% endif %}
+              {% if puede.abordaje %}· <a href="{{ url_for('panel.abordaje', codigo=codigo, via='manual') }}">Abordaje</a>{% endif %}
+            </th>
+          </tr>
+          {% for p in grupo %}
+            <tr>
+              <td>{{ p.nombres }} {{ p.apellidos }}</td>
+              <td>{{ p.tipo_documento }} {{ p.numero_documento }}</td>
+              <td>{{ p.nacionalidad }}</td>
+              <td>{{ p.tipo }}</td>
+              <td>{% if p.abordo_en %}✓ {{ p.abordo_en | hora }} ({{ p.metodo_abordaje }}){% else %}—{% endif %}</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      {% else %}
+        <tbody><tr><td colspan="5">Todavía no hay pasajeros con reserva activa.</td></tr></tbody>
+      {% endfor %}
+    </table>
+  </div>
+</section>
+{% endblock %}

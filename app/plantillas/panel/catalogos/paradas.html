@@ -1,0 +1,50 @@
+{% extends "panel/base_panel.html" %}
+{% from "panel/_macros.html" import campo_panel %}
+{% from "reservas/_macros.html" import resumen %}
+{% block titulo %}Paradas · {{ r.nombre }}{% endblock %}
+
+{% block contenido %}
+<p class="miga"><a href="{{ url_for('catalogos.lista', nombre='rutas') }}">← Rutas</a></p>
+<h1>Paradas de «{{ r.nombre }}»</h1>
+<p class="texto-suave">Orden de visita y minutos en cada comunidad.
+  {% if r.incluye_pernocte %}Esta ruta incluye una noche: marca UNA parada como pernocte (S-16).
+  {% else %}Esta ruta no incluye noche.{% endif %}</p>
+
+<div class="tabla-desplazable" role="region" aria-labelledby="titulo-paradas" tabindex="0">
+  <table class="tabla">
+    <caption id="titulo-paradas">{{ paradas | length }} parada(s)</caption>
+    <thead><tr><th scope="col">Orden</th><th scope="col">Comunidad</th><th scope="col">Estadía</th>
+               <th scope="col">Pernocte</th><th scope="col">Acciones</th></tr></thead>
+    <tbody>
+      {% for p in paradas %}
+        <tr>
+          <td>{{ p.orden }}</td>
+          <td>{{ p.comunidad }}</td>
+          <td>{{ p.minutos_estadia }} min</td>
+          <td>{% if p.es_pernocte %}Sí, aquí se duerme{% else %}—{% endif %}</td>
+          <td class="acciones-fila">
+            <a href="{{ url_for('catalogos.paradas', ruta_id=r.id, parada_id=p.id) }}">Editar</a>
+            <form method="post" action="{{ url_for('catalogos.parada_borrar', ruta_id=r.id, parada_id=p.id) }}">
+              <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+              <button class="boton-enlace" type="submit">Quitar</button>
+            </form>
+          </td>
+        </tr>
+      {% else %}
+        <tr><td colspan="5">La ruta todavía no tiene paradas.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+<section class="tarjeta tarjeta--formulario bloque" aria-labelledby="titulo-form-parada">
+  <h2 id="titulo-form-parada">{% if actual %}Editar la parada {{ actual.orden }}{% else %}Agregar una parada{% endif %}</h2>
+  {{ resumen(f, sueltos, "Revisa la parada") }}
+  <form method="post" action="{{ url_for('catalogos.paradas', ruta_id=r.id, parada_id=actual.id if actual else None) }}" novalidate>
+    {{ f.csrf_token }}
+    {% for c in f %}{{ campo_panel(c) }}{% endfor %}
+    {{ f.enviar(class_='boton') }}
+    {% if actual %}<a class="boton boton--secundario" href="{{ url_for('catalogos.paradas', ruta_id=r.id) }}">Cancelar la edición</a>{% endif %}
+  </form>
+</section>
+{% endblock %}

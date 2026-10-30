@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block titulo %}Lista · {{ s.ruta_nombre }}{% endblock %}
+{% block subnavegacion %}{% endblock %}
+
+{% block contenido %}
+<p class="miga no-imprimir"><a href="{{ url_for('panel.pasajeros', salida_id=s.salida_id) }}">← Volver a la salida</a>
+  · Usa «Imprimir» del navegador (o guárdala como PDF para verla sin señal).</p>
+
+<div class="impresion">
+  <h1>{{ s.ruta_nombre }}</h1>
+  <p><strong>{{ s.fecha_hora_zarpe | fecha_larga | capitalize }}, zarpe {{ s.fecha_hora_zarpe | hora }}</strong>
+    · {{ s.muelle_salida }} · Lancha {{ s.embarcacion_nombre }} ({{ s.matricula }})
+    · Capitán {{ s.capitan }}{% if s.guia %} · Guía {{ s.guia }}{% endif %}</p>
+  <p>Pasajeros: {{ pasajeros | length }} de {{ s.cupo }} · Impreso el {{ generado_en.strftime('%d/%m/%Y %H:%M') }}</p>
+
+  <table class="tabla tabla--impresion">
+    <thead>
+      <tr><th scope="col">Subió</th><th scope="col">Pasajero</th><th scope="col">Documento</th>
+          <th scope="col">Tipo</th><th scope="col">Reserva</th><th scope="col">Pago</th></tr>
+    </thead>
+    <tbody>
+      {% for p in pasajeros %}
+        {% set saldo = p.total - p.pagado %}
+        <tr>
+          <td class="casilla">{% if p.abordo_en %}✓{% else %}☐{% endif %}</td>
+          <td>{{ p.apellidos }}, {{ p.nombres }}</td>
+          <td>{{ p.tipo_documento }} {{ p.numero_documento }} ({{ p.nacionalidad }})</td>
+          <td>{{ p.tipo }}</td>
+          <td>{{ p.codigo }}</td>
+          <td>{% if p.estado_reserva == 'pendiente_pago' %}Por verificar{% elif saldo > 0 %}Falta {{ saldo | soles }}{% else %}Pagado{% endif %}</td>
+        </tr>
+      {% else %}
+        <tr><td colspan="6">Sin pasajeros con reserva activa.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

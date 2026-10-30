@@ -1,0 +1,113 @@
+{% extends "panel/base_panel.html" %}
+{% from "macros.html" import barra_cupos %}
+{% block titulo %}Panel{% endblock %}
+
+{% block contenido %}
+<h1>Resumen del día</h1>
+<p class="texto-suave">{{ current_user.nombre_completo }} · {{ current_user.rol_nombre }}</p>
+
+{% if current_user.rol in ('operador', 'guia', 'capitan') %}
+<form method="get" action="{{ url_for('panel.abordaje_buscar') }}" class="filtro" role="search">
+  <div class="campo">
+    {{ buscar.codigo.label(class_='campo__etiqueta') }}
+    {{ buscar.codigo(class_='campo__control') }}
+  </div>
+  <button class="boton boton--secundario" type="submit">Abordaje</button>
+</form>
+{% endif %}
+
+{# Lo que le toca a cada rol, en orden y con su botón (matriz de permisos: docs/matriz-permisos.md) #}
+<section aria-labelledby="titulo-trabajo" class="bloque">
+  <h2 id="titulo-trabajo">Tu trabajo de hoy</h2>
+  <ol class="tareas">
+    {% if current_user.rol == 'operador' %}
+      <li class="tarea"><a href="{{ url_for('panel.pagos') }}">Verificar los pagos</a>
+        <p>{{ contadores.pagos_por_verificar }} pago(s) de Yape o Plin esperan. Compara el número de operación con la app de la agencia.</p></li>
+      <li class="tarea"><a href="{{ url_for('panel.reservas') }}">Atender a un turista</a>
+        <p>Busca su reserva por código, documento, celular o nombre. Si llega al muelle o escribe por WhatsApp sin reserva, véndele desde la salida («Vender»).</p></li>
+      <li class="tarea"><a href="{{ url_for('panel.alertas') }}">Revisar las alertas del lago</a>
+        <p>Registra el aviso de SENAMHI o la Capitanía; si es naranja o roja, suspende las salidas afectadas en un solo paso.</p></li>
+      <li class="tarea"><a href="{{ url_for('panel.abordaje_buscar') }}">Embarcar a los pasajeros</a>
+        <p>Desde 60 minutos antes del zarpe: lee el QR del boleto o escribe el código de la reserva.</p></li>
+      <li class="tarea"><a href="{{ url_for('panel.salidas') }}">Marcar el zarpe</a>
+        <p>En los pasajeros de cada salida. Quien no subió queda como «no se presentó».</p></li>
+      <li class="tarea"><a href="{{ url_for('panel.hospedajes') }}">Confirmar las noches cumplidas</a>
+        <p>Cuando el grupo vuelve, la noche de la familia anfitriona pasa al reporte de transparencia.</p></li>
+    {% elif current_user.rol == 'admin' %}
+      <li class="tarea"><a href="{{ url_for('panel.bitacora') }}">Revisar la bitácora</a>
+        <p>Quién hizo qué, cuándo y desde qué IP: inicios de sesión, pagos, cambios de estado y catálogos.</p></li>
+      <li class="tarea"><a href="{{ url_for('panel.usuarios') }}">Usuarios y roles</a>
+        <p>Altas, cambios de rol o de contraseña y bajas del personal.</p></li>
+      <li class="tarea"><a href="{{ url_for('panel.indicadores_panel') }}">Ver los indicadores</a>
+        <p>Ocupación por ruta, ingresos por método de pago, nacionalidades y noches por familia.</p></li>
+      <li class="tarea"><a href="{{ url_for('catalogos.inicio') }}">Mantener los catálogos</a>
+        <p>Rutas, lanchas, tarifas, temporadas, comunidades y familias. Ves toda la operación, pero la ejecuta el operador.</p></li>
+      <li class="tarea"><a href="{{ url_for('panel.respaldos') }}">Revisar los respaldos</a>
+        <p>{% if ultimo_respaldo %}El último es del {{ ultimo_respaldo.fecha | fecha_hora }} ({{ ultimo_respaldo.tipo | lower }}). Guarda una copia fuera de la PC.{% else %}Todavía no hay ninguno: crea el primero.{% endif %}</p></li>
+    {% else %}
+      <li class="tarea"><a href="#titulo-salidas">Abrir tu salida</a>
+        <p>Abajo están tus salidas de hoy y de los 2 días siguientes: entra para ver la lista de pasajeros.</p></li>
+      <li class="tarea"><a href="{{ url_for('panel.abordaje_buscar') }}">Registrar el abordaje</a>
+        <p>Desde 60 minutos antes: lee el QR del boleto con la cámara del celular o escribe el código.</p></li>
+      {% if current_user.rol == 'capitan' %}
+        <li class="tarea"><a href="#titulo-salidas">Manifiesto y zarpe</a>
+          <p>Descarga el manifiesto (PDF) y marca el zarpe: quien no subió queda como «no se presentó».</p></li>
+      {% else %}
+        <li class="tarea"><a href="#titulo-salidas">Lista sin señal</a>
+          <p>Desde la salida, imprime la lista de pasajeros o envíala por WhatsApp antes de llegar a la isla.</p></li>
+      {% endif %}
+    {% endif %}
+  </ol>
+</section>
+
+{% if alertas %}
+<section aria-labelledby="titulo-alertas" class="bloque">
+  <h2 id="titulo-alertas">Alertas vigentes</h2>
+  <ul class="lista-limpia">
+    {% for a in alertas %}
+      <li class="alerta alerta--{{ a.nivel }}">
+        <span class="insignia insignia--{{ a.nivel }}">{{ a.nivel | nivel_alerta }}</span>
+        <strong>{{ a.titulo }}</strong>
+        <span class="texto-suave">· {{ a.lugar }} · {{ a.fuente }} · hasta {{ a.vigente_hasta | fecha_hora }}</span>
+      </li>
+    {% endfor %}
+  </ul>
+</section>
+{% endif %}
+
+{% if contadores is defined %}
+<section aria-labelledby="titulo-pendientes" class="bloque">
+  <h2 id="titulo-pendientes">Pendientes</h2>
+  <dl class="contadores">
+    <div class="contador"><dt><a href="{{ url_for('panel.pagos') }}">Pagos por verificar</a></dt><dd>{{ contadores.pagos_por_verificar }}</dd></div>
+    <div class="contador"><dt>Reservas esperando pago</dt><dd>{{ contadores.reservas_esperando_pago }}</dd></div>
+    <div class="contador"><dt>Alertas vigentes</dt><dd>{{ contadores.alertas_vigentes }}</dd></div>
+  </dl>
+</section>
+{% endif %}
+
+<section aria-labelledby="titulo-salidas" class="bloque">
+  <h2 id="titulo-salidas">
+    {% if current_user.rol in ('admin', 'operador') %}Salidas de hoy{% else %}Mis salidas (hoy y 2 días más){% endif %}
+  </h2>
+  {% if salidas %}
+    <ul class="lista-limpia salidas">
+      {% for s in salidas %}
+        <li class="salida">
+          <div class="salida__cabeza">
+            <span class="salida__hora">{{ s.fecha_hora_zarpe | fecha_hora }}</span>
+            <span class="insignia insignia--{{ s.estado_publico }}">{{ s.estado_publico | estado_publico }}</span>
+          </div>
+          <p class="salida__ruta">
+            <a class="enlace-tarjeta" href="{{ url_for('panel.pasajeros', salida_id=s.salida_id) }}">{{ s.ruta_nombre }}</a>
+          </p>
+          <p class="texto-suave">Lancha {{ s.embarcacion_nombre }}{% if s.matricula %} · {{ s.matricula }}{% endif %} · ver pasajeros</p>
+          {{ barra_cupos(s) }}
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p class="aviso aviso--info">No hay salidas para mostrar.</p>
+  {% endif %}
+</section>
+{% endblock %}

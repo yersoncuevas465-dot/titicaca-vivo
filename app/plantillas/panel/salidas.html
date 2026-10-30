@@ -1,0 +1,84 @@
+{% extends "panel/base_panel.html" %}
+{% from "panel/_macros.html" import como_funciona %}
+{% block titulo %}Salidas{% endblock %}
+
+{% block contenido %}
+<div class="cabeza-pagina">
+  <h1>Salidas del {{ fecha | fecha_larga }}</h1>
+  {% if current_user.rol == 'operador' %}
+    <a class="boton" href="{{ url_for('panel.salida_nueva') }}">Nueva salida</a>
+  {% endif %}
+</div>
+{% if feriado %}
+  <p class="aviso aviso--info"><strong>Feriado: {{ feriado }}.</strong> Suele haber más turistas: revisa los cupos y si hace falta otra salida.</p>
+{% endif %}
+
+{% call como_funciona() %}
+  <li>Cambia de día con las flechas o con la fecha. La tabla muestra también las salidas canceladas.</li>
+  <li><strong>Nueva salida</strong> (operador): ruta, día y hora, lancha, capitán, guía y cupo. El retorno se calcula con la duración de la ruta.</li>
+  <li>Al guardar se revisa RN-07: lancha operativa, cupo que no pasa su capacidad, capitán con licencia y ninguna otra salida de esa lancha que se cruce.</li>
+  <li><strong>Pasajeros</strong> abre la salida: manifiesto en PDF, lista para imprimir o para WhatsApp, abordaje y zarpe.</li>
+  {% if current_user.rol == 'operador' %}
+    <li><strong>Vender</strong> registra la reserva de quien llega al muelle o escribe por WhatsApp: es el formulario del turista, con el canal, y queda a tu nombre en la bitácora.</li>
+  {% endif %}
+  <li><strong>Suspender</strong> deja que cada turista reprograme o pida la devolución; <strong>Cancelar</strong> solo se puede si nadie reservó.</li>
+{% endcall %}
+
+{% if error %}<p class="aviso aviso--error" role="alert">{{ error }}</p>{% endif %}
+
+<nav class="navegar-dias" aria-label="Cambiar de día">
+  <a class="boton boton--secundario boton--chico" href="{{ url_for('panel.salidas', fecha=anterior.isoformat()) }}">← {{ anterior | fecha_corta }}</a>
+  {% if fecha != hoy %}<a class="boton boton--secundario boton--chico" href="{{ url_for('panel.salidas') }}">Hoy</a>{% endif %}
+  <a class="boton boton--secundario boton--chico" href="{{ url_for('panel.salidas', fecha=siguiente.isoformat()) }}">{{ siguiente | fecha_corta }} →</a>
+  <form method="get" class="navegar-dias__fecha">
+    <label class="visualmente-oculto" for="fecha">Ir a la fecha</label>
+    <input class="campo__control" type="date" id="fecha" name="fecha" value="{{ fecha.isoformat() }}">
+    <button class="boton boton--secundario boton--chico" type="submit">Ir</button>
+  </form>
+</nav>
+
+<div class="tabla-desplazable" role="region" aria-labelledby="titulo-salidas" tabindex="0">
+  <table class="tabla">
+    <caption id="titulo-salidas">{{ salidas | length }} salida(s), también las canceladas</caption>
+    <thead>
+      <tr><th scope="col">Zarpe</th><th scope="col">Ruta</th><th scope="col">Lancha</th>
+          <th scope="col">Capitán · guía</th><th scope="col">Ocupados</th><th scope="col">Estado</th>
+          <th scope="col">Acciones</th></tr>
+    </thead>
+    <tbody>
+      {% for s in salidas %}
+        <tr>
+          <td>{{ s.fecha_hora_zarpe | hora }}</td>
+          <td>{{ s.ruta_nombre }}</td>
+          <td>{{ s.embarcacion_nombre }}<br><span class="texto-suave">{{ s.matricula }}</span></td>
+          <td>{{ s.capitan }}<br><span class="texto-suave">{{ s.guia or 'Sin guía' }}</span></td>
+          <td>{{ s.ocupados }} / {{ s.cupo }}</td>
+          <td>
+            <span class="insignia insignia--{{ s.estado_publico }}">{{ s.estado_publico | estado_publico }}</span>
+            {% if s.motivo_estado %}<br><span class="texto-suave">{{ s.motivo_estado }}</span>{% endif %}
+          </td>
+          <td class="acciones-fila">
+            <a href="{{ url_for('panel.pasajeros', salida_id=s.salida_id) }}">Pasajeros</a>
+            {% if current_user.rol == 'operador' %}
+              {% if s.estado_publico in ('disponible', 'pocos_cupos') %}
+                <a href="{{ url_for('reservas.reservar', salida_id=s.salida_id) }}">Vender</a>
+              {% endif %}
+              {% if s.estado in ('programada', 'suspendida') and s.aun_no_zarpa %}
+                <a href="{{ url_for('panel.salida_editar', salida_id=s.salida_id) }}">Editar</a>
+              {% endif %}
+              {% if s.estado in ('programada', 'embarcando') %}
+                <a href="{{ url_for('panel.salida_estado', salida_id=s.salida_id, accion='suspender') }}">Suspender</a>
+              {% endif %}
+              {% if s.estado in ('programada', 'embarcando', 'suspendida') %}
+                <a href="{{ url_for('panel.salida_estado', salida_id=s.salida_id, accion='cancelar') }}">Cancelar</a>
+              {% endif %}
+            {% endif %}
+          </td>
+        </tr>
+      {% else %}
+        <tr><td colspan="7">No hay salidas este día.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

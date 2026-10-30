@@ -1,0 +1,23 @@
+{% extends "panel/base_panel.html" %}
+{% block titulo %}WhatsApp · {{ s.ruta_nombre }}{% endblock %}
+
+{% block contenido %}
+<p class="miga"><a href="{{ url_for('panel.pasajeros', salida_id=s.salida_id) }}">← Volver a la salida</a></p>
+
+<section class="tarjeta tarjeta--formulario">
+  <h1>Lista para WhatsApp</h1>
+  <p class="texto-suave">El botón abre WhatsApp con el mensaje ya escrito; tú eliges a quién enviarlo
+    y lo envías. No se usa ninguna API: nada sale de aquí sin que tú lo envíes. El mensaje no lleva
+    documentos ni teléfonos de los turistas.</p>
+  <div class="campo">
+    <label class="campo__etiqueta" for="texto-whatsapp">Mensaje</label>
+    <textarea class="campo__control texto-whatsapp" id="texto-whatsapp" rows="14" readonly>{{ texto }}</textarea>
+  </div>
+  <div class="acciones">
+    <a class="boton" href="{{ enlace }}" rel="noopener noreferrer" target="_blank">Abrir WhatsApp</a>
+    {% if enlace_guia %}
+      <a class="boton boton--secundario" href="{{ enlace_guia }}" rel="noopener noreferrer" target="_blank">Enviar al guía ({{ s.guia }})</a>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}

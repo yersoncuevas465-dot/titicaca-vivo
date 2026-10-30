@@ -1,0 +1,64 @@
+{% extends "panel/base_panel.html" %}
+{% from "macros.html" import campo %}
+{% from "reservas/_macros.html" import opciones %}
+{% block titulo %}Abordaje · {{ r.codigo }}{% endblock %}
+
+{% block contenido %}
+<p class="miga"><a href="{{ url_for('panel.pasajeros', salida_id=r.salida_id) }}">← Pasajeros de la salida</a>
+  {% if current_user.rol == 'operador' %}· <a href="{{ url_for('panel.reserva_detalle', codigo=r.codigo) }}">Ficha de la reserva</a>{% endif %}</p>
+
+<div class="detalle__cabeza">
+  <h1>Abordaje · {{ r.codigo }}</h1>
+  {% set estado = estado_visible(r) %}
+  <span class="insignia insignia--reserva-{{ estado }}">{{ estado | estado_reserva }}</span>
+</div>
+<p><strong>{{ r.ruta_nombre }}</strong> · {{ r.fecha_hora_zarpe | fecha_hora }} · Lancha {{ r.embarcacion_nombre }}</p>
+<p>Titular: {{ r.nombres }} {{ r.apellidos }}{% if r.telefono %} · {{ r.telefono }}{% endif %}</p>
+
+{% if errores %}
+  <div class="resumen-errores" role="alert" tabindex="-1" id="resumen-errores">
+    <ul>{% for e in errores %}<li>{{ e }}</li>{% endfor %}</ul>
+  </div>
+{% endif %}
+{% if saldo > 0 and r.estado in ('confirmada', 'abordada') %}
+  <p class="aviso aviso--error"><strong>Falta pagar {{ saldo | soles }}</strong> (paga en el muelle). Cóbralo antes de que suba.</p>
+{% endif %}
+{% if r.motivo_no %}<p class="aviso aviso--info" role="status">{{ r.motivo_no }}</p>{% endif %}
+
+<form method="post" class="tarjeta abordaje" novalidate>
+  {{ f.csrf_token }}{{ f.metodo }}
+  <fieldset class="campo campo--opciones">
+    <legend class="campo__etiqueta">Pasajeros ({{ r.pasajeros | length }}) · faltan {{ r.faltan }}</legend>
+    {% for p in r.pasajeros %}
+      <div class="opcion opcion--grande{% if p.abordo_en %} opcion--hecha{% endif %}">
+        {% if p.abordo_en %}
+          <span aria-hidden="true">✓</span>
+          <span>{{ p.nombres }} {{ p.apellidos }} · {{ p.tipo_documento }} {{ p.numero_documento }} ·
+            <strong>abordó {{ p.abordo_en | hora }}</strong></span>
+        {% else %}
+          <input type="checkbox" name="pasajero" value="{{ p.id }}" id="pasajero-{{ p.id }}"
+                 {% if not r.motivo_no %}checked{% else %}disabled{% endif %}>
+          <label for="pasajero-{{ p.id }}">{{ p.nombres }} {{ p.apellidos }} · {{ p.tipo_documento }} {{ p.numero_documento }} · {{ p.tipo }}</label>
+        {% endif %}
+      </div>
+    {% endfor %}
+  </fieldset>
+  {% if not r.motivo_no %}
+    {{ f.enviar(class_='boton boton--ancho') }}
+    <p class="texto-suave">Revisa el documento de cada persona. Desmarca a quien todavía no llegó.</p>
+  {% endif %}
+</form>
+
+{% if cobro %}
+<section class="tarjeta bloque" aria-labelledby="titulo-cobro">
+  <h2 id="titulo-cobro">Cobrar en el muelle</h2>
+  <form method="post" action="{{ url_for('panel.cobro', codigo=r.codigo, via=('manual' if f.metodo.data == 'manual' else None)) }}" novalidate>
+    {# Sin id: esta página tiene dos formularios y un id no se puede repetir #}
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    {{ opciones(cobro.metodo) }}
+    <div class="fila-2">{{ campo(cobro.monto) }}{{ campo(cobro.numero_operacion) }}</div>
+    {{ cobro.enviar(class_='boton boton--secundario', id='cobro-enviar') }}
+  </form>
+</section>
+{% endif %}
+{% endblock %}

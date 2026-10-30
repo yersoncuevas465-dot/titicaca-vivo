@@ -1,0 +1,59 @@
+{% extends "panel/base_panel.html" %}
+{% from "panel/_macros.html" import como_funciona %}
+{% block titulo %}Transparencia comunitaria{% endblock %}
+
+{% block contenido %}
+<p class="miga no-imprimir"><a href="{{ url_for('panel.hospedajes') }}">← Hospedajes</a></p>
+<h1>Reporte de transparencia comunitaria</h1>
+<p class="texto-suave">Cuántas noches recibió cada familia y cuánto le corresponde, por comunidad. «Cumplidas» son
+  las noches que la agencia confirmó; «por cumplir», las ya asignadas. Se puede imprimir para la asamblea de la comunidad.</p>
+
+{% call como_funciona() %}
+  <li>Elige el mes y pulsa <strong>Ver</strong>.</li>
+  <li>Cada comunidad muestra todas sus familias, también las que no recibieron a nadie (con 0): así se ve si la rotación es pareja.</li>
+  <li>El monto es personas × noches × el pago por persona y noche que fija la agencia.</li>
+  <li>Para la asamblea, imprime con Ctrl + P: el menú, los botones y esta guía no salen en el papel.</li>
+{% endcall %}
+
+<form method="get" class="filtro no-imprimir">
+  <div class="campo">
+    <label class="campo__etiqueta" for="mes">Mes</label>
+    <select class="campo__control" id="mes" name="mes">
+      {% for m in meses %}<option value="{{ m }}" {% if m == mes %}selected{% endif %}>{{ m }}</option>{% endfor %}
+    </select>
+  </div>
+  <button class="boton boton--secundario" type="submit">Ver</button>
+</form>
+
+{% for comunidad, grupo in filas | groupby('comunidad') %}
+  {% set total = grupo[0] %}
+  <section class="bloque" aria-labelledby="titulo-com-{{ total.comunidad_id }}">
+    <h2 id="titulo-com-{{ total.comunidad_id }}">{{ comunidad }} · {{ mes }}</h2>
+    <p>Noches del mes: <strong>{{ total.noches_comunidad }}</strong> · Pagado a familias (cumplidas):
+      <strong>{{ total.monto_comunidad | soles }}</strong></p>
+    <div class="tabla-desplazable" role="region" aria-labelledby="titulo-com-{{ total.comunidad_id }}" tabindex="0">
+      <table class="tabla">
+        <thead>
+          <tr><th scope="col">Familia</th><th scope="col">Noches cumplidas</th><th scope="col">Personas-noche</th>
+              <th scope="col">Monto</th><th scope="col">Por cumplir</th><th scope="col">Monto por cumplir</th></tr>
+        </thead>
+        <tbody>
+          {% for f in grupo %}
+            <tr>
+              <th scope="row">{{ f.nombre_familia }}{% if not f.activa %} <span class="texto-suave">(inactiva)</span>{% endif %}</th>
+              <td>{{ f.noches }}</td>
+              <td>{{ f.personas_noche }}</td>
+              <td>{{ f.monto | soles }}</td>
+              <td>{{ f.noches_por_cumplir }}</td>
+              <td>{{ f.monto_por_cumplir | soles }}</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </section>
+{% else %}
+  <p class="aviso aviso--info">Todavía no hay noches registradas.</p>
+{% endfor %}
+<p class="texto-suave">Generado desde la vista v_ingresos_familia. Monto por persona y noche: {{ config.PAGO_FAMILIA_PERSONA_NOCHE | soles }} (por confirmar con Giant Trip).</p>
+{% endblock %}

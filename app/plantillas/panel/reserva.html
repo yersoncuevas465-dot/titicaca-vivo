@@ -1,0 +1,160 @@
+{% extends "panel/base_panel.html" %}
+{% from "panel/_macros.html" import como_funciona %}
+{% block titulo %}Reserva {{ r.codigo }}{% endblock %}
+
+{% block contenido %}
+<p class="miga"><a href="{{ url_for('panel.reservas') }}">← Reservas</a></p>
+
+{% set estado = estado_visible(r) %}
+{% set saldo = r.total - r.pagado %}
+{% set activa = estado in ('pendiente_pago', 'confirmada', 'pagada', 'abordada') %}
+{% set con_boleto = r.estado in ('confirmada', 'pagada', 'abordada') %}
+{% set opera = current_user.rol == 'operador' %}
+
+<div class="detalle__cabeza">
+  <h1>Reserva {{ r.codigo }}</h1>
+  <span class="insignia insignia--reserva-{{ estado }}">{{ estado | estado_reserva }}</span>
+</div>
+<p><strong>{{ r.ruta_nombre }}</strong> · {{ r.fecha_hora_zarpe | fecha_hora }} · {{ r.muelle_salida }} · Lancha {{ r.embarcacion_nombre }}
+  · <a href="{{ url_for('panel.pasajeros', salida_id=r.salida_id) }}">Ver la salida</a></p>
+{% if r.salida_estado == 'suspendida' %}
+  <p class="aviso aviso--error">La salida está suspendida{% if r.motivo_estado %}: {{ r.motivo_estado }}{% endif %}.
+    {% if puede_reprogramar %}El turista puede reprogramar o pedir la devolución desde «Mi reserva».{% endif %}</p>
+{% endif %}
+
+{% call como_funciona() %}
+  <li>El estado está arriba. «Vencida» quiere decir que no se pagó a tiempo y su lugar ya se liberó.</li>
+  {% if opera %}
+    <li><strong>Cobrar y embarcar</strong> abre el abordaje: cobra lo que falta (efectivo, Yape, Plin o POS) y marca quién subió.</li>
+    <li><strong>Confirmación por WhatsApp</strong> abre WhatsApp con el mensaje listo (código, salida, total y lo que falta pagar), sin el documento del turista.</li>
+  {% else %}
+    <li>Como administrador solo miras: el cobro, el abordaje y los mensajes los hace el operador.</li>
+  {% endif %}
+  <li><strong>Boleto con QR</strong> es el mismo que ve el turista: se puede imprimir o bajar en PDF.</li>
+  <li>Abajo está el historial completo: cada cambio, quién lo hizo, cuándo y desde qué IP (la bitácora).</li>
+{% endcall %}
+
+{% if (opera and activa) or con_boleto %}
+<div class="acciones acciones--panel">
+  {% if opera and activa %}
+    <a class="boton boton--chico" href="{{ url_for('panel.abordaje', codigo=r.codigo, via='manual') }}">{% if saldo > 0 %}Cobrar y embarcar{% else %}Embarcar{% endif %}</a>
+    <a class="boton boton--secundario boton--chico" href="{{ enlace_whatsapp }}" rel="noopener noreferrer" target="_blank">Confirmación por WhatsApp</a>
+  {% endif %}
+  {% if con_boleto %}
+    <a class="boton boton--secundario boton--chico" href="{{ url_for('reservas.boleto', codigo=r.codigo) }}">Boleto con QR</a>
+  {% endif %}
+</div>
+{% if opera and activa %}
+  <details class="no-imprimir">
+    <summary>Ver el mensaje de WhatsApp</summary>
+    <label class="visualmente-oculto" for="texto-whatsapp">Mensaje para el turista</label>
+    <textarea class="campo__control texto-whatsapp" id="texto-whatsapp" rows="6" readonly>{{ texto_whatsapp }}</textarea>
+  </details>
+{% endif %}
+{% endif %}
+
+<section class="bloque" aria-labelledby="titulo-datos">
+  <h2 id="titulo-datos">Titular y pago</h2>
+  <dl class="datos datos--panel">
+    <div><dt>Titular</dt><dd>{{ r.nombres }} {{ r.apellidos }}</dd></div>
+    <div><dt>Documento</dt><dd>{{ r.tipo_documento }} {{ r.numero_documento }}</dd></div>
+    <div><dt>Celular</dt><dd>{{ r.telefono or '—' }}</dd></div>
+    <div><dt>Correo</dt><dd>{{ r.correo or '—' }}</dd></div>
+    <div><dt>Canal</dt><dd>{{ canales.get(r.canal, r.canal) }} · registrada el {{ r.creada_en | fecha_hora }}</dd></div>
+    <div><dt>Forma de pago elegida</dt><dd>{{ r.metodo_pago_elegido | metodo_pago }}</dd></div>
+    <div><dt>Total · verificado</dt><dd>{{ r.total | soles }} · {{ r.pagado | soles }}{% if saldo > 0 %} (falta {{ saldo | soles }}){% endif %}</dd></div>
+    {% if r.reportado %}
+      <div><dt>Reportado sin verificar</dt><dd>{{ r.reportado | soles }} · <a href="{{ url_for('panel.pagos') }}">Pagos por verificar</a></dd></div>
+    {% endif %}
+    {% if r.estado == 'pendiente_pago' %}
+      <div><dt>Lugar guardado hasta</dt><dd>{% if r.vigente %}{{ r.vence_en | fecha_hora }}{% else %}<strong class="texto-alerta">Venció</strong>{% endif %}</dd></div>
+    {% endif %}
+  </dl>
+</section>
+
+<section class="bloque" aria-labelledby="titulo-pasajeros">
+  <h2 id="titulo-pasajeros">Pasajeros ({{ pasajeros | length }})</h2>
+  <div class="tabla-desplazable" role="region" aria-labelledby="titulo-pasajeros" tabindex="0">
+    <table class="tabla">
+      <caption class="visualmente-oculto">Pasajeros de la reserva con el precio que se les aplicó</caption>
+      <thead>
+        <tr><th scope="col">Pasajero</th><th scope="col">Documento</th><th scope="col">País</th>
+            <th scope="col">Tipo</th><th scope="col">Precio</th></tr>
+      </thead>
+      <tbody>
+        {% for p in pasajeros %}
+          <tr><td>{{ p.nombres }} {{ p.apellidos }}</td><td>{{ p.tipo_documento }} {{ p.numero_documento }}</td>
+              <td>{{ p.nacionalidad | pais }}</td><td>{{ p.tipo }}</td><td class="sin-cortar">{{ p.precio_aplicado | soles }}</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section class="bloque" aria-labelledby="titulo-pagos">
+  <h2 id="titulo-pagos">Pagos</h2>
+  {% if pagos %}
+    <div class="tabla-desplazable" role="region" aria-labelledby="titulo-pagos" tabindex="0">
+      <table class="tabla">
+        <caption class="visualmente-oculto">Pagos de la reserva, del más reciente al más antiguo</caption>
+        <thead>
+          <tr><th scope="col">Fecha</th><th scope="col">Método</th><th scope="col">Monto</th>
+              <th scope="col">Operación</th><th scope="col">Estado</th></tr>
+        </thead>
+        <tbody>
+          {% for p in pagos %}
+            <tr><td>{{ p.reportado_en | fecha_hora }}</td><td>{{ p.metodo | metodo_pago }}</td><td class="sin-cortar">{{ p.monto | soles }}</td>
+                <td>{% if p.numero_operacion %}<code>{{ p.numero_operacion }}</code>{% else %}—{% endif %}</td>
+                <td>{{ p.estado | estado_pago }}{% if p.observacion %}<br><span class="texto-suave">{{ p.observacion }}</span>{% endif %}</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  {% else %}
+    <p class="texto-suave">Todavía no hay pagos.</p>
+  {% endif %}
+</section>
+
+{% if r.incluye_pernocte or hospedajes %}
+<section class="bloque" aria-labelledby="titulo-noche">
+  <h2 id="titulo-noche">Noche con la familia</h2>
+  {% if hospedajes %}
+    <ul class="lista-limpia lista-separada">
+      {% for h in hospedajes %}
+        <li>{{ h.fecha_noche | fecha_larga | capitalize }} · {{ h.nombre_familia }} ({{ h.comunidad }}) · {{ h.personas }} persona(s)
+          · {% if h.estado == 'cumplido' %}cumplida{% else %}asignada{% endif %}</li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p class="texto-suave">Todavía sin familia: se asigna por rotación cuando la reserva queda confirmada o pagada
+      (<a href="{{ url_for('panel.hospedajes') }}">Hospedajes</a>).</p>
+  {% endif %}
+</section>
+{% endif %}
+
+<section class="bloque" aria-labelledby="titulo-historial">
+  <h2 id="titulo-historial">Historial</h2>
+  <div class="tabla-desplazable" role="region" aria-labelledby="titulo-historial" tabindex="0">
+    <table class="tabla">
+      <caption class="visualmente-oculto">Todo lo que pasó con la reserva, sus pagos y su noche, del más antiguo al más reciente</caption>
+      <thead>
+        <tr><th scope="col">Fecha</th><th scope="col">Quién</th><th scope="col">Qué</th>
+            <th scope="col">Detalle</th><th scope="col">IP</th></tr>
+      </thead>
+      <tbody>
+        {% for h in historial %}
+          <tr>
+            <td>{{ h.creado_en | fecha_hora }}</td>
+            <td>{{ h.nombre_usuario or 'Turista o sistema' }}</td>
+            <td>{{ h.accion | accion_bitacora }}{% if h.tabla_afectada != 'reserva' %} <span class="texto-suave">({{ h.tabla_afectada }})</span>{% endif %}</td>
+            <td>{% for clave, valor in h.detalle.items() %}<span class="bitacora-dato">{{ clave }}: <strong>{{ valor }}</strong></span> {% endfor %}</td>
+            <td>{{ h.ip or '—' }}</td>
+          </tr>
+        {% else %}
+          <tr><td colspan="5">Sin registros en la bitácora.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</section>
+{% endblock %}

@@ -1,0 +1,47 @@
+{% extends "panel/base_panel.html" %}
+{% from "panel/_macros.html" import como_funciona %}
+{% block titulo %}Alertas del lago{% endblock %}
+
+{% block contenido %}
+<div class="cabeza-pagina">
+  <h1>Alertas del lago</h1>
+  {% if current_user.rol == 'operador' %}
+    <a class="boton" href="{{ url_for('panel.alerta_formulario') }}">Registrar alerta</a>
+  {% endif %}
+</div>
+<p class="texto-suave">Se registran a mano con los avisos de SENAMHI, la Capitanía, la agencia o la comunidad.
+  Una alerta naranja o roja marca las salidas que pasan por su comunidad (o todas, si es de todo el lago) y
+  permite suspenderlas en un solo paso (RN-11).</p>
+
+{% call como_funciona() %}
+  <li><strong>Registrar alerta</strong> (operador): nivel, tipo, fuente, lugar (una comunidad o todo el lago) y desde cuándo hasta cuándo rige.</li>
+  <li>La amarilla solo informa. La naranja o la roja marca las salidas que pasan por ese lugar en ese horario.</li>
+  <li>Abre la alerta (<strong>Ver y editar</strong>) y pulsa <strong>Suspender las N salidas en un solo paso</strong>: es una sola transacción, o se suspenden todas o ninguna.</li>
+  <li>Cada turista afectado ve el motivo en su reserva y elige: reprogramar a otra salida de la misma ruta o pedir la devolución.</li>
+{% endcall %}
+
+<div class="tabla-desplazable" role="region" aria-labelledby="titulo-alertas" tabindex="0">
+  <table class="tabla">
+    <caption id="titulo-alertas">Vigentes, próximas y de los últimos 30 días</caption>
+    <thead>
+      <tr><th scope="col">Nivel</th><th scope="col">Alerta</th><th scope="col">Lugar</th>
+          <th scope="col">Rige</th><th scope="col">Salidas por suspender</th><th scope="col">Acciones</th></tr>
+    </thead>
+    <tbody>
+      {% for a in alertas %}
+        <tr>
+          <td><span class="insignia insignia--{{ a.nivel }}">{{ a.nivel | nivel_alerta }}</span></td>
+          <td><strong>{{ a.titulo }}</strong><br><span class="texto-suave">{{ a.tipo | tipo_alerta }} · {{ a.fuente }}</span></td>
+          <td>{{ a.lugar }}</td>
+          <td>{{ a.vigente_desde | fecha_hora }}<br><span class="texto-suave">hasta {{ a.vigente_hasta | fecha_hora }}</span>
+            {% if a.vigente %}<br><strong>Vigente</strong>{% endif %}</td>
+          <td>{% if a.por_suspender %}<strong class="texto-alerta">{{ a.por_suspender }}</strong>{% else %}0{% endif %}</td>
+          <td class="acciones-fila"><a href="{{ url_for('panel.alerta_formulario', alerta_id=a.id) }}">Ver{% if current_user.rol == 'operador' %} y editar{% endif %}</a></td>
+        </tr>
+      {% else %}
+        <tr><td colspan="6">No hay alertas en los últimos 30 días.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

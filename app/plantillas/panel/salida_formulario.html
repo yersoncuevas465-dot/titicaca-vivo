@@ -1,0 +1,33 @@
+{% extends "panel/base_panel.html" %}
+{% from "macros.html" import campo %}
+{% from "reservas/_macros.html" import resumen %}
+{% block titulo %}{% if s %}Editar salida{% else %}Nueva salida{% endif %}{% endblock %}
+
+{% block contenido %}
+<p class="miga">
+  {% if s %}<a href="{{ url_for('panel.pasajeros', salida_id=s.salida_id) }}">← Volver a la salida</a>
+  {% else %}<a href="{{ url_for('panel.salidas') }}">← Salidas</a>{% endif %}
+</p>
+
+<section class="tarjeta tarjeta--formulario">
+  <h1>{% if s %}Editar salida{% else %}Nueva salida{% endif %}</h1>
+  <p class="texto-suave">RN-07: la lancha tiene que estar operativa, el cupo no pasa su capacidad,
+    el capitán necesita licencia y la lancha no puede tener otra salida que se cruce.
+    El retorno se calcula con la duración de la ruta.</p>
+  {% if s %}
+    <p><strong>{{ s.ruta_nombre }}</strong> · {{ s.fecha_hora_zarpe | fecha_hora }} ·
+      {{ s.ocupados }} pasajero(s) con reserva{% if s.ocupados %}: el cupo no puede ser menor y el día no cambia{% endif %}.</p>
+  {% endif %}
+
+  {{ resumen(f, sueltos, "Revisa la salida") }}
+  <form method="post" novalidate>
+    {{ f.csrf_token }}
+    {% if not s %}{{ campo(f.ruta_id) }}{% endif %}
+    <div class="fila-2">{{ campo(f.fecha) }}{{ campo(f.hora) }}</div>
+    {{ campo(f.embarcacion_id) }}
+    <div class="fila-2">{{ campo(f.capitan_id) }}{{ campo(f.guia_id) }}</div>
+    {{ campo(f.cupo) }}
+    {{ f.enviar(class_='boton') }}
+  </form>
+</section>
+{% endblock %}
