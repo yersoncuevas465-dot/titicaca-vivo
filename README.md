@@ -243,3 +243,14 @@ titicaca_vivo/
                   arquitectura.md, matriz-permisos.md, trazabilidad.md, decisiones.md,
                   creditos-imagenes.md, evidencias/
 ```
+
+## APIs externas (v2.2)
+
+| API | Para qué |
+|---|---|
+| RENIEC (graphperu) | Con el DNI se completan nombres y apellidos al reservar |
+| SUNAT (apis.net.pe) | Tipo de cambio del día: precios también en dólares |
+| Open-Meteo | Clima de la bahía de Puno a la hora de cada zarpe |
+| Nager.Date | Feriados del Perú en la lista de salidas |
+
+Solo las llama el servidor. Sin internet la app funciona igual; `APIS_EXTERNAS=0` en `.env` las apaga.
