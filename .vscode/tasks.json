@@ -1,0 +1,46 @@
+{
+  // Terminal > Ejecutar tarea... (Ctrl+Shift+B arranca el servidor).
+  // Todas usan el entorno virtual del proyecto: %USERPROFILE%\.venvs\titicaca_vivo
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Titicaca Vivo: iniciar servidor",
+      "type": "process",
+      "command": "${env:USERPROFILE}\\.venvs\\titicaca_vivo\\Scripts\\python.exe",
+      "args": ["servidor.py", "--abrir"],
+      "options": { "cwd": "${workspaceFolder}" },
+      "isBackground": true,
+      "problemMatcher": [],
+      "group": { "kind": "build", "isDefault": true },
+      "presentation": { "reveal": "always", "panel": "dedicated", "clear": true }
+    },
+    {
+      "label": "Titicaca Vivo: revisar que todo esté listo",
+      "type": "process",
+      "command": "${env:USERPROFILE}\\.venvs\\titicaca_vivo\\Scripts\\python.exe",
+      "args": ["servidor.py", "--revisar"],
+      "options": { "cwd": "${workspaceFolder}" },
+      "problemMatcher": [],
+      "presentation": { "reveal": "always", "panel": "dedicated", "clear": true }
+    },
+    {
+      "label": "Titicaca Vivo: pruebas (pytest)",
+      "type": "process",
+      "command": "${env:USERPROFILE}\\.venvs\\titicaca_vivo\\Scripts\\python.exe",
+      "args": ["-m", "pytest", "-q"],
+      "options": { "cwd": "${workspaceFolder}" },
+      "problemMatcher": [],
+      "group": { "kind": "test", "isDefault": true },
+      "presentation": { "reveal": "always", "panel": "dedicated", "clear": true }
+    },
+    {
+      "label": "Titicaca Vivo: reiniciar la base (borra las reservas de prueba)",
+      "type": "process",
+      "command": "${env:USERPROFILE}\\.venvs\\titicaca_vivo\\Scripts\\python.exe",
+      "args": ["-m", "flask", "bd", "reiniciar"],
+      "options": { "cwd": "${workspaceFolder}" },
+      "problemMatcher": [],
+      "presentation": { "reveal": "always", "panel": "dedicated", "clear": true }
+    }
+  ]
+}

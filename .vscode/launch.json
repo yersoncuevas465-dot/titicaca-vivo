@@ -1,0 +1,27 @@
+{
+  // F5 (o Ctrl+F5): arranca Titicaca Vivo con el entorno virtual del proyecto
+  // (%USERPROFILE%\.venvs\titicaca_vivo, ver INSTRUCCIONES.txt, PASO 2).
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Titicaca Vivo: servidor",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/servidor.py",
+      "args": ["--abrir"],
+      "cwd": "${workspaceFolder}",
+      "python": "${env:USERPROFILE}\\.venvs\\titicaca_vivo\\Scripts\\python.exe",
+      "console": "integratedTerminal"
+    },
+    {
+      "name": "Titicaca Vivo: pruebas (pytest)",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "pytest",
+      "args": ["-q"],
+      "cwd": "${workspaceFolder}",
+      "python": "${env:USERPROFILE}\\.venvs\\titicaca_vivo\\Scripts\\python.exe",
+      "console": "integratedTerminal"
+    }
+  ]
+}

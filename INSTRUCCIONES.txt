@@ -1,0 +1,245 @@
+============================================================
+ TITICACA VIVO - INSTRUCCIONES PASO A PASO (Windows + XAMPP)
+============================================================
+
+QUE NECESITAS:  Python 3.13 (o 3.12)  y  XAMPP (MySQL/MariaDB).
+LA PRIMERA VEZ: unos 10 minutos (pasos 1 a 7).
+CADA DIA:       2 pasos (ver "CADA VEZ QUE LO USES", mas abajo).
+
+Todos los comandos se escriben en PowerShell, DENTRO de la carpeta
+titicaca_vivo (en VS Code: Terminal > Nuevo terminal).
+
+
+PASO 1 - ENCENDER MySQL
+------------------------------------------------------------
+   Abre "XAMPP Control Panel" y pulsa Start en MySQL.
+   Espera a que MySQL se ponga en verde.
+   (phpMyAdmin es opcional: para usarlo, pulsa Start tambien en Apache.)
+
+
+PASO 2 - ENTORNO VIRTUAL Y DEPENDENCIAS (una sola vez por PC)
+------------------------------------------------------------
+   El entorno va FUERA de OneDrive (tiene miles de archivos):
+
+       py -3.13 -m venv $env:USERPROFILE\.venvs\titicaca_vivo
+       & $env:USERPROFILE\.venvs\titicaca_vivo\Scripts\Activate.ps1
+       pip install -r requirements.txt
+
+   Si sale "la ejecucion de scripts esta deshabilitada", ejecuta una vez:
+       Set-ExecutionPolicy -Scope CurrentUser RemoteSigned
+   y vuelve a activar el entorno.
+
+   El entorno esta ACTIVADO cuando la linea empieza con (titicaca_vivo).
+   Cada terminal nueva se activa otra vez con la segunda linea de arriba.
+
+
+PASO 3 - ARCHIVO .env (se crea solo)
+------------------------------------------------------------
+   El .env guarda la configuracion y los secretos de ESTA PC. Nunca se
+   comparte ni va en el ZIP de entrega.
+   - Si no existe, el PASO 4 lo crea a partir de .env.example y le pone
+     una SECRET_KEY y una contrasena para MySQL generadas al azar.
+   - Solo hay que editarlo (notepad .env) si tu MySQL esta en otro
+     puerto u otra PC (BD_HOST, BD_PUERTO) o para los datos de cobro
+     (YAPE_NUMERO, PLIN_NUMERO, TITULAR_COBRO).
+
+
+PASO 4 - CREAR LAS BASES Y EL USUARIO DE MySQL (una sola vez por PC)
+------------------------------------------------------------
+   Con MySQL encendido y el entorno activado:
+
+       python scripts/crear_bd.py
+
+   Crea las bases titicaca_vivo (la de trabajo) y titicaca_vivo_pruebas
+   (solo para pytest) y el usuario titicaca_app, con la contrasena de
+   BD_CONTRASENA del .env. Se puede ejecutar mas de una vez.
+   - Si el root de tu MySQL tiene contrasena (XAMPP no tiene):
+       python scripts/crear_bd.py --pedir-clave-root
+   - NO escribas la contrasena en database/00_crear_bd_usuario.sql:
+     ese archivo va en el ZIP de entrega.
+
+
+PASO 5 - CREAR LAS TABLAS Y CARGAR LOS DATOS DE PRUEBA
+------------------------------------------------------------
+       flask bd reiniciar --si
+
+   Borra la base titicaca_vivo y la crea de nuevo: 20 tablas, 2 vistas,
+   4 triggers, 1 procedimiento y 269 filas de prueba, con las salidas
+   puestas en la fecha de HOY. (Borra las reservas que hayas hecho.)
+
+       flask bd contar          muestra las filas de cada tabla
+
+
+PASO 6 - ARRANCAR
+------------------------------------------------------------
+   Cualquiera de estas tres formas:
+
+   a) Doble clic en INICIAR.bat   (la mas facil: abre el navegador solo)
+   b) python servidor.py           (con el entorno activado)
+   c) En VS Code: F5               (o Terminal > Ejecutar tarea de compilacion)
+
+   Antes de abrir el puerto, servidor.py revisa todo y lo muestra asi:
+
+       [ok] Python 3.13.x
+       [ok] Dependencias instaladas (Flask 3.1.3, PyMySQL 1.2.3, waitress 3.0.2)
+       [ok] Archivo .env con SECRET_KEY (entorno desarrollo)
+       [ok] MySQL responde en 127.0.0.1:3306 (MariaDB 10.4.32)
+       [ok] Base titicaca_vivo: 20 tablas, 2 vistas, 4 triggers y 1 procedimiento
+       [ok] Datos: 269 filas - 3 salida(s) hoy - 9 de hoy en adelante
+       [ok] Puerto 8080 libre
+
+   Si una linea sale con [X], abajo dice exactamente que hacer y el
+   servidor NO arranca. Con [!] arranca, pero avisa algo (por ejemplo,
+   que la base se cargo otro dia y conviene el PASO 5 antes de presentar).
+
+   Solo revisar, sin arrancar:   python servidor.py --revisar
+
+
+PASO 7 - ENTRAR
+------------------------------------------------------------
+   Pagina del turista:   http://127.0.0.1:8080
+   Panel del personal:   http://127.0.0.1:8080/entrar
+
+       admin       Admin-Titicaca26
+       operador    Operador-Titicaca26
+       (los 6 usuarios y las reservas de prueba: USUARIOS_DEMO.txt)
+
+   Estado rapido de la app y la base:  http://127.0.0.1:8080/salud
+   Tambien se entra con el CORREO de la cuenta en vez del usuario.
+   La sesion se cierra sola tras 30 minutos sin actividad (aviso 2 min antes).
+
+
+RECUPERAR UNA CONTRASENA OLVIDADA
+------------------------------------------------------------
+   1. En /entrar: "Olvidaste tu contrasena?" -> usuario o correo ->
+      "Enviarme el codigo".
+   2. Sin correo de verdad (CORREO_SIMULAR=1 en el .env, como viene):
+      el codigo de 6 digitos aparece en la VENTANA DEL SERVIDOR
+      (la de INICIAR.bat o la terminal de VS Code), en el bloque
+      [CORREO SIMULADO]. Vence en 15 minutos y sirve una sola vez.
+   3. Escribir el codigo y la contrasena nueva dos veces.
+      La contrasena nueva: 10 caracteres o mas, letras y numeros,
+      sin espacios y sin el nombre de usuario.
+
+   Si la cuenta NO tiene correo: el admin le pone una contrasena nueva
+   en Usuarios -> Editar. Si el que la olvido es el admin:
+       flask usuarios listar          (quien tiene correo)
+       flask usuarios clave admin     (pide la nueva sin mostrarla)
+
+   Para enviar el codigo de verdad con Gmail (opcional):
+   1. En la cuenta de Google: Verificacion en 2 pasos -> Contrasenas de
+      aplicacion -> crear una (16 letras).
+   2. En el .env:  CORREO_SIMULAR=0, SMTP_USUARIO=tu.correo@gmail.com,
+      SMTP_CONTRASENA=las 16 letras (los demas SMTP_ ya vienen bien).
+   3. Probar:  flask correo probar tu.correo@gmail.com
+   4. En Mi cuenta (o en Usuarios) pon tu correo real en la cuenta.
+
+
+RESPALDOS DE LA BASE (no perder nada)
+------------------------------------------------------------
+   Panel del admin -> "Respaldos":
+     - "Crear respaldo ahora": guarda TODA la base en la carpeta
+       respaldos\ (un archivo .sql). Tambien se descarga desde ahi.
+     - Con el servidor encendido se crea uno AUTOMATICO cada 24 horas.
+       Se guardan los 15 mas nuevos.
+     - "Reporte general (Excel)": reservas, pagos, salidas y hospedajes.
+   Desde la terminal (con el entorno activado):
+       flask bd respaldar                        (uno ahora)
+       flask bd restaurar NOMBRE_DEL_ARCHIVO.sql (BORRA la base y deja
+                                                  la del respaldo; antes
+                                                  guarda uno por si acaso)
+   "flask bd reiniciar --si" tambien guarda un respaldo antes de borrar.
+   Copia la carpeta respaldos\ a un USB de vez en cuando. No la compartas:
+   lleva datos de los turistas (por eso no va en el ZIP de entrega).
+
+
+PARA DETENERLO
+------------------------------------------------------------
+   Ctrl + C en la ventana del servidor (o cerrar esa ventana).
+   MySQL se apaga en XAMPP: Stop en MySQL. Siempre Stop ANTES de cerrar
+   XAMPP o apagar la PC: si MySQL se corta de golpe puede danarse y no
+   volver a arrancar (le paso al equipo el 29/10/2026).
+
+
+CADA VEZ QUE LO USES (despues de la primera vez)
+------------------------------------------------------------
+   1. XAMPP: Start en MySQL.
+   2. Doble clic en INICIAR.bat.
+
+
+ANTES DE GRABAR EL VIDEO O DE PRESENTAR
+------------------------------------------------------------
+   1. XAMPP: Start en MySQL (y en Apache, para phpMyAdmin).
+   2. Con el entorno activado:   flask bd reiniciar --si
+      (las salidas de prueba quedan en la fecha de HOY)
+   3. Doble clic en INICIAR.bat y revisa que todo salga [ok].
+   El guion completo, paso a paso y por integrante: GUION_VIDEO.md
+
+
+PRUEBAS AUTOMATICAS
+------------------------------------------------------------
+       pytest                       todas (628, cerca de 2 minutos y medio)
+       pytest -v tests/test_concurrencia.py      8 personas por 1 lugar
+       pytest -v -s tests/test_mutante.py        sin FOR UPDATE hay sobreventa
+       pytest -v tests/test_trazabilidad.py      la matriz se verifica sola
+       ruff check .                 estilo y seguridad del codigo
+
+   Usan SOLO la base titicaca_vivo_pruebas (la borran y la crean al
+   empezar): nunca tocan la base de la demo. Si MySQL esta apagado,
+   pytest se detiene con UN mensaje que dice que hacer.
+
+
+DESDE UN CELULAR (para leer el QR del boleto)
+------------------------------------------------------------
+   1. La PC y el celular en la misma red Wi-Fi.
+   2. INICIAR.bat --host 0.0.0.0   (o python servidor.py --host 0.0.0.0)
+      La ventana muestra la direccion para el celular, por ejemplo
+      http://192.168.1.20:8080
+   3. En el .env:  URL_PUBLICA=http://192.168.1.20:8080   (la de arriba)
+      y reinicia el servidor: asi el QR del boleto abre esa direccion.
+   4. En el celular, entra al panel (operador, guia o capitan) y luego
+      lee el QR con la camara: abre el abordaje de esa reserva.
+   Si Windows pregunta por el firewall, permite "Redes privadas".
+
+
+PROBLEMAS COMUNES
+------------------------------------------------------------
+   [X] MySQL no responde
+       XAMPP > Start en MySQL. Si XAMPP dice "Port 3306 in use", hay
+       otro MySQL abierto: buscalo con  netstat -ano | findstr :3306
+       y detenlo (services.msc), o reinicia la PC.
+   [X] MySQL no acepto al usuario 'titicaca_app'
+       La contrasena del .env no es la del usuario:  python scripts/crear_bd.py
+       (le pone la del .env).
+   [X] La base no existe / esta vacia o incompleta
+       python scripts/crear_bd.py   y luego   flask bd reiniciar --si
+   [X] Faltan dependencias en este Python
+       No activaste el entorno: usa INICIAR.bat, o activalo (PASO 2).
+   [X] El puerto 8080 ya esta en uso
+       Ya hay un servidor abierto en otra ventana: cierralo con Ctrl + C,
+       o usa otro puerto:  python servidor.py --puerto 8081
+   "flask" no se reconoce como comando
+       El entorno no esta activado (PASO 2).
+   "Demasiados intentos" al entrar
+       5 claves mal en 15 minutos desde esa PC. Espera o reinicia el servidor.
+   El abordaje dice "abre 60 minutos antes del zarpe"
+       Es la regla RN-12. Para la demo, el guion crea una salida que zarpa
+       dentro de 30 minutos (GUION_VIDEO.md).
+   La pagina dice "No hay conexion con la base de datos"
+       MySQL se apago mientras la app estaba abierta: Start en MySQL y
+       recarga la pagina.
+   La tabla completa de problemas (MySQL 8, otra PC, HTTPS...) esta en el
+   README.md, seccion "Problemas comunes".
+
+
+DONDE ESTA CADA COSA
+------------------------------------------------------------
+   INICIAR.bat           doble clic para arrancar
+   INSTRUCCIONES.txt     este archivo
+   USUARIOS_DEMO.txt     usuarios, claves, reservas de prueba y flujo completo
+   COMO_FUNCIONA.txt     el programa explicado en una pagina
+   GUION_VIDEO.md        el video: que muestra y que dice cada integrante
+   README.md             todo el detalle tecnico
+   docs/                 base de datos, consultas explicadas, trazabilidad,
+                         marca, decisiones y evidencias de cada fase
+============================================================

@@ -1,0 +1,18 @@
+.env
+.venv/
+venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+logs/*.log
+respaldos/
+logs/
+# Configuración local del asistente (rutas de esta PC)
+.claude/
+# Guiones del video del equipo: son para grabar la exposición, no parte del programa
+DIALOGO_VIDEO.txt
+GUION_VIDEO.md
+DEMO_BASE_DE_DATOS.txt

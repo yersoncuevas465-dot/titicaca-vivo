@@ -1,0 +1,24 @@
+[project]
+name = "titicaca_vivo"
+version = "2.2.0"
+description = "Plataforma de turismo lacustre y vivencial de Puno (Flask + MariaDB)"
+requires-python = ">=3.12"
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "UP", "S"]
+ignore = ["S101"]  # assert es normal dentro de las pruebas
+
+[tool.ruff.lint.per-file-ignores]
+# En las pruebas cada caso es una sentencia SQL completa en una línea (se lee mejor así),
+# y el SQL se arma con constantes del propio archivo, nunca con datos de un usuario.
+"tests/*" = ["E501", "S608", "S105", "S106"]
+# El diccionario de inglés tiene frases largas: partirlas lo haría más difícil de revisar.
+"app/servicios/textos_en.py" = ["E501"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-ra"
