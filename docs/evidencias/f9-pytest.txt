@@ -1,0 +1,73 @@
+F9 · Pruebas de la mejora de cuenta, seguridad, marca y respaldos · 2026-10-30 06:46 · Python 3.13.17 · MariaDB 10.4.32 (XAMPP)
+
+$ ruff check .
+All checks passed!
+
+$ pytest -q
+........................................................................ [ 11%]
+........................................................................ [ 22%]
+........................................................................ [ 34%]
+........................................................................ [ 45%]
+........................................................................ [ 57%]
+....................................
+  es /                                  79.8 KB
+  es /salidas                           69.0 KB
+  es /salidas/10                        68.6 KB
+  es /comunidades                       71.8 KB
+  es /comunidades/amantani              66.3 KB
+  es /alertas                           64.9 KB
+  es /mi-reserva                        63.9 KB
+  es /salidas/10/reservar               67.2 KB
+.
+  en /                                  79.7 KB
+  en /salidas                           69.0 KB
+  en /salidas/10                        68.6 KB
+  en /comunidades                       71.7 KB
+  en /comunidades/amantani              66.2 KB
+  en /alertas                           64.9 KB
+  en /mi-reserva                        63.9 KB
+  en /salidas/10/reservar               67.2 KB
+.
+  operador /panel                                          69.3 KB
+  operador /panel/salidas                                  72.5 KB
+  operador /panel/salidas/8/pasajeros                      75.9 KB
+  operador /panel/pagos                                    69.7 KB
+  operador /panel/abordaje/TV-WWUQ                         72.1 KB
+  operador /panel/alertas                                  69.5 KB
+  operador /panel/alertas/1                                69.3 KB
+  operador /panel/hospedajes                               69.8 KB
+  operador /panel/hospedajes/transparencia                 72.3 KB
+  operador /panel/resenas                                  68.5 KB
+  operador /panel/indicadores?dias=365                     75.2 KB
+  operador /panel/catalogos/familias                       68.7 KB
+  operador /panel/catalogos/rutas/3/paradas                68.6 KB
+  operador /panel/salidas/8/pasajeros?formato=whatsapp     71.7 KB
+  operador /panel/mi-cuenta                                73.2 KB
+.
+  admin    /panel/bitacora                                 83.4 KB
+  admin    /panel/usuarios                                 75.7 KB
+  admin    /panel/usuarios/nuevo                           68.6 KB
+  admin    /panel/respaldos                                68.5 KB
+................................. [ 68%]
+........................................................................ [ 80%]
+........................................................................ [ 91%]
+....................................................                     [100%]
+============================== warnings summary ===============================
+tests/test_accesibilidad.py: 26 warnings
+tests/test_rendimiento.py: 7 warnings
+tests/test_rutas_f6.py: 28 warnings
+tests/test_rutas_panel_operacion.py: 6 warnings
+tests/test_rutas_reservas.py: 92 warnings
+
+tests/test_accesibilidad.py: 5 warnings
+tests/test_rendimiento.py: 3 warnings
+tests/test_rutas_f6.py: 6 warnings
+tests/test_rutas_panel_operacion.py: 5 warnings
+tests/test_rutas_reservas.py: 39 warnings
+
+tests/test_accesibilidad.py::test_paginas_del_panel[operador]
+tests/test_rutas_panel_operacion.py::test_matriz_de_permisos[/panel/catalogos/familias/1]
+tests/test_rutas_panel_operacion.py::test_matriz_de_permisos[/panel/catalogos/familias/1]
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+628 passed, 220 warnings in 129.75s (0:02:09)

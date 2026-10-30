@@ -1,0 +1,96 @@
+TITICACA VIVO - COMO FUNCIONA (en 1 pagina)
+==========================================================
+
+QUE ES
+  Una pagina web para la agencia Giant Trip (Puno): el turista ve las salidas en
+  lancha por el lago Titicaca, reserva su lugar sin que se vendan mas lugares de
+  los que hay, paga con Yape/Plin o en el muelle, y sube a la lancha con un QR.
+  El personal de la agencia lo maneja todo desde un panel.
+
+QUIEN LA USA
+  - Turista: NO tiene cuenta. Reserva y vuelve a su reserva con su codigo.
+  - Personal (tiene cuenta, la crea el admin): admin, operador, guia y capitan.
+    Usuarios y claves de prueba: ver USUARIOS_DEMO.txt
+
+
+1. COMO RESERVA EL TURISTA (el "pedido")
+----------------------------------------------------------
+  1) Entra a "Salidas", elige el dia y la ruta, y pulsa "Reservar".
+  2) Escribe los datos de cada pasajero y como va a pagar
+     (Yape, Plin o en el muelle). Pulsa "Confirmar reserva".
+  3) La pagina le muestra su CODIGO (TV-XXXX) y su BOLETO con QR.
+
+  El codigo NO se pide a nadie: se genera solo al confirmar la reserva.
+  Tambien esta en el boleto (se puede descargar en PDF).
+
+  Despues, en "Mi reserva", escribe su codigo y su documento para:
+    - ver la reserva y descargar el boleto;
+    - reportar el pago de Yape/Plin (numero de operacion);
+    - reprogramar o pedir la devolucion si una alerta suspende la salida;
+    - dejar una resena despues del viaje.
+
+  Si paga con Yape/Plin y no reporta el pago, el lugar se guarda 2 horas.
+  Si paga en el muelle, la reserva queda confirmada al momento.
+
+
+2. COMO TRABAJA EL PERSONAL (panel, boton "Entrar")
+----------------------------------------------------------
+  Operador: crea las salidas (lancha, capitan, guia, cupo), verifica los pagos,
+            registra las alertas del lago (SENAMHI o Capitania) y suspende las
+            salidas afectadas, asigna las familias anfitrionas y modera resenas.
+  Guia y capitan: ven SOLO sus salidas, la lista de pasajeros y leen el QR del
+            boleto con la camara del celular para registrar quien subio.
+            El capitan marca el zarpe.
+  Admin:    usuarios y roles, bitacora (quien hizo que), catalogos e indicadores,
+            y los RESPALDOS de la base (uno automatico cada 24 horas).
+
+  Todos:    "Mi cuenta" en el menu: sus datos, lo que HACE y NO HACE su rol,
+            cambiar su contrasena, su correo y celular, y sus ultimos ingresos.
+            Se entra con el usuario o con el correo. Si olvidan la contrasena:
+            "Olvidaste tu contrasena?" -> un codigo de 6 digitos al correo
+            (sin internet, sale en la ventana del servidor). La sesion se
+            cierra sola tras 30 minutos sin actividad.
+
+
+3. REGLAS QUE CUIDA EL SISTEMA (las que el docente puede preguntar)
+----------------------------------------------------------
+  - Nunca se vende mas de lo que hay: la salida se bloquea (FOR UPDATE)
+    mientras se cuenta y se guarda la reserva.
+  - Doble clic o recargar no duplica la reserva (token unico).
+  - Precio = tarifa vigente x recargo de temporada, y queda guardado.
+  - La familia anfitriona se elige por turnos (rotacion justa).
+  - El abordaje solo se registra de 60 min antes a 15 min despues del zarpe.
+  - Todo va en hora de Lima. Las contrasenas se guardan con bcrypt.
+
+
+4. COMO ESTA HECHO
+----------------------------------------------------------
+  Navegador -> waitress -> rutas (app/rutas) -> modelos con el SQL a mano
+  (app/modelos) -> base MariaDB "titicaca_vivo" -> plantillas (app/plantillas).
+  Python 3.13 + Flask 3.1 + MariaDB (XAMPP). Sin ORM y sin nada de internet (CDN).
+
+  Carpetas:
+    app/          la aplicacion (rutas, modelos, plantillas, estilos)
+    database/     los scripts SQL: 00 usuario, 01 tablas, 02 vistas y
+                  triggers, 03 datos de prueba, 99 consultas de prueba
+    tests/        628 pruebas automaticas (pytest)
+    docs/         la documentacion (empiecen por consultas-explicadas.md)
+    scripts/      ayudas (EXPLAIN, ZIP de entrega, fotos, claves)
+
+
+5. COMO ARRANCARLA
+----------------------------------------------------------
+  1) XAMPP: Start en MySQL.
+  2) Activar el entorno virtual (ver README, paso 4).
+  3) flask bd reiniciar --si        deja la base como nueva, con fechas de HOY
+  4) python servidor.py             y abrir http://127.0.0.1:8080
+  5) (opcional) pytest              628 pruebas, cerca de 2 minutos y medio
+
+
+6. DONDE ESTA CADA COSA PARA EXPLICARLA
+----------------------------------------------------------
+  README.md                       instalacion paso a paso y problemas comunes
+  docs/consultas-explicadas.md    20 consultas SQL explicadas linea por linea
+  docs/desafio-niveles.md         Bronce, Plata, Oro y Platino con su evidencia
+  docs/decisiones.md              por que se hizo cada cosa, propuestas y pendientes
+  docs/fase-8-entrega.md          lo ultimo: otro servidor, HTTPS, el ZIP

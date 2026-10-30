@@ -1,0 +1,24 @@
+============================= test session starts =============================
+platform win32 -- Python 3.11.0, pytest-9.1.1, pluggy-1.7.0 -- C:\Users\Usuario.DESKTOP-C0QT2SA\.venvs\titicaca_vivo\Scripts\python.exe
+rootdir: C:\Users\Usuario.DESKTOP-C0QT2SA\OneDrive\Documentos\TURISMO PROGRAMA\titicaca_vivo
+configfile: pyproject.toml
+plugins: cov-7.1.0
+collecting ... collected 9 items
+
+tests/test_mutante.py::test_con_for_update_y_sin_trigger_no_hay_sobreventa 
+  reserva_con_pausa: 1 reserva(s) creadas, 1 ocupado(s) de 1 lugar, 2.5 s · ['SinCupo', 'SinCupo', 'SinCupo', 'SinCupo', 'SinCupo', 'ok', 'SinCupo', 'SinCupo']
+PASSED
+tests/test_mutante.py::test_el_mutante_sin_for_update_vende_de_mas 
+  reserva_mutante: 8 reserva(s) creadas, 8 ocupado(s) de 1 lugar, 0.4 s · ['ok', 'ok', 'ok', 'ok', 'ok', 'ok', 'ok', 'ok']
+PASSED
+tests/test_mutante.py::test_el_trigger_frena_al_mutante 
+  reserva_mutante: 1 reserva(s) creadas, 1 ocupado(s) de 1 lugar, 0.4 s · ['ErrorNegocio', 'ErrorNegocio', 'ErrorNegocio', 'ok', 'ErrorNegocio', 'ErrorNegocio', 'ErrorNegocio', 'SinCupo']
+PASSED
+tests/test_mutante.py::test_el_trigger_quedo_restaurado PASSED
+tests/test_concurrencia.py::test_ocho_hilos_por_el_ultimo_lugar_crean_una_sola_reserva PASSED
+tests/test_concurrencia.py::test_tres_envios_del_mismo_formulario_crean_una_sola_reserva PASSED
+tests/test_concurrencia.py::test_dos_operadores_verifican_el_mismo_pago_a_la_vez PASSED
+tests/test_concurrencia.py::test_dos_reprogramaciones_por_el_ultimo_lugar PASSED
+tests/test_concurrencia.py::test_dos_guias_leen_el_mismo_qr_a_la_vez PASSED
+
+============================== 9 passed in 5.11s ==============================

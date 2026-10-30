@@ -1,0 +1,126 @@
+TITICACA VIVO - USUARIOS DE PRUEBA
+(personas ficticias de la semilla, no son personas reales)
+==========================================================
+
+Donde entrar:  http://127.0.0.1:8080/entrar   (boton "Entrar", arriba a la derecha)
+
+Base de datos que usa la app:  titicaca_vivo
+  - titicaca_vivo_pruebas es SOLO para pytest: se borra y se crea de nuevo
+    en cada corrida de pruebas. No la usen para la demo.
+
+
+PERSONAL DE LA AGENCIA (tienen cuenta)
+----------------------------------------------------------
+Usuario           Contrasena            Rol
+admin             Admin-Titicaca26      admin
+operador          Operador-Titicaca26   operador
+guia.elena        Guia-Titicaca26       guia      (comunidad Amantani)
+guia.marco        Guia-Titicaca26       guia      (comunidad Llachon)
+capitan.teodoro   Capitan-Titicaca26    capitan   (licencia LIC-PUN-00123)
+capitan.fermin    Capitan-Titicaca26    capitan   (licencia LIC-PUN-00456)
+
+Que hace cada uno (al entrar, "Tu trabajo de hoy" lo dice con sus botones):
+  admin     Usuarios y roles, bitacora, catalogos e indicadores.
+            Ve toda la operacion, pero no la ejecuta.
+  operador  El dia a dia: salidas, pagos, cobro en el muelle, abordaje,
+            alertas, hospedajes, resenas, catalogos e indicadores.
+  guia      Solo SUS salidas: lista de pasajeros y abordaje con QR.
+  capitan   Solo SUS salidas: pasajeros, manifiesto, abordaje y zarpe.
+
+Cada pantalla del panel tiene "Como funciona esta pagina?" con los pasos.
+
+
+TURISTA (NO tiene cuenta)
+----------------------------------------------------------
+Reserva sin cuenta desde "Salidas". Para volver a ver su reserva entra a
+"Mi reserva" con el CODIGO y el DOCUMENTO del titular:
+
+  Codigo    Documento              Para mostrar
+  TV-33VR   DNI 40998812           reserva pagada (Uros, Amantani y Taquile)
+  TV-8N4P   DNI 42233445           reserva confirmada (Uros y Luquina Chico)
+  TV-D7H7   PASAPORTE 548812345    reserva confirmada (Llachon, con noche)
+  TV-RQCP   DNI 47001234           pago con Yape reportado: el operador lo
+                                   verifica en el panel -> Pagos
+  TV-GPJN   PASAPORTE TZ1234567    su salida esta SUSPENDIDA por una alerta:
+                                   puede reprogramar o pedir la devolucion
+
+
+PARA PROBAR EL FLUJO COMPLETO (ensayado el 29/10/2026)
+----------------------------------------------------------
+Antes: XAMPP Start en MySQL, "flask bd reiniciar --si" y doble clic en
+INICIAR.bat. Usen DOS ventanas del navegador: una normal (el turista) y
+otra de incognito, Ctrl+Shift+N (el personal). Asi el turista no pierde
+el acceso a su reserva cuando el operador inicia sesion.
+
+ 1. RESERVAR CON YAPE (turista)
+    Salidas -> manana -> "Uros y Taquile" 07:00 -> Reservar.
+    Titular: Rosa Elena Quispe Mamani, DNI 71234567, pais PE,
+    celular 900000301, Adulto nacional. Acompanante: Diego Quispe
+    Mamani, DNI 71234568, PE, Estudiante. Pago: Yape -> Confirmar reserva.
+    -> Sale el codigo TV-XXXX, "Pendiente de pago" y S/ 140.00.
+       El lugar se guarda 2 horas (RN-05).
+    Prueba extra: doble clic en "Confirmar reserva" -> se crea UNA sola.
+
+ 2. REPORTAR EL PAGO (turista)
+    En la reserva: "Reportar mi pago" -> Yape, 140.00, operacion 11223344.
+    -> "Recibimos tu reporte": el lugar queda guardado hasta 60 min
+       antes del zarpe.
+
+ 3. VERIFICAR EL PAGO (operador, ventana de incognito)
+    Entrar como operador -> Pagos -> en la tarjeta de su codigo: Verificar.
+    -> "La reserva TV-XXXX quedo PAGADA". En la ventana del turista:
+       "Ver mi boleto con QR" (pase de abordar; tambien en PDF).
+
+ 4. ALERTA DEL LAGO EN UN SOLO PASO (operador)
+    Alertas -> Registrar alerta: "Vientos fuertes en todo el lago",
+    Oleaje, Rojo, Capitania de Puerto, Todo el lago, desde manana 06:00
+    hasta manana 18:00 -> Guardar alerta.
+    -> Lista las salidas afectadas -> "Suspender las 2 salida(s) en un
+       solo paso" (una sola transaccion: todas o ninguna).
+
+ 5. REPROGRAMAR (turista)
+    Mi reserva -> TV-GPJN + TZ1234567 -> "Reprogramar o pedir la
+    devolucion" -> elegir la salida del dia siguiente -> "Pasar mi
+    reserva a esta salida".
+    -> Mismo codigo, mismos pagos, mismo precio; nueva noche y familia.
+    (La reserva del paso 1 tambien quedo suspendida: puede pedir la
+     devolucion y el operador la ve en Pagos -> Devoluciones por atender.)
+
+ 6. EMBARCAR CON QR (operador)
+    El abordaje solo abre de 60 min antes a 15 min despues del zarpe
+    (RN-12). Para la demo, crear una salida que zarpe dentro de 30 min:
+    Salidas -> Nueva salida: Islas flotantes de los Uros, HOY, hora =
+    ahora + 30 min, lancha Mama Qota (es la que esta libre todo el dia),
+    capitan Teodoro, guia Elena, cupo 10 -> Guardar salida.
+    Turista: reservar esa salida pagando "En el muelle" (Lucia Condori
+    Apaza, DNI 72345678) -> queda "Confirmada (pagas en el muelle)".
+    Operador: Abordaje -> escribir el codigo (o leer el QR con el celular)
+    -> "Falta pagar S/ 30.00" -> Cobrar en el muelle: Efectivo, 30.00 ->
+    Registrar cobro -> Confirmar abordaje.
+    -> "Ya subio todo el grupo: la reserva quedo abordada".
+
+ 7. ZARPE (operador o capitan)
+    Salidas -> Pasajeros de esa salida -> Marcar zarpe.
+    -> "Zarpe registrado"; quien no subio queda como "no se presento".
+    Ahi mismo: Manifiesto (PDF), Lista para imprimir, Lista para WhatsApp.
+
+ 8. CONTROL (admin)
+    Entrar como admin -> Bitacora: aparece todo lo anterior (quien, que,
+    cuando y desde que IP). Indicadores -> 365 dias.
+
+ 9. EN INGLES (turista)
+    Arriba a la derecha "English": la portada, una salida y el formulario
+    de reserva quedan en ingles. Un DNI de 3 digitos muestra
+    "A DNI has 8 digits.". Volver con "Espanol".
+
+
+ANTES DE PRESENTAR
+----------------------------------------------------------
+1. XAMPP: Start en MySQL (y Apache, si van a mostrar phpMyAdmin).
+2. flask bd reiniciar --si
+   Deja la base como nueva, con las fechas de HOY (20 tablas, 269 filas).
+   Ojo: borra las reservas que hayan hecho de prueba.
+3. Doble clic en INICIAR.bat: todo debe salir [ok].
+
+El paso a paso de la instalacion esta en INSTRUCCIONES.txt y el guion
+del video en GUION_VIDEO.md.

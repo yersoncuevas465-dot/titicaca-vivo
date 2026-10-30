@@ -1,0 +1,42 @@
+HTTPS detrás de un proxy, sin cambiar código · 20/10/2026
+
+waitress no habla HTTPS. En producción un proxy (Caddy, nginx o IIS) atiende https:// en el puerto
+443 y le pasa cada petición a waitress por http://127.0.0.1:8080, con dos cabeceras:
+  X-Forwarded-For   = IP del turista        X-Forwarded-Proto = https
+Aquí un script de un solo uso (no queda en el proyecto) hace de proxy: manda esas cabeceras desde 127.0.0.1.
+IP de documentación (RFC 5737), no son de nadie. No escribe en la base (los intentos fallidos
+solo cuentan para el límite de /entrar: 5 cada 15 minutos por IP, sección 11).
+Cada escenario arranca un waitress nuevo (el contador del límite vive en la memoria del proceso).
+
+== A · Proxy delante, waitress SIN configurar (como `python servidor.py`)
+   waitress-serve --listen=127.0.0.1:8091 --threads=4  --call app:crear_app
+   5 intentos fallidos del turista A (203.0.113.10): [401, 401, 401, 401, 401]
+   6.º intento del turista A: 429
+   1.er intento del turista B (203.0.113.20), que no hizo nada: 429
+
+== B · Proxy delante y waitress confiando SOLO en el proxy (127.0.0.1), ENTORNO=produccion
+   waitress-serve --listen=127.0.0.1:8092 --threads=4 --trusted-proxy=127.0.0.1 --trusted-proxy-count=1 --trusted-proxy-headers=x-forwarded-for x-forwarded-proto --clear-untrusted-proxy-headers --call app:crear_app
+   5 intentos fallidos del turista A (203.0.113.10): [401, 401, 401, 401, 401]
+   6.º intento del turista A: 429
+   1.er intento del turista B (203.0.113.20), que no hizo nada: 401
+   cookie de sesión: titicaca_sesion=… Secure; HttpOnly; Path=/; SameSite=Lax
+   POST sin Referer por https (turista C): 400 (Flask-WTF exige que el formulario venga del mismo sitio)
+
+== C · Alguien se conecta directo e inventa X-Forwarded-For (el proxy de confianza es otro)
+   waitress-serve --listen=127.0.0.1:8093 --threads=4 --trusted-proxy=10.9.9.9 --trusted-proxy-count=1 --trusted-proxy-headers=x-forwarded-for x-forwarded-proto --clear-untrusted-proxy-headers --call app:crear_app
+   5 intentos fallidos del turista A (203.0.113.10): [401, 401, 401, 401, 401]
+   6.º intento del turista A: 429
+   1.er intento del turista B (203.0.113.20), que no hizo nada: 429
+
+Códigos: 401 = usuario o contraseña incorrectos · 429 = demasiados intentos · 400 = formulario rechazado
+
+Qué muestra
+  A: si waitress no sabe que hay un proxy, TODOS los turistas parecen 127.0.0.1. Los 5 errores del
+     turista A bloquean a B, que no hizo nada: el límite se vuelve uno solo para el mundo entero
+     (y la bitácora guardaría 127.0.0.1 en cada inicio de sesión).
+  B: waitress confía en X-Forwarded-For y X-Forwarded-Proto SOLO si vienen del proxy (127.0.0.1).
+     Cada turista tiene su propio límite. La app sabe que la petición llegó por https: la cookie va
+     con Secure + HttpOnly + SameSite=Lax (ENTORNO=produccion) y Flask-WTF exige que el formulario
+     venga del mismo sitio (Referer); el navegador lo manda solo (Referrer-Policy: same-origin).
+  C: quien se conecta directo (sin pasar por el proxy) no puede inventar su IP con X-Forwarded-For:
+     waitress borra esas cabeceras (--clear-untrusted-proxy-headers) y el límite sigue funcionando.

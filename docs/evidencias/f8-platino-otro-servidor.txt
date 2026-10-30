@@ -1,0 +1,78 @@
+Platino: la misma app contra un SEGUNDO servidor MariaDB (puerto 3307, datos y usuarios propios)
+Fecha: 2026-10-20 21:18
+
+$ (1) cambiar SOLO el .env
+líneas del .env cambiadas: ['BD_PUERTO', 'BD_CONTRASENA'] · el resto del .env queda igual
+huella original: 0f091e384f5acc4b · huella nueva: 174ab2ce6ce4e197
+
+$ flask bd reiniciar --si
+  01_esquema.sql            27 sentencias
+  02_vistas_triggers.sql    15 sentencias
+  03_datos.sql              32 sentencias
+Base 'titicaca_vivo' en 127.0.0.1:3307 lista en 0.8 s.
+  rol                     4
+  usuario                 6
+  comunidad               6
+  familia_anfitriona     10
+  embarcacion             5
+  ruta                    5
+  ruta_parada            10
+  temporada               6
+  tipo_pasajero           5
+  tarifa                 35
+  salida                 14
+  turista                20
+  reserva                23
+  reserva_pasajero       58
+  pago                   14
+  hospedaje               9
+  abordaje               14
+  alerta_lago             6
+  resena                  6
+  bitacora               13
+  20 tablas, 269 filas en total.
+
+$ flask bd contar
+  rol                     4
+  usuario                 6
+  comunidad               6
+  familia_anfitriona     10
+  embarcacion             5
+  ruta                    5
+  ruta_parada            10
+  temporada               6
+  tipo_pasajero           5
+  tarifa                 35
+  salida                 14
+  turista                20
+  reserva                23
+  reserva_pasajero       58
+  pago                   14
+  hospedaje               9
+  abordaje               14
+  alerta_lago             6
+  resena                  6
+  bitacora               13
+  20 tablas, 269 filas en total.
+
+$ (2) ¿a qué servidor se conecta la app?
+  host     BLUMME-C7
+  puerto   3307
+  version  10.4.32-MariaDB
+  datos    …8-68b347970e67\scratchpad\platino\datos\
+  base     titicaca_vivo
+  usuario  titicaca_app@localhost
+  /salud   {'hora': '2026-10-20T21:19:02-05:00', 'ok': True}
+
+$ (3) pytest -q   (las pruebas usan titicaca_vivo_pruebas del MISMO servidor del .env: el 3307)
+........................................................................ [ 75%]
+........................................................................ [ 90%]
+...............................................                          [100%]
+479 passed in 86.16s (0:01:26)
+
+$ (4) volver al .env original (XAMPP, puerto 3306)
+restaurado; huella: 0f091e384f5acc4b igual a la original: True
+  puerto   3306
+  /salud   {'hora': '2026-10-20T21:20:45-05:00', 'ok': True}
+
+Conclusión: el mismo código, sin tocar una línea, corre contra otro servidor; solo cambiaron 2 líneas del .env.

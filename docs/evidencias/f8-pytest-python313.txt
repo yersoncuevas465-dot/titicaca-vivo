@@ -1,0 +1,52 @@
+F8 · Pruebas con Python 3.13 (entorno nuevo, sin setuptools) · 2026-10-21 10:48 · MariaDB 10.4.32 (XAMPP)
+Incluye las mejoras visuales del 21/10/2026 (D-106 a D-108).
+
+$ python --version
+Python 3.13.16
+
+$ ruff check .
+All checks passed!
+
+$ pytest -q --cov=app/modelos --cov-report=term
+........................................................................ [ 14%]
+........................................................................ [ 29%]
+........................................................................ [ 44%]
+...................................................................
+.
+.
+.
+.. [ 59%]
+........................................................................ [ 74%]
+........................................................................ [ 88%]
+......................................................                   [100%]
+=============================== tests coverage ================================
+______________ coverage: platform win32, python 3.13.16-final-0 _______________
+
+Name                            Stmts   Miss  Cover
+---------------------------------------------------
+app\modelos\__init__.py            22      1    95%
+app\modelos\abordaje.py            73      6    92%
+app\modelos\alerta.py              68      3    96%
+app\modelos\bitacora.py            19      0   100%
+app\modelos\catalogo.py            17      1    94%
+app\modelos\comunidad.py           57      3    95%
+app\modelos\embarcacion.py         41      2    95%
+app\modelos\familia.py             49      2    96%
+app\modelos\hospedaje.py           78      3    96%
+app\modelos\indicadores.py         19      0   100%
+app\modelos\pago.py               125     14    89%
+app\modelos\panel.py               22      0   100%
+app\modelos\reprogramacion.py     104      9    91%
+app\modelos\resena.py              59      9    85%
+app\modelos\reserva.py            292     30    90%
+app\modelos\ruta.py                86      9    90%
+app\modelos\salida.py             182      9    95%
+app\modelos\sistema.py              3      0   100%
+app\modelos\tarifa.py              44      6    86%
+app\modelos\temporada.py           27      4    85%
+app\modelos\tipo_pasajero.py       23      6    74%
+app\modelos\usuario.py            106      3    97%
+app\modelos\validacion.py          78     15    81%
+---------------------------------------------------
+TOTAL                            1594    135    92%
+486 passed in 82.66s (0:01:22)

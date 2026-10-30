@@ -1,0 +1,101 @@
+============================= test session starts =============================
+platform win32 -- Python 3.11.0, pytest-9.1.1, pluggy-1.7.0
+rootdir: C:\Users\Usuario.DESKTOP-C0QT2SA\OneDrive\Documentos\TURISMO PROGRAMA\titicaca_vivo
+configfile: pyproject.toml
+testpaths: tests
+plugins: cov-7.1.0
+collected 479 items
+
+tests\test_accesibilidad.py .........                                    [  1%]
+tests\test_bd_esquema.py ...............................                 [  8%]
+tests\test_bd_restricciones.py ......................................... [ 16%]
+................                                                         [ 20%]
+tests\test_bd_triggers.py ..............                                 [ 23%]
+tests\test_catalogos.py .................................                [ 30%]
+tests\test_concurrencia.py .....                                         [ 31%]
+tests\test_mapa_precios_fotos.py ............                            [ 33%]
+tests\test_mutante.py ....                                               [ 34%]
+tests\test_plata.py ..............                                       [ 37%]
+tests\test_reglas_f6.py ....................                             [ 41%]
+tests\test_reglas_pago_abordaje.py ..................                    [ 45%]
+tests\test_reglas_reserva.py ......................................      [ 53%]
+tests\test_reglas_salida.py ........................                     [ 58%]
+tests\test_rendimiento.py 
+  es /                                  48.4 KB
+  es /salidas                           38.4 KB
+  es /salidas/10                        38.0 KB
+  es /comunidades                       44.8 KB
+  es /comunidades/amantani              37.6 KB
+  es /alertas                           36.8 KB
+  es /mi-reserva                        35.1 KB
+  es /salidas/10/reservar               55.3 KB
+.
+  en /                                  48.2 KB
+  en /salidas                           38.4 KB
+  en /salidas/10                        38.0 KB
+  en /comunidades                       44.7 KB
+  en /comunidades/amantani              37.5 KB
+  en /alertas                           36.8 KB
+  en /mi-reserva                        35.1 KB
+  en /salidas/10/reservar               55.3 KB
+.
+  operador /panel                                          38.4 KB
+  operador /panel/salidas                                  37.9 KB
+  operador /panel/salidas/8/pasajeros                      41.6 KB
+  operador /panel/pagos                                    40.7 KB
+  operador /panel/abordaje/TV-WWUQ                         38.6 KB
+  operador /panel/alertas                                  37.8 KB
+  operador /panel/alertas/1                                38.7 KB
+  operador /panel/hospedajes                               37.5 KB
+  operador /panel/hospedajes/transparencia                 40.2 KB
+  operador /panel/resenas                                  38.0 KB
+  operador /panel/indicadores?dias=365                     46.3 KB
+  operador /panel/catalogos/familias                       38.7 KB
+  operador /panel/catalogos/rutas/3/paradas                38.6 KB
+  operador /panel/salidas/8/pasajeros?formato=whatsapp     38.1 KB
+.
+  admin    /panel/bitacora                                 50.1 KB
+  admin    /panel/usuarios                                 38.4 KB
+  admin    /panel/usuarios/nuevo                           37.9 KB
+..........                                  [ 60%]
+tests\test_rutas_autenticacion.py .........................              [ 66%]
+tests\test_rutas_f6.py .....................                             [ 70%]
+tests\test_rutas_panel.py .................                              [ 74%]
+tests\test_rutas_panel_operacion.py ..................................   [ 81%]
+tests\test_rutas_publicas.py ............................                [ 87%]
+tests\test_rutas_reservas.py ........................                    [ 92%]
+tests\test_scripts_y_comandos.py ..........                              [ 94%]
+tests\test_seguridad_f7.py .................                             [ 97%]
+tests\test_seguridad_y_errores.py ...........                            [100%]
+
+=============================== tests coverage ================================
+_______________ coverage: platform win32, python 3.11.0-final-0 _______________
+
+Name                            Stmts   Miss  Cover
+---------------------------------------------------
+app\modelos\__init__.py            22      1    95%
+app\modelos\abordaje.py            73      6    92%
+app\modelos\alerta.py              68      3    96%
+app\modelos\bitacora.py            19      0   100%
+app\modelos\catalogo.py            17      1    94%
+app\modelos\comunidad.py           57      3    95%
+app\modelos\embarcacion.py         41      2    95%
+app\modelos\familia.py             49      2    96%
+app\modelos\hospedaje.py           78      3    96%
+app\modelos\indicadores.py         19      0   100%
+app\modelos\pago.py               125     14    89%
+app\modelos\panel.py               22      0   100%
+app\modelos\reprogramacion.py     104      9    91%
+app\modelos\resena.py              59      9    85%
+app\modelos\reserva.py            292     30    90%
+app\modelos\ruta.py                86      9    90%
+app\modelos\salida.py             182      9    95%
+app\modelos\sistema.py              3      0   100%
+app\modelos\tarifa.py              44      6    86%
+app\modelos\temporada.py           27      4    85%
+app\modelos\tipo_pasajero.py       23      6    74%
+app\modelos\usuario.py            106      3    97%
+app\modelos\validacion.py          78     15    81%
+---------------------------------------------------
+TOTAL                            1594    135    92%
+======================= 479 passed in 76.06s (0:01:16) ========================

@@ -1,0 +1,27 @@
+# Evidencia F1 · flask bd reiniciar · 2026-10-19 22:51 (hora de la PC)
+$ flask bd reiniciar --si
+  01_esquema.sql            27 sentencias
+  02_vistas_triggers.sql    15 sentencias
+  03_datos.sql              32 sentencias
+Base 'titicaca_vivo' en 127.0.0.1:3306 lista en 0.7 s.
+  rol                     4
+  usuario                 6
+  comunidad               6
+  familia_anfitriona     10
+  embarcacion             5
+  ruta                    5
+  ruta_parada            10
+  temporada               6
+  tipo_pasajero           5
+  tarifa                 35
+  salida                 14
+  turista                20
+  reserva                23
+  reserva_pasajero       58
+  pago                   14
+  hospedaje               9
+  abordaje               14
+  alerta_lago             6
+  resena                  6
+  bitacora               13
+  20 tablas, 269 filas en total.

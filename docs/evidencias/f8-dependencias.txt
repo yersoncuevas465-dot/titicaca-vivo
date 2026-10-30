@@ -1,0 +1,117 @@
+Revisión de dependencias A MANO (sin pip-audit: decisión del equipo, F8) · 20/10/2026
+
+Qué se revisó: los 36 paquetes del venv (14 directos de requirements.txt + 22 que estos traen).
+Fuentes públicas, las mismas que usaría pip-audit:
+  - PyPI:  https://pypi.org/pypi/<paquete>/<versión>/json  (campo "vulnerabilities")
+  - OSV:   https://osv.dev  (base abierta de fallas conocidas; consulta por paquete y versión)
+Para no abrir 72 páginas una por una, un script de un solo uso (biblioteca estándar de Python,
+sin instalar nada) hizo esas mismas consultas. Solo envió nombre y versión de cada paquete.
+Columnas: PyPI y OSV = cuántas fallas conocidas reporta cada fuente para ESA versión.
+
+Revisión del 20/10/2026 21:27 · Python 3.11.0 · 36 paquetes en el venv (14 directos en requirements.txt)
+
+paquete                tipo      instalada   última      publicada   PyPI  OSV   detalle
+bcrypt                 directa   5.0.0       5.0.0       2025-09-25  0     0     sin fallas conocidas
+Flask                  directa   3.1.3       3.1.3       2026-02-19  0     0     sin fallas conocidas
+Flask-Limiter          directa   4.1.1       4.1.1       2025-12-06  0     0     sin fallas conocidas
+Flask-Login            directa   0.6.3       0.6.3       2023-10-30  0     0     sin fallas conocidas
+Flask-WTF              directa   1.3.0       1.3.0       2026-04-23  0     0     sin fallas conocidas
+PyMySQL                directa   1.2.3       1.2.3       2026-09-17  0     0     sin fallas conocidas
+pytest                 directa   9.1.1       9.1.1       2026-06-19  0     0     sin fallas conocidas
+pytest-cov             directa   7.1.0       7.1.0       2026-03-21  0     0     sin fallas conocidas
+python-dotenv          directa   1.2.4       1.2.4       2026-10-01  0     0     sin fallas conocidas
+qrcode                 directa   8.2         8.2         2025-05-01  0     0     sin fallas conocidas
+reportlab              directa   5.0.1       5.0.1       2026-08-20  0     0     sin fallas conocidas
+ruff                   directa   0.17.1      0.17.1      2026-10-15  0     0     sin fallas conocidas
+tzdata                 directa   2026.5      2026.5      2026-10-03  0     0     sin fallas conocidas
+waitress               directa   3.0.2       3.0.2       2024-11-16  0     0     sin fallas conocidas
+blinker                indirecta 1.9.0       1.9.0       2024-11-08  0     0     sin fallas conocidas
+charset-normalizer     indirecta 3.5.2       3.5.2       2026-09-30  0     0     sin fallas conocidas
+click                  indirecta 8.5.0       8.5.0       2026-08-26  0     0     sin fallas conocidas
+colorama               indirecta 0.4.6       0.4.6       2022-10-25  0     0     sin fallas conocidas
+coverage               indirecta 7.16.2      7.16.2      2026-09-27  0     0     sin fallas conocidas
+Deprecated             indirecta 1.3.1       3.0.0       2025-10-30  0     0     sin fallas conocidas
+iniconfig              indirecta 2.3.1       2.3.1       2026-10-06  0     0     sin fallas conocidas
+itsdangerous           indirecta 2.2.0       2.2.0       2024-04-16  0     0     sin fallas conocidas
+Jinja2                 indirecta 3.1.6       3.1.6       2025-03-05  0     0     sin fallas conocidas
+limits                 indirecta 5.8.0       5.8.0       2026-02-05  0     0     sin fallas conocidas
+MarkupSafe             indirecta 3.0.4       3.0.4       2026-10-02  0     0     sin fallas conocidas
+ordered-set            indirecta 4.1.0       4.1.0       2022-01-26  0     0     sin fallas conocidas
+packaging              indirecta 26.3        26.3        2026-08-04  0     0     sin fallas conocidas
+pillow                 indirecta 13.0.0      13.0.0      2026-10-16  0     0     sin fallas conocidas
+pip                    indirecta 26.2.1      26.2.2      2026-08-04  0     0     sin fallas conocidas
+pluggy                 indirecta 1.7.0       1.7.0       2026-10-15  0     0     sin fallas conocidas
+Pygments               indirecta 2.21.0      2.21.0      2026-08-17  0     0     sin fallas conocidas
+setuptools             indirecta 65.5.0      84.2.1      2022-10-14  8     8     GHSA-5rjg-fvgr-3xxf, GHSA-cx63-2mw6-8hw5, GHSA-h35f-9h28-mq5c, GHSA-r9hx-vwmv-q579, PYSEC-2022-43012, PYSEC-2025-49, PYSEC-2026-1918, PYSEC-2026-3447
+     GHSA-5rjg-fvgr-3xxf · setuptools has a path traversal vulnerability in PackageIndex.download that leads to Arbitrary File Write
+     GHSA-cx63-2mw6-8hw5 · setuptools vulnerable to Command Injection via package URL
+     GHSA-h35f-9h28-mq5c · setuptools: MANIFEST.in exclusion bypass in sdist via Unicode normalization collision (NFC/NFD) on macOS APFS/
+     GHSA-r9hx-vwmv-q579 · pypa/setuptools vulnerable to Regular Expression Denial of Service (ReDoS)
+     PYSEC-2022-43012 · Python Packaging Authority (PyPA) setuptools before 65.5.1 allows remote attackers to cause a denial of servic
+     PYSEC-2025-49 · setuptools is a package that allows users to download, build, install, upgrade, and uninstall Python packages.
+     PYSEC-2026-1918 · setuptools vulnerable to Command Injection via package URL
+     PYSEC-2026-3447 · setuptools is a package that allows users to download, build, install, upgrade, and uninstall Python packages.
+typing_extensions      indirecta 4.16.0      4.16.0      2026-07-02  0     0     sin fallas conocidas
+Werkzeug               indirecta 3.1.9       3.1.9       2026-09-27  0     0     sin fallas conocidas
+wrapt                  indirecta 2.5.1       2.5.1       2026-10-14  0     0     sin fallas conocidas
+WTForms                indirecta 3.2.2       3.2.2       2026-05-03  0     0     sin fallas conocidas
+
+Fallas conocidas en total: 8
+
+Conclusión
+  - Las 14 dependencias directas: 0 fallas conocidas y todas en su última versión.
+  - De las 22 indirectas, 21 tienen 0 fallas conocidas. Todas están en su última versión salvo
+    Deprecated 1.3.1 < 3.0.0 (lo pide limits con "deprecated>=1.2") y pip (abajo).
+  - setuptools 65.5.0: 8 fallas conocidas. NO lo usa la aplicación (pip show setuptools →
+    "Required-by:" vacío; no se importa en app/, scripts/ ni tests/). Lo pone "python -m venv" en
+    Python 3.11. Todas las fallas son al DESCARGAR o CONSTRUIR paquetes, no al correr la app.
+    Arreglo (sin dependencias nuevas): crear el venv con Python 3.12 o 3.13 (ya no instalan
+    setuptools) o, en el venv actual:  python -m pip install --upgrade setuptools
+  - pip 26.2.1 < 26.2.2: sin fallas conocidas; se actualiza con  python -m pip install --upgrade pip
+  - El intérprete (Python 3.11.0, octubre de 2022) no está en PyPI ni en esta revisión: las versiones
+    3.11.x posteriores traen arreglos de seguridad. El enunciado pide 3.12 o 3.13 (pendiente abierto).
+
+=====================================================================================
+Repetida el 21/10/2026 con el entorno NUEVO de Python 3.13 (py -3.13 -m venv):
+ese entorno ya no trae setuptools, así que desaparecen sus 8 fallas.
+
+Revisión del 21/10/2026 09:57 · Python 3.13.16 · 35 paquetes en el venv (14 directos en requirements.txt)
+
+paquete                tipo      instalada   última      publicada   PyPI  OSV   detalle
+bcrypt                 directa   5.0.0       5.0.0       2025-09-25  0     0     sin fallas conocidas
+Flask                  directa   3.1.3       3.1.3       2026-02-19  0     0     sin fallas conocidas
+Flask-Limiter          directa   4.1.1       4.1.1       2025-12-06  0     0     sin fallas conocidas
+Flask-Login            directa   0.6.3       0.6.3       2023-10-30  0     0     sin fallas conocidas
+Flask-WTF              directa   1.3.0       1.3.0       2026-04-23  0     0     sin fallas conocidas
+PyMySQL                directa   1.2.3       1.2.3       2026-09-17  0     0     sin fallas conocidas
+pytest                 directa   9.1.1       9.1.1       2026-06-19  0     0     sin fallas conocidas
+pytest-cov             directa   7.1.0       7.1.0       2026-03-21  0     0     sin fallas conocidas
+python-dotenv          directa   1.2.4       1.2.4       2026-10-01  0     0     sin fallas conocidas
+qrcode                 directa   8.2         8.2         2025-05-01  0     0     sin fallas conocidas
+reportlab              directa   5.0.1       5.0.1       2026-08-20  0     0     sin fallas conocidas
+ruff                   directa   0.17.1      0.17.1      2026-10-15  0     0     sin fallas conocidas
+tzdata                 directa   2026.5      2026.5      2026-10-03  0     0     sin fallas conocidas
+waitress               directa   3.0.2       3.0.2       2024-11-16  0     0     sin fallas conocidas
+blinker                indirecta 1.9.0       1.9.0       2024-11-08  0     0     sin fallas conocidas
+charset-normalizer     indirecta 3.5.2       3.5.2       2026-09-30  0     0     sin fallas conocidas
+click                  indirecta 8.5.0       8.5.0       2026-08-26  0     0     sin fallas conocidas
+colorama               indirecta 0.4.6       0.4.6       2022-10-25  0     0     sin fallas conocidas
+coverage               indirecta 7.16.2      7.16.2      2026-09-27  0     0     sin fallas conocidas
+Deprecated             indirecta 3.0.0       3.0.0       2026-09-26  0     0     sin fallas conocidas
+iniconfig              indirecta 2.3.1       2.3.1       2026-10-06  0     0     sin fallas conocidas
+itsdangerous           indirecta 2.2.0       2.2.0       2024-04-16  0     0     sin fallas conocidas
+Jinja2                 indirecta 3.1.6       3.1.6       2025-03-05  0     0     sin fallas conocidas
+limits                 indirecta 5.8.0       5.8.0       2026-02-05  0     0     sin fallas conocidas
+MarkupSafe             indirecta 3.0.4       3.0.4       2026-10-02  0     0     sin fallas conocidas
+ordered-set            indirecta 4.1.0       4.1.0       2022-01-26  0     0     sin fallas conocidas
+packaging              indirecta 26.3        26.3        2026-08-04  0     0     sin fallas conocidas
+pillow                 indirecta 13.0.0      13.0.0      2026-10-16  0     0     sin fallas conocidas
+pip                    indirecta 26.2.1      26.2.2      2026-08-04  0     0     sin fallas conocidas
+pluggy                 indirecta 1.7.0       1.7.0       2026-10-15  0     0     sin fallas conocidas
+Pygments               indirecta 2.21.0      2.21.0      2026-08-17  0     0     sin fallas conocidas
+typing_extensions      indirecta 4.16.0      4.16.0      2026-07-02  0     0     sin fallas conocidas
+Werkzeug               indirecta 3.1.9       3.1.9       2026-09-27  0     0     sin fallas conocidas
+wrapt                  indirecta 2.5.1       2.5.1       2026-10-14  0     0     sin fallas conocidas
+WTForms                indirecta 3.2.2       3.2.2       2026-05-03  0     0     sin fallas conocidas
+
+Fallas conocidas en total: 0

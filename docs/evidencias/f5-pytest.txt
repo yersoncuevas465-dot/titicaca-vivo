@@ -1,0 +1,55 @@
+============================= test session starts =============================
+platform win32 -- Python 3.11.0, pytest-9.1.1, pluggy-1.7.0
+rootdir: C:\Users\Usuario.DESKTOP-C0QT2SA\OneDrive\Documentos\TURISMO PROGRAMA\titicaca_vivo
+configfile: pyproject.toml
+testpaths: tests
+plugins: cov-7.1.0
+collected 392 items
+
+tests\test_bd_esquema.py ...............................                 [  7%]
+tests\test_bd_restricciones.py ......................................... [ 18%]
+................                                                         [ 22%]
+tests\test_bd_triggers.py ..............                                 [ 26%]
+tests\test_catalogos.py .................................                [ 34%]
+tests\test_concurrencia.py ..                                            [ 34%]
+tests\test_mapa_precios_fotos.py ............                            [ 38%]
+tests\test_plata.py ..............                                       [ 41%]
+tests\test_reglas_pago_abordaje.py ..................                    [ 46%]
+tests\test_reglas_reserva.py ......................................      [ 55%]
+tests\test_reglas_salida.py ........................                     [ 61%]
+tests\test_rutas_autenticacion.py .........................              [ 68%]
+tests\test_rutas_panel.py .................                              [ 72%]
+tests\test_rutas_panel_operacion.py ..................................   [ 81%]
+tests\test_rutas_publicas.py ............................                [ 88%]
+tests\test_rutas_reservas.py ........................                    [ 94%]
+tests\test_scripts_y_comandos.py ..........                              [ 97%]
+tests\test_seguridad_y_errores.py ...........                            [100%]
+
+=============================== tests coverage ================================
+_______________ coverage: platform win32, python 3.11.0-final-0 _______________
+
+Name                           Stmts   Miss  Cover
+--------------------------------------------------
+app\modelos\__init__.py           22      1    95%
+app\modelos\abordaje.py           73      6    92%
+app\modelos\alerta.py              5      0   100%
+app\modelos\bitacora.py           19      0   100%
+app\modelos\catalogo.py           17      1    94%
+app\modelos\comunidad.py          57      3    95%
+app\modelos\embarcacion.py        41      2    95%
+app\modelos\familia.py            49      4    92%
+app\modelos\hospedaje.py          22      0   100%
+app\modelos\pago.py              125     14    89%
+app\modelos\panel.py              22      0   100%
+app\modelos\reserva.py           292     30    90%
+app\modelos\ruta.py               86      9    90%
+app\modelos\salida.py            182      9    95%
+app\modelos\sistema.py             3      0   100%
+app\modelos\tarifa.py             44      6    86%
+app\modelos\temporada.py          27      4    85%
+app\modelos\tipo_pasajero.py      23      6    74%
+app\modelos\usuario.py           106      3    97%
+app\modelos\validacion.py         78     16    79%
+--------------------------------------------------
+TOTAL                           1293    114    91%
+======================= 392 passed in 73.76s (0:01:13) ========================
