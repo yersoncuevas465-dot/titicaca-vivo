@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="96" height="96" viewBox="0 0 96 96">
+  <!-- Trama de fondo (marca de agua): chakana escalonada, como en los tejidos de Taquile. -->
+  <path d="M40 16h16v8h8v8h8v8h8v16h-8v8h-8v8h-8v8H40v-8h-8v-8h-8v-8h-8V40h8v-8h8v-8h8z" fill="none" stroke="#572B44" stroke-opacity=".10" stroke-width="2"/>
+  <path d="M44 44h8v8h-8z" fill="#C27A52" fill-opacity=".13"/>
+  <g fill="#C27A52" fill-opacity=".13"><circle cx="0" cy="0" r="3"/><circle cx="96" cy="0" r="3"/><circle cx="0" cy="96" r="3"/><circle cx="96" cy="96" r="3"/></g>
+</svg>

@@ -1,0 +1,61 @@
+{# Mapa esquemático del lago: SVG propio. Comunidades y rutas vienen de la base (servicios/mapa.py).
+   Puede resaltar una ruta (con sus paradas numeradas), comunidades (con un halo) o todo el lago. #}
+{% macro mapa_lago(mapa, id='mapa', descripcion=None, mostrar_recorrido=True) %}
+<figure class="mapa">
+  <svg class="mapa__svg" viewBox="0 0 {{ mapa.ancho }} {{ mapa.alto }}" role="group"
+       aria-labelledby="{{ id }}-titulo" aria-describedby="{{ id }}-desc">
+    <title id="{{ id }}-titulo">{{ t('Mapa esquemático de la bahía de Puno y sus comunidades') }}</title>
+    <desc id="{{ id }}-desc">{{ descripcion or t('Cada punto es una comunidad y lleva a su página. Las líneas son las rutas. Las mismas comunidades están en la lista de esta página.') }}</desc>
+    <rect width="{{ mapa.ancho }}" height="{{ mapa.alto }}" fill="#D7E6EC"/>
+    {% if mapa.todo_el_lago %}<rect width="{{ mapa.ancho }}" height="{{ mapa.alto }}" fill="#C2531A" fill-opacity="0.22"/>{% endif %}
+    {% for d in mapa.tierra %}<path d="{{ d }}" fill="#F5E9DC" stroke="#C9B8A6" stroke-width="1.5"/>{% endfor %}
+    {% for cx, cy, rx, ry, giro in mapa.islas %}
+      <ellipse cx="{{ cx }}" cy="{{ cy }}" rx="{{ rx }}" ry="{{ ry }}" transform="rotate({{ giro }} {{ cx }} {{ cy }})"
+               fill="#F5E9DC" stroke="#C9B8A6" stroke-width="1.5"/>
+    {% endfor %}
+    {% for r in mapa.rutas %}
+      <polyline points="{{ r.polilinea }}" fill="none" stroke="{{ r.color }}"
+                stroke-width="{{ 5 if r.resaltada else 3 }}" stroke-linejoin="round" stroke-linecap="round"
+                {% if not r.resaltada %}stroke-dasharray="7 5"{% endif %}{% if r.tenue %} opacity="0.25"{% endif %}/>
+    {% endfor %}
+    <rect x="{{ mapa.puno.x - 6 }}" y="{{ mapa.puno.y - 6 }}" width="12" height="12" rx="2" fill="#2A1220"/>
+    <text class="mapa__etiqueta" x="{{ mapa.puno.x + 4 }}" y="{{ mapa.puno.y + 24 }}">{{ mapa.puno.nombre }}</text>
+    {% for c in mapa.comunidades %}
+      <a href="{{ url_for('publico.detalle_comunidad', slug=c.slug) }}" class="mapa__punto"{% if c.tenue %} opacity="0.45"{% endif %}>
+        <title>{{ c.nombre }} ({{ c.idioma | idioma }})</title>
+        {% if c.resaltada %}<circle cx="{{ c.x }}" cy="{{ c.y }}" r="17" fill="#C2531A" fill-opacity="0.28" stroke="#C2531A" stroke-width="2"/>{% endif %}
+        <circle cx="{{ c.x }}" cy="{{ c.y }}" r="8" fill="{{ '#572B44' if c.idioma == 'quechua' else '#C27A52' }}"
+                stroke="#FEF9F3" stroke-width="2.5"/>
+        <text class="mapa__etiqueta" x="{{ c.texto_x }}" y="{{ c.y + 4 }}" text-anchor="{{ c.ancla }}">{{ c.nombre }}</text>
+      </a>
+    {% endfor %}
+    {% for p in mapa.paradas_numeradas %}
+      <circle cx="{{ p.x }}" cy="{{ p.y }}" r="9" fill="#2A1220" stroke="#FEF9F3" stroke-width="2"/>
+      <text class="mapa__numero" x="{{ p.x }}" y="{{ p.y + 4 }}" text-anchor="middle">{{ p.n }}</text>
+    {% endfor %}
+    <line x1="20" y1="420" x2="{{ 20 + mapa.escala_10km }}" y2="420" stroke="#2A1220" stroke-width="2"/>
+    <line x1="20" y1="414" x2="20" y2="426" stroke="#2A1220" stroke-width="2"/>
+    <line x1="{{ 20 + mapa.escala_10km }}" y1="414" x2="{{ 20 + mapa.escala_10km }}" y2="426" stroke="#2A1220" stroke-width="2"/>
+    <text class="mapa__etiqueta" x="{{ 20 + mapa.escala_10km / 2 }}" y="408" text-anchor="middle">10 km</text>
+    <text class="mapa__etiqueta" x="{{ mapa.ancho - 24 }}" y="30" text-anchor="middle">N ↑</text>
+  </svg>
+  <figcaption class="mapa__leyenda">
+    {% if mapa.recorrido and mostrar_recorrido %}
+      <ul class="lista-limpia recorrido">
+        <li>{{ t('Sale de Puno') }}</li>
+        {% for nombre in mapa.recorrido %}<li><span class="recorrido__n">{{ loop.index }}</span> {{ nombre }}</li>{% endfor %}
+        <li>{{ t('Vuelve a Puno') }}</li>
+      </ul>
+    {% elif not mapa.recorrido %}
+      <ul class="lista-limpia leyenda">
+        {% for r in mapa.rutas %}
+          {% if not r.tenue %}<li><svg width="28" height="10" aria-hidden="true"><line x1="2" y1="5" x2="26" y2="5" stroke="{{ r.color }}" stroke-width="3"{% if not r.resaltada %} stroke-dasharray="7 5"{% endif %}/></svg>{{ r.nombre }}</li>{% endif %}
+        {% endfor %}
+        <li><svg width="14" height="14" aria-hidden="true"><circle cx="7" cy="7" r="6" fill="#572B44"/></svg>{{ t('Comunidad quechua') }}</li>
+        <li><svg width="14" height="14" aria-hidden="true"><circle cx="7" cy="7" r="6" fill="#C27A52"/></svg>{{ t('Comunidad aimara') }}</li>
+      </ul>
+    {% endif %}
+    <p class="texto-suave">{{ t('Mapa esquemático: las distancias son aproximadas.') }}</p>
+  </figcaption>
+</figure>
+{% endmacro %}

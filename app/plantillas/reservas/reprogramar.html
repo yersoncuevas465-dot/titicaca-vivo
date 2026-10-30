@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% from "reservas/_macros.html" import resumen, opciones %}
+{% block titulo %}{{ t('Reprogramar') }} · {{ r.codigo }}{% endblock %}
+
+{% block contenido %}
+<p class="miga"><a href="{{ url_for('reservas.ver', codigo=r.codigo) }}">← {{ t('Volver a la reserva {codigo}', codigo=r.codigo) }}</a></p>
+<h1>{{ t('Tu salida está suspendida') }}</h1>
+<p>{{ r.ruta_nombre }} · {{ r.fecha_hora_zarpe | fecha_hora }}. {{ t('Motivo:') }} <strong>{{ r.motivo_estado or t('por seguridad en el lago') }}</strong></p>
+<p class="texto-suave">{{ t('La suspensión no es tu culpa: al reprogramar se mantienen tu código, tus pagos y tus precios.') }}</p>
+
+{{ resumen(f, sueltos, "Revisa tu elección") }}
+
+<div class="dos-columnas bloque">
+  <section class="tarjeta" aria-labelledby="titulo-reprogramar">
+    <h2 id="titulo-reprogramar">{{ t('Pasar a otra salida') }}</h2>
+    {% if f.salida_id.choices %}
+      <form method="post" novalidate>
+        {{ f.csrf_token }}
+        {{ opciones(f.salida_id, ayuda=t('Salidas de la misma ruta con lugar para tu grupo ({n} personas).', n=personas)) }}
+        {{ f.enviar(class_='boton boton--ancho') }}
+      </form>
+    {% else %}
+      <p class="aviso aviso--info">{{ t('Por ahora no hay otra salida de esta ruta con lugar para tu grupo. Vuelve a mirar más tarde o pide la devolución.') }}</p>
+    {% endif %}
+  </section>
+
+  <section class="tarjeta" aria-labelledby="titulo-devolucion">
+    <h2 id="titulo-devolucion">{{ t('Pedir la devolución') }}</h2>
+    {% if r.pagado %}
+      <p>{{ t('La agencia te devolverá {monto} y se comunicará contigo por teléfono o correo.', monto=fuerte(r.pagado | soles)) }}</p>
+    {% else %}
+      <p>{{ t('Todavía no tienes pagos verificados: tu reserva se cancelará sin costo.') }}</p>
+    {% endif %}
+    <p class="texto-suave">{{ t('Tu reserva quedará cancelada y tu lugar se liberará.') }}</p>
+    <form method="post" action="{{ url_for('reservas.devolucion', codigo=r.codigo) }}">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <button class="boton boton--secundario boton--ancho" type="submit">{{ t('Cancelar mi reserva y pedir la devolución') }}</button>
+    </form>
+  </section>
+</div>
+{% endblock %}

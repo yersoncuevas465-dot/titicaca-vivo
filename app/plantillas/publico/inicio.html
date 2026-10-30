@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+{% from "macros_publico.html" import tarjeta_salida, tarjeta_alerta, imagen_comunidad %}
+{% from "publico/_mapa.html" import mapa_lago %}
+{% block titulo %}{{ t('Salidas en lancha por el lago Titicaca') }}{% endblock %}
+
+{% block contenido %}
+<section class="portada" aria-labelledby="titulo-portada">
+  <h1 id="titulo-portada">{{ t('Vive el lago con las comunidades que lo habitan') }}</h1>
+  <p class="portada__texto">{{ t('Elige tu salida en lancha, reserva tu lugar y duerme en casa de una familia anfitriona.') }}</p>
+  <p><a class="boton" href="{{ url_for('publico.salidas') }}">{{ t('Ver todas las salidas') }}</a></p>
+</section>
+
+<section class="bloque" aria-labelledby="titulo-como">
+  <h2 id="titulo-como">{{ t('Cómo reservar') }}</h2>
+  <ol class="lista-limpia pasos">
+    <li class="paso">
+      <span class="paso__numero" aria-hidden="true">1</span>
+      <h3>{{ t('Elige tu salida') }}</h3>
+      <p>{{ t('Mira el día, la ruta, el precio y los lugares libres.') }}</p>
+    </li>
+    <li class="paso">
+      <span class="paso__numero" aria-hidden="true">2</span>
+      <h3>{{ t('Escribe los datos') }}</h3>
+      <p>{{ t('Los de cada pasajero y cómo vas a pagar: Yape, Plin o en el muelle.') }}</p>
+    </li>
+    <li class="paso">
+      <span class="paso__numero" aria-hidden="true">3</span>
+      <h3>{{ t('Guarda tu código') }}</h3>
+      <p>{{ t('Al terminar recibes tu código TV-XXXX y tu boleto con QR para subir a la lancha.') }}</p>
+    </li>
+  </ol>
+  <p><a href="{{ url_for('reservas.mi_reserva') }}">{{ t('¿Ya reservaste? Mira tu reserva con tu código →') }}</a></p>
+</section>
+
+{% if alertas %}
+<section class="bloque" aria-labelledby="titulo-alertas">
+  <h2 id="titulo-alertas">{{ t('Alertas en el lago') }}</h2>
+  <ul class="lista-limpia">
+    {% for a in alertas %}{{ tarjeta_alerta(a) }}{% endfor %}
+  </ul>
+</section>
+{% endif %}
+
+<section class="bloque" aria-labelledby="titulo-hoy">
+  <h2 id="titulo-hoy">{{ t('Salidas de hoy') }} <span class="texto-suave">· {{ hoy | fecha_larga }}</span></h2>
+  {% if salidas %}
+    <ul class="lista-limpia salidas">
+      {% for s in salidas %}{{ tarjeta_salida(s) }}{% endfor %}
+    </ul>
+  {% else %}
+    <p class="aviso aviso--info">{{ t('Hoy no hay salidas programadas.') }}</p>
+  {% endif %}
+  <p><a href="{{ url_for('publico.salidas', fecha=manana.isoformat()) }}">{{ t('Ver las salidas de mañana →') }}</a></p>
+</section>
+
+<section class="bloque" aria-labelledby="titulo-rutas">
+  <h2 id="titulo-rutas">{{ t('El lago y sus rutas') }}</h2>
+  <div class="dos-columnas">
+    {{ mapa_lago(mapa) }}
+    <ul class="lista-limpia rutas">
+      {% for r in rutas %}
+        <li class="ruta">
+          <h3 class="ruta__nombre"><a href="{{ url_for('publico.salidas', ruta=r.codigo) }}">{{ r.nombre }}</a></h3>
+          <p class="texto-suave">{{ r.duracion_horas | duracion }}{% if r.incluye_pernocte %} · {{ t('incluye una noche con una familia') }}{% endif %}</p>
+          {% if r.desde %}<p class="ruta__precio">{{ t('desde') }} <strong>{{ r.desde | soles }}</strong></p>{% endif %}
+        </li>
+      {% endfor %}
+    </ul>
+  </div>
+</section>
+
+<section class="bloque" aria-labelledby="titulo-comunidades">
+  <h2 id="titulo-comunidades">{{ t('Comunidades') }}</h2>
+  <ul class="lista-limpia comunidades">
+    {% for c in comunidades %}
+      <li class="comunidad-tarjeta">
+        {{ imagen_comunidad(c, 'foto--tarjeta') }}
+        <h3><a class="enlace-tarjeta" href="{{ url_for('publico.detalle_comunidad', slug=c.slug) }}">{{ c.nombre }}</a></h3>
+        <p class="texto-suave">{{ c.idioma_originario | idioma }} · {{ c.senal | senal }}{% if c.familias %} · {{ t('{n} familias anfitrionas', n=c.familias) }}{% endif %}</p>
+      </li>
+    {% endfor %}
+  </ul>
+</section>
+{% endblock %}

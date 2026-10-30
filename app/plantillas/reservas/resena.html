@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% from "macros.html" import campo %}
+{% from "reservas/_macros.html" import resumen, opciones %}
+{% block titulo %}{{ t('Tu opinión') }} · {{ r.codigo }}{% endblock %}
+
+{% block contenido %}
+<p class="miga"><a href="{{ url_for('reservas.ver', codigo=r.codigo) }}">← {{ t('Volver a la reserva {codigo}', codigo=r.codigo) }}</a></p>
+
+<section class="tarjeta tarjeta--angosta">
+  <h1>{{ t('¿Cómo te fue en el lago?') }}</h1>
+  {% if motivo %}
+    <p class="aviso aviso--info">{{ motivo }}</p>
+  {% else %}
+    <p class="texto-suave">{{ t('Tu opinión ayuda a otros viajeros y a las comunidades. Se publica después de que la agencia la revisa, sin tu nombre: solo tu país y el mes del viaje.') }}</p>
+    {{ resumen(f, sueltos, "Revisa tu opinión") }}
+    <form method="post" novalidate>
+      {{ f.csrf_token }}
+      {{ opciones(f.puntuacion) }}
+      {{ campo(f.comentario, ayuda=t('Opcional. No escribas teléfonos ni datos personales.')) }}
+      {{ f.enviar(class_='boton boton--ancho') }}
+    </form>
+  {% endif %}
+</section>
+{% endblock %}

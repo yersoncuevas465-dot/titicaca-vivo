@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="{{ idioma_actual() }}">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block titulo %}Titicaca Vivo{% endblock %} · Titicaca Vivo</title>
+  <meta name="description" content="{{ t('Salidas en lancha y turismo vivencial en el lago Titicaca, Puno.') }}">
+  <meta name="theme-color" content="#572B44">
+  <link rel="icon" href="{{ estatico('img/favicon.svg') }}" type="image/svg+xml">
+  <link rel="icon" href="{{ estatico('img/favicon-32.png') }}" sizes="32x32" type="image/png">
+  <link rel="apple-touch-icon" href="{{ estatico('img/apple-touch-icon.png') }}">
+  <link rel="stylesheet" href="{{ estatico('css/estilos.css') }}">
+</head>
+<body>
+  {# Foto de la sección como marca de agua (D-109): muy tenue, detrás de todo y solo en pantallas
+     anchas. loading="lazy" + display:none en el celular = en el celular ni se descarga. #}
+  {% set fondo = fondo_de_pagina() %}
+  {% if fondo %}
+    <img class="fondo-foto" src="{{ estatico(fondo.ruta) }}" alt="" width="960" height="600" loading="lazy" decoding="async">
+  {% endif %}
+  <a class="saltar" href="#contenido">{{ t('Saltar al contenido') }}</a>
+
+  <header class="cabecera">
+    <div class="contenedor cabecera__fila">
+      <a class="marca" href="{{ url_for('publico.inicio') }}">
+        <picture>
+          <source media="(min-width: 48em)" srcset="{{ estatico('img/logo.svg') }}" width="210" height="60">
+          <img src="{{ estatico('img/logo-isotipo.svg') }}" width="40" height="40" alt="">
+        </picture>
+        <span class="marca__texto">Titicaca Vivo</span>
+      </a>
+
+      <div class="cabecera__acciones">
+        {% if not sin_menu and request.blueprint in ('publico', 'reservas') %}
+          {# Cambio de idioma: solo en las páginas del turista (el panel queda en español) #}
+          {% set volver = request.full_path.rstrip('?') %}
+          {% if idioma_actual() == 'en' %}
+            <a class="idioma-cambio" href="{{ url_for('publico.idioma', codigo='es', volver=volver) }}" lang="es" hreflang="es">Español</a>
+          {% else %}
+            <a class="idioma-cambio" href="{{ url_for('publico.idioma', codigo='en', volver=volver) }}" lang="en" hreflang="en">English</a>
+          {% endif %}
+        {% endif %}
+        {% if not sin_menu and current_user.is_authenticated %}
+          <div class="sesion">
+            <a class="sesion__panel" href="{{ url_for('panel.inicio') }}">
+              <span class="sesion__nombre">{{ current_user.nombre_usuario }}</span>
+              <span class="insignia">{{ current_user.rol_nombre }}</span>
+            </a>
+            <form method="post" action="{{ url_for('autenticacion.salir') }}">
+              <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+              <button class="boton boton--secundario boton--chico" type="submit">{{ t('Salir') }}</button>
+            </form>
+          </div>
+        {% elif not sin_menu %}
+          <a class="boton boton--secundario boton--chico" href="{{ url_for('autenticacion.entrar') }}">{{ t('Entrar') }}</a>
+        {% endif %}
+      </div>
+    </div>
+  </header>
+
+  {% block subnavegacion %}{% include "publico/_nav.html" %}{% endblock %}
+
+  <main id="contenido" class="contenedor principal" tabindex="-1">
+    {% with mensajes = get_flashed_messages(with_categories=true) %}
+      {% if mensajes %}
+        <div class="mensajes" role="status">
+          {% for categoria, texto in mensajes %}
+            <p class="aviso aviso--{{ categoria }}">{{ texto }}</p>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+
+    {% block contenido %}{% endblock %}
+  </main>
+
+  <footer class="pie">
+    <div class="contenedor">
+      <p>{{ t('Titicaca Vivo · Puno, Perú · Horarios en hora de Lima') }}</p>
+      {% if fondo %}<p class="pie__credito">{{ t('Foto de fondo: {credito}', credito=fondo.credito) }}</p>{% endif %}
+    </div>
+  </footer>
+  {% block scripts %}{% endblock %}
+</body>
+</html>

@@ -1,0 +1,12 @@
+{# Panel de marca de las páginas de acceso (entrar y recuperar la contraseña): la foto del lago,
+   el logo y para qué sirve el panel. En el celular no se muestra (y su foto no se descarga).
+   Va DESPUÉS de la tarjeta en el HTML (primero el <h1>); el CSS lo pone a la izquierda. #}
+{% macro panel_marca(titulo) %}
+  {% set foto = fondo_de_pagina() %}
+  <aside class="acceso__marca" aria-labelledby="acceso-marca-titulo">
+    {% if foto %}<img class="acceso__foto" src="{{ estatico(foto.ruta) }}" alt="" width="960" height="600" loading="lazy" decoding="async">{% endif %}
+    <img class="acceso__logo" src="{{ estatico('img/logo-negativo.svg') }}" width="210" height="60" alt="">
+    <h2 id="acceso-marca-titulo" class="acceso__titulo">{{ titulo }}</h2>
+    <ul class="acceso__puntos">{{ caller() }}</ul>
+  </aside>
+{% endmacro %}

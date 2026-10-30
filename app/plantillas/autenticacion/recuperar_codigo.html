@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% from "macros.html" import campo, resumen_errores %}
+{% from "autenticacion/_acceso.html" import panel_marca %}
+{% block titulo %}Código y contraseña nueva{% endblock %}
+
+{% block contenido %}
+<div class="acceso">
+  <section class="tarjeta acceso__tarjeta" aria-labelledby="titulo-codigo">
+    <img class="tarjeta__sello" src="{{ estatico('img/logo-isotipo.svg') }}" width="72" height="72" alt="">
+    <p class="acceso__paso">Paso 2 de 2</p>
+    <h1 id="titulo-codigo">Código y contraseña nueva</h1>
+    <p class="texto-suave acceso__intro">Escribe el código de 6 dígitos que te llegó por correo y elige tu contraseña nueva. El código vence {{ minutos }} minutos después de pedirlo y sirve una sola vez.</p>
+
+    {{ resumen_errores(formulario) }}
+
+    <form method="post" novalidate>
+      {{ formulario.csrf_token }}
+      {{ campo(formulario.codigo) }}
+      {{ campo(formulario.contrasena, ayuda=formulario.contrasena.description) }}
+      {{ campo(formulario.repetir) }}
+      {{ formulario.enviar(class_='boton boton--ancho') }}
+    </form>
+
+    {% if demostracion %}
+      <p class="aviso aviso--info acceso__demo"><strong>Modo demostración:</strong> busca el código en la ventana del servidor (la de INICIAR.bat o la terminal de VS Code), en el bloque «CORREO SIMULADO».</p>
+    {% endif %}
+
+    <p class="acceso__otras">¿No te llegó? <a href="{{ url_for('autenticacion.recuperar') }}">Pedir otro código</a> · <a href="{{ url_for('autenticacion.entrar') }}">Volver a entrar</a></p>
+  </section>
+
+  {% call panel_marca('Elige una contraseña segura') %}
+    <li>Al menos 10 caracteres, con letras y números.</li>
+    <li>Sin espacios y sin tu nombre de usuario.</li>
+    <li>Después de 5 códigos equivocados hay que pedir uno nuevo.</li>
+  {% endcall %}
+</div>
+{% endblock %}

@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% from "macros.html" import campo, resumen_errores %}
+{% from "autenticacion/_acceso.html" import panel_marca %}
+{% block titulo %}Recuperar la contraseña{% endblock %}
+
+{% block contenido %}
+<div class="acceso">
+  <section class="tarjeta acceso__tarjeta" aria-labelledby="titulo-recuperar">
+    <img class="tarjeta__sello" src="{{ estatico('img/logo-isotipo.svg') }}" width="72" height="72" alt="">
+    <p class="acceso__paso">Paso 1 de 2</p>
+    <h1 id="titulo-recuperar">Recuperar la contraseña</h1>
+    <p class="texto-suave acceso__intro">Escribe tu nombre de usuario o tu correo. Si tu cuenta tiene correo, te enviamos un código de 6 dígitos para que elijas una contraseña nueva.</p>
+
+    {{ resumen_errores(formulario) }}
+
+    <form method="post" novalidate>
+      {{ formulario.csrf_token }}
+      {{ campo(formulario.identificador) }}
+      {{ formulario.enviar(class_='boton boton--ancho') }}
+    </form>
+
+    {% if demostracion %}
+      <p class="aviso aviso--info acceso__demo"><strong>Modo demostración:</strong> el correo no sale a internet. El código aparece en la ventana del servidor (la de INICIAR.bat o la terminal de VS Code). Para enviarlo de verdad se configura el correo en el archivo .env.</p>
+    {% endif %}
+
+    <div class="acceso__otras">
+      <h2>¿No tienes correo en tu cuenta?</h2>
+      <ul>
+        <li>Pide al <strong>administrador</strong> que te ponga una contraseña nueva desde <em>Usuarios → Editar</em>.</li>
+        <li>Si es el administrador quien la olvidó, el encargado del servidor la cambia con <code>flask usuarios clave admin</code> (INSTRUCCIONES.txt).</li>
+      </ul>
+      <p><a href="{{ url_for('autenticacion.entrar') }}">Volver a entrar</a></p>
+    </div>
+  </section>
+
+  {% call panel_marca('Recupera tu acceso') %}
+    <li>Escribe tu usuario o tu correo.</li>
+    <li>Te llega un código de 6 dígitos que vence en 15 minutos y sirve una sola vez.</li>
+    <li>Con el código eliges tu contraseña nueva: tus otras sesiones abiertas se cierran solas.</li>
+  {% endcall %}
+</div>
+{% endblock %}

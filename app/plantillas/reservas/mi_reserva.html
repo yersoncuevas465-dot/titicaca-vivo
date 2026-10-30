@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% from "macros.html" import campo, resumen_errores %}
+{% block titulo %}{{ t('Mi reserva') }}{% endblock %}
+
+{% block contenido %}
+<section class="tarjeta tarjeta--angosta">
+  <img class="tarjeta__sello" src="{{ estatico('img/logo-isotipo.svg') }}" width="72" height="72" alt="">
+  <h1>{{ t('Mi reserva') }}</h1>
+  <p class="texto-suave">{{ t('Escribe el código que recibiste al reservar (TV-XXXX) y el número de documento de quien hizo la reserva.') }}</p>
+  {{ resumen_errores(f, error_general) }}
+  <form method="post" novalidate>
+    {{ f.csrf_token }}
+    {{ campo(f.codigo) }}
+    {{ campo(f.numero_documento) }}
+    {{ f.enviar(class_='boton boton--ancho') }}
+  </form>
+  <p class="ayuda-codigo">{{ t('¿Todavía no tienes código? Lo recibes al terminar tu reserva y también está en tu boleto.') }}
+    <a href="{{ url_for('publico.salidas') }}">{{ t('Elegir una salida') }}</a></p>
+</section>
+{% endblock %}

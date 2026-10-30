@@ -1,0 +1,667 @@
+/* =====================================================================
+   Titicaca Vivo · estilos propios (sin frameworks ni CDN)
+   Paleta "Esencia Andina". Mobile-first: lo básico es para el celular y
+   las media queries agregan lo de pantallas anchas.
+   Contraste (D-06): botones y enlaces en ciruela; terracota solo en
+   texto grande, bordes e íconos.
+   ===================================================================== */
+
+:root {
+  --ciruela: #572B44;
+  --terracota: #C27A52;
+  --crema: #FEF9F3;
+  --arena: #F5E9DC;
+  --tinta: #2A1220;
+  /* Colores de estado (D-27): solo para avisos, con contraste AA sobre crema */
+  --error: #9B1C1C;
+  --exito: #1F5E3B;
+  --amarillo: #8A6100;
+
+  --serif: Georgia, "Times New Roman", Times, serif;
+  --sans: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --radio: 0.75rem;
+  --sombra: 0 1px 2px rgb(42 18 32 / 0.08), 0 4px 12px rgb(42 18 32 / 0.06);
+  --ancho: 64rem;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+/* hidden siempre oculta, aunque la clase diga display:flex (el selector de acompañantes
+   se esconde con JavaScript: sin esta regla seguía visible). */
+[hidden] { display: none !important; }
+
+html { -webkit-text-size-adjust: 100%; }
+
+body {
+  margin: 0;
+  /* Marca de agua (D-106): el lago abajo a la derecha y una trama de tejido muy suave.
+     Son SVG propios de menos de 2 KB; el texto siempre queda sobre crema o sobre tarjetas. */
+  background-color: var(--crema);
+  background-image: url("../img/fondo-lago.svg"), url("../img/fondo-tejido.svg");
+  background-repeat: no-repeat, repeat;
+  background-position: right -5rem bottom -3rem, 0 0;
+  background-size: min(50rem, 120vw) auto, 6rem 6rem;
+  background-attachment: fixed, scroll;
+  color: var(--tinta);
+  font-family: var(--sans);
+  font-size: 1rem;
+  line-height: 1.55;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+h1, h2, h3 { font-family: var(--serif); color: var(--ciruela); line-height: 1.2; margin: 0 0 0.5rem; }
+h1 { font-size: 1.75rem; }
+h2 { font-size: 1.3rem; }
+p { margin: 0 0 0.75rem; }
+img { max-width: 100%; height: auto; }
+code { font-size: 0.9em; }
+
+a { color: var(--ciruela); text-decoration-thickness: 0.08em; text-underline-offset: 0.15em; }
+a:hover { color: var(--tinta); }
+
+/* Foco visible y claro para quien usa teclado */
+:focus-visible {
+  outline: 3px solid var(--terracota);
+  outline-offset: 2px;
+  border-radius: 0.25rem;
+}
+main:focus { outline: none; }
+
+.saltar {
+  position: absolute; left: 0.5rem; top: -3rem;
+  background: var(--ciruela); color: var(--crema);
+  padding: 0.6rem 1rem; border-radius: var(--radio); z-index: 10;
+}
+.saltar:focus { top: 0.5rem; color: var(--crema); }
+
+.visualmente-oculto {
+  position: absolute; width: 1px; height: 1px; overflow: hidden;
+  clip: rect(0 0 0 0); white-space: nowrap;
+}
+
+.contenedor { width: 100%; max-width: var(--ancho); margin: 0 auto; padding: 0 1rem; }
+.principal { flex: 1; padding-top: 1.25rem; padding-bottom: 2rem; }
+.texto-suave { color: #5E4654; }   /* 8.1 : 1 sobre crema */
+.lista-limpia { list-style: none; margin: 0; padding: 0; }
+.bloque { margin-top: 1.75rem; }
+
+/* ---------- Cabecera ---------- */
+.cabecera { background: var(--crema); border-bottom: 3px solid var(--terracota); }
+.cabecera__fila {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 0.75rem; min-height: 4rem;
+}
+.marca {
+  display: inline-flex; align-items: center; gap: 0.6rem;
+  text-decoration: none; color: var(--ciruela);
+}
+.marca img { display: block; width: 40px; height: 40px; }
+.marca__texto { font-family: var(--serif); font-weight: 700; font-size: 1.2rem; }
+
+.cabecera__acciones { display: flex; align-items: center; gap: 0.25rem 0.5rem; flex-wrap: wrap; justify-content: flex-end; }
+.sesion { display: flex; align-items: center; gap: 0.5rem; }
+.sesion form { margin: 0; }
+.sesion__panel { display: inline-flex; align-items: center; gap: 0.4rem; text-decoration: none; }
+.sesion__nombre { display: none; font-weight: 600; }
+
+/* ---------- Subnavegación del panel ---------- */
+.subnav { background: var(--ciruela); }
+/* En el celular el menú pasa a una segunda línea antes que esconder opciones */
+.subnav__fila { display: flex; flex-wrap: wrap; gap: 0 0.25rem; }
+.subnav a {
+  color: var(--crema); text-decoration: none; padding: 0.8rem 0.6rem;
+  display: inline-block; min-height: 2.75rem; white-space: nowrap;
+}
+.subnav a[aria-current="page"] { box-shadow: inset 0 -4px 0 var(--terracota); font-weight: 700; }
+.subnav a:hover { background: rgb(254 249 243 / 0.12); }
+.subnav a:focus-visible { outline-color: var(--crema); }
+
+/* ---------- Botones (mínimo 44 px de alto: dedos y guantes) ---------- */
+.boton {
+  display: inline-flex; align-items: center; justify-content: center;
+  min-height: 2.75rem; padding: 0.6rem 1.2rem;
+  background: var(--ciruela); color: var(--crema);
+  border: 2px solid var(--ciruela); border-radius: var(--radio);
+  font: inherit; font-weight: 700; text-decoration: none; cursor: pointer;
+}
+.boton:hover { background: var(--tinta); border-color: var(--tinta); color: var(--crema); }
+.boton--secundario { background: transparent; color: var(--ciruela); }
+.boton--secundario:hover { background: var(--arena); color: var(--tinta); border-color: var(--ciruela); }
+.boton--chico { min-height: 2.75rem; padding: 0.35rem 0.85rem; font-size: 0.95rem; }
+.boton--ancho { width: 100%; margin-top: 0.5rem; }
+
+/* ---------- Tarjetas ---------- */
+.tarjeta {
+  background: #FFFDF9; border: 1px solid var(--arena); border-radius: calc(var(--radio) * 1.5);
+  padding: 1.5rem 1.25rem; box-shadow: var(--sombra);
+}
+.tarjeta--angosta { max-width: 28rem; margin: 1rem auto; }
+.tarjeta__sello { display: block; margin: 0 auto 1rem; }
+.tarjeta--angosta h1 { text-align: center; }
+
+/* ---------- Insignias de estado ---------- */
+.insignia {
+  display: inline-block; padding: 0.1rem 0.55rem; border-radius: 999px;
+  font-size: 0.8rem; font-weight: 700; background: var(--arena); color: var(--ciruela);
+  border: 1px solid currentColor; white-space: nowrap;
+}
+.insignia--disponible { color: var(--exito); }
+.insignia--pocos_cupos { color: var(--amarillo); }
+.insignia--llena, .insignia--suspendida, .insignia--cancelada { color: var(--error); }
+.insignia--zarpo { color: #5E4654; }
+.insignia--verde { color: var(--exito); }
+.insignia--amarillo { color: var(--amarillo); }
+.insignia--naranja { color: #8F3F12; }
+.insignia--rojo { color: var(--error); }
+
+/* ---------- Avisos ---------- */
+.mensajes { margin-bottom: 1rem; }
+.aviso {
+  border-left: 5px solid var(--ciruela); background: var(--arena);
+  padding: 0.75rem 1rem; border-radius: 0.4rem; margin: 0 0 0.5rem;
+}
+.aviso--exito { border-color: var(--exito); }
+.aviso--error { border-color: var(--error); }
+.aviso--info { border-color: var(--terracota); }
+
+/* ---------- Formularios ---------- */
+.campo { margin-bottom: 1rem; display: flex; flex-direction: column; gap: 0.3rem; }
+.campo__etiqueta { font-weight: 700; }
+.campo__ayuda { margin: 0; font-size: 0.9rem; color: #5E4654; }
+.campo__control {
+  font: inherit; min-height: 2.75rem; padding: 0.55rem 0.75rem;
+  border: 2px solid #8C7380; border-radius: 0.5rem; background: #fff; color: var(--tinta);
+  width: 100%;
+}
+.campo__control:focus-visible { border-color: var(--ciruela); }
+.campo--error .campo__control { border-color: var(--error); }
+.campo__error { margin: 0; color: var(--error); font-weight: 700; font-size: 0.95rem; }
+.campo__error::before { content: "⚠ "; }
+
+.resumen-errores {
+  border: 2px solid var(--error); border-radius: var(--radio);
+  padding: 0.75rem 1rem; margin-bottom: 1rem; background: #FFF4F2;
+}
+.resumen-errores__titulo { font-size: 1.05rem; color: var(--error); margin-bottom: 0.25rem; }
+.resumen-errores ul { margin: 0; padding-left: 1.2rem; }
+.resumen-errores a { color: var(--error); }
+
+.filtro { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 0.75rem; margin: 1rem 0; }
+.filtro .campo { margin: 0; min-width: 12rem; }
+
+/* ---------- Panel: contadores, alertas y salidas ---------- */
+.contadores {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr));
+  gap: 0.75rem; margin: 0;
+}
+.contador {
+  background: var(--arena); border-radius: var(--radio); padding: 0.9rem 1rem;
+  display: flex; flex-direction: column; justify-content: space-between;
+}
+.contador dt { font-size: 0.9rem; }
+.contador dd { margin: 0; font-family: var(--serif); font-size: 2rem; color: var(--ciruela); font-weight: 700; }
+
+.alerta {
+  background: #FFFDF9; border: 1px solid var(--arena); border-left: 6px solid var(--terracota);
+  border-radius: 0.5rem; padding: 0.75rem 1rem; margin-bottom: 0.6rem;
+}
+.alerta--rojo { border-left-color: var(--error); }
+.alerta--naranja { border-left-color: #C2531A; }
+.alerta--amarillo { border-left-color: #D9A400; }
+.alerta--verde { border-left-color: var(--exito); }
+
+.salidas { display: grid; gap: 0.75rem; }
+.salida {
+  background: #FFFDF9; border: 1px solid var(--arena); border-radius: var(--radio);
+  padding: 1rem; box-shadow: var(--sombra);
+}
+.salida__cabeza { display: flex; justify-content: space-between; align-items: center; gap: 0.5rem; }
+.salida__hora { font-weight: 700; }
+.salida__ruta { font-family: var(--serif); font-size: 1.15rem; color: var(--ciruela); margin: 0.3rem 0 0.1rem; }
+.cupos { display: flex; flex-direction: column; gap: 0.25rem; font-size: 0.9rem; }
+.cupos meter { width: 100%; height: 0.9rem; }
+/* Colores de la barra: verde = hay lugar, amarillo = pocos cupos, rojo = llena */
+.cupos meter::-webkit-meter-bar { background: var(--arena); border: 1px solid #D9C7B5; border-radius: 0.4rem; }
+.cupos meter::-webkit-meter-optimum-value { background: var(--exito); }
+.cupos meter::-webkit-meter-suboptimum-value { background: #D9A400; }
+.cupos meter::-webkit-meter-even-less-good-value { background: var(--error); }
+.cupos meter:-moz-meter-optimum::-moz-meter-bar { background: var(--exito); }
+.cupos meter:-moz-meter-sub-optimum::-moz-meter-bar { background: #D9A400; }
+.cupos meter:-moz-meter-sub-sub-optimum::-moz-meter-bar { background: var(--error); }
+
+/* ---------- Tablas ---------- */
+.tabla-desplazable { overflow-x: auto; border: 1px solid var(--arena); border-radius: var(--radio); }
+.tabla { border-collapse: collapse; width: 100%; font-size: 0.92rem; background: #FFFDF9; }
+.tabla caption { text-align: left; padding: 0.6rem 0.75rem; font-weight: 700; color: var(--ciruela); }
+.tabla th, .tabla td { padding: 0.55rem 0.75rem; border-top: 1px solid var(--arena); text-align: left; vertical-align: top; }
+.tabla th { background: var(--arena); color: var(--tinta); white-space: nowrap; }
+.tabla td:last-child { white-space: nowrap; }
+.bitacora-dato { display: inline-block; margin-right: 0.6rem; }
+.paginacion { display: flex; gap: 0.75rem; margin-top: 1rem; }
+
+/* ---------- Portada provisional y páginas de error ---------- */
+/* Portada (D-106): amanecer sobre el lago, con 2 capas de olas que se mueven despacio. */
+.portada {
+  position: relative; overflow: hidden; isolation: isolate;
+  text-align: center; padding: 2.5rem 1.25rem 4.5rem; margin-top: 0.25rem;
+  border: 1px solid var(--arena); border-radius: calc(var(--radio) * 1.5); box-shadow: var(--sombra);
+  background:
+    url("../img/portada-paisaje.svg") center bottom / cover no-repeat,
+    linear-gradient(180deg, #FFF8EF 0%, #FBEBDC 60%, #F4DCC8 100%);
+}
+.portada::before, .portada::after {
+  content: ""; position: absolute; left: 0; right: 0; z-index: -1; pointer-events: none;
+  background: url("../img/olas.svg") repeat-x 0 100% / 120px 100%;
+}
+.portada::before { bottom: 0.6rem; height: 1.6rem; opacity: 0.10; animation: olas 22s linear infinite reverse; }
+.portada::after { bottom: 0; height: 1.4rem; opacity: 0.18; animation: olas 14s linear infinite; }
+@keyframes olas { to { background-position-x: 120px; } }
+.portada__logo { width: min(100%, 26rem); margin: 0 auto 1.5rem; display: block; }
+.portada__texto { font-size: 1.15rem; max-width: 32rem; margin: 0 auto 1rem; }
+.error-pagina { text-align: center; }
+.error-pagina__codigo { font-weight: 700; color: #5E4654; margin-bottom: 0.25rem; }
+
+/* ---------- Pie ---------- */
+.pie { background: var(--ciruela); color: var(--crema); padding: 1rem 0; font-size: 0.9rem; }
+.pie p { margin: 0; }
+
+/* ---------- Páginas públicas (F3) ---------- */
+.portada h1 { font-size: 1.9rem; }
+.miga { margin: 0 0 0.75rem; font-size: 0.95rem; }
+.dos-columnas { display: grid; gap: 1.25rem; align-items: start; }
+
+/* Tarjeta completa clicable: el enlace del título cubre toda la tarjeta */
+.salida, .comunidad-tarjeta { position: relative; }
+.enlace-tarjeta { text-decoration: none; color: inherit; }
+.enlace-tarjeta::after { content: ""; position: absolute; inset: 0; border-radius: inherit; }
+.enlace-tarjeta:focus-visible { outline: none; }
+.salida:focus-within, .comunidad-tarjeta:focus-within { outline: 3px solid var(--terracota); outline-offset: 2px; }
+.salida:hover, .comunidad-tarjeta:hover { border-color: var(--terracota); }
+.salida--alerta { border-color: #C2531A; }
+.salida__aviso { color: #8F3F12; font-weight: 700; font-size: 0.92rem; margin: 0.25rem 0; }
+.salida .cupos { position: relative; z-index: 1; pointer-events: none; }
+
+/* Selector de días */
+.dias { margin: 0.5rem 0 1rem; }
+.dias__lista { display: flex; gap: 0.5rem; overflow-x: auto; padding-bottom: 0.4rem; }
+.dia {
+  display: flex; flex-direction: column; min-width: 6.2rem; min-height: 2.75rem;
+  padding: 0.45rem 0.7rem; border: 2px solid var(--arena); border-radius: var(--radio);
+  background: #FFFDF9; text-decoration: none; color: var(--tinta);
+}
+.dia__nombre { font-weight: 700; color: var(--ciruela); }
+.dia__cantidad { font-size: 0.85rem; color: #5E4654; }
+.dia--actual { border-color: var(--ciruela); background: var(--ciruela); }
+.dia--actual .dia__nombre, .dia--actual .dia__cantidad { color: var(--crema); }
+.dia--vacio .dia__cantidad { font-style: italic; }
+.dia__feriado { font-size: 0.75rem; font-weight: 700; color: #8F3F12; }
+.dia--actual .dia__feriado { color: var(--crema); }
+
+/* ---------- APIs (v2.2): clima del zarpe y DNI de RENIEC ---------- */
+.clima { max-width: 40rem; }
+.clima h2 { font-size: 1.2rem; }
+.clima__resumen { display: flex; align-items: center; gap: 0.5rem; margin: 0.25rem 0 0.5rem; font-size: 1.05rem; }
+.clima__icono { font-size: 2rem; line-height: 1; }
+.clima__temperatura { font-family: var(--serif); font-size: 1.6rem; color: var(--ciruela); }
+.clima__fuente { font-size: 0.85rem; margin-bottom: 0; }
+.campo__reniec { margin: 0.35rem 0 0; font-weight: 700; color: var(--ciruela); }
+
+/* Rutas con precio "desde" */
+.rutas { display: grid; gap: 0.6rem; }
+.ruta { background: #FFFDF9; border: 1px solid var(--arena); border-radius: var(--radio); padding: 0.8rem 1rem; }
+.ruta__nombre { font-size: 1.1rem; margin: 0; }
+.ruta p { margin: 0.15rem 0 0; }
+.ruta__precio strong { font-family: var(--serif); color: var(--ciruela); font-size: 1.15rem; }
+
+/* Mapa del lago */
+.mapa { margin: 0; }
+.mapa__svg { width: 100%; height: auto; display: block; border-radius: var(--radio); border: 1px solid #C9B8A6; }
+.mapa__etiqueta {
+  font: 700 13px var(--sans); fill: var(--tinta);
+  paint-order: stroke; stroke: #FEF9F3; stroke-width: 3px; stroke-linejoin: round;
+}
+.mapa__punto:focus-visible circle, .mapa__punto:hover circle { stroke: var(--tinta); stroke-width: 3.5; }
+.mapa__punto:focus-visible { outline: none; }
+.mapa__leyenda { margin-top: 0.5rem; font-size: 0.9rem; }
+.mapa__numero { font: 700 12px var(--sans); fill: #FEF9F3; }
+/* El recorrido en texto: los números son los mismos de las paradas del mapa */
+.recorrido { display: flex; flex-wrap: wrap; align-items: center; gap: 0.35rem 0.4rem; margin: 0 0 0.4rem; }
+.recorrido li { display: inline-flex; align-items: center; gap: 0.3rem; font-weight: 600; }
+.recorrido li:not(:last-child)::after { content: "→"; color: #8F3F12; margin-left: 0.4rem; }
+.recorrido__n {
+  display: inline-grid; place-items: center; width: 1.5rem; height: 1.5rem; border-radius: 50%;
+  background: var(--tinta); color: var(--crema); font-size: 0.8rem;
+}
+.leyenda { display: flex; flex-wrap: wrap; gap: 0.3rem 1rem; }
+.leyenda li { display: inline-flex; align-items: center; gap: 0.35rem; }
+
+/* Comunidades */
+.comunidades { display: grid; gap: 1rem; grid-template-columns: repeat(auto-fill, minmax(14rem, 1fr)); }
+.comunidades--una { grid-template-columns: 1fr; }
+.comunidad-tarjeta {
+  background: #FFFDF9; border: 1px solid var(--arena); border-radius: var(--radio);
+  overflow: hidden; padding-bottom: 0.75rem;
+}
+.comunidad-tarjeta h3, .comunidad-tarjeta p { padding: 0 0.9rem; }
+.comunidad-tarjeta h3 { margin: 0.6rem 0 0.2rem; }
+.comunidad-tarjeta--fila { display: grid; grid-template-columns: 6.5rem 1fr; gap: 0.75rem; padding: 0.6rem; }
+.comunidad-tarjeta--fila p { padding: 0; margin: 0.1rem 0; }
+.comunidad-tarjeta__nombre { font-size: 1.15rem; margin: 0; }
+
+.foto { margin: 0; position: relative; }
+.foto img { display: block; width: 100%; height: auto; aspect-ratio: 8 / 5; object-fit: cover; background: var(--arena); }
+.foto--miniatura img { border-radius: 0.5rem; }
+.foto--grande img { border-radius: var(--radio); }
+.foto__credito { font-size: 0.78rem; color: #5E4654; padding: 0.25rem 0.1rem; }
+
+.familias { display: grid; gap: 0.75rem; grid-template-columns: repeat(auto-fill, minmax(13rem, 1fr)); }
+.familia { background: #FFFDF9; border: 1px solid var(--arena); border-radius: var(--radio); padding: 0.8rem 1rem; }
+.familia__nombre { font-size: 1.05rem; margin: 0; }
+.etiquetas { list-style: none; margin: 0.4rem 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: 0.35rem; }
+.etiquetas li { background: var(--arena); border-radius: 999px; padding: 0.1rem 0.6rem; font-size: 0.85rem; }
+
+/* Detalle de salida y comunidad */
+.detalle__cabeza { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem 1rem; }
+.detalle__cabeza h1 { margin: 0; }
+.detalle__fecha { font-size: 1.1rem; margin-top: 0.5rem; }
+.detalle__texto { font-size: 1.05rem; }
+.datos { display: grid; gap: 0.4rem; margin: 1rem 0; }
+.datos div { display: flex; justify-content: space-between; gap: 1rem; border-bottom: 1px dashed #D9C7B5; padding-bottom: 0.3rem; }
+.datos dt { font-weight: 700; }
+.datos dd { margin: 0; text-align: right; }
+.paradas { padding-left: 1.4rem; margin: 0; }
+.paradas li { margin-bottom: 0.4rem; }
+.lista-separada li { padding: 0.55rem 0; border-bottom: 1px solid var(--arena); }
+.alerta__titulo { margin: 0 0 0.25rem; }
+.alertas--pasadas .alerta { opacity: 0.85; }
+
+/* ---------- Reserva, pago y boleto (F4) ---------- */
+.resumen-salida { margin-bottom: 1.25rem; padding: 1rem 1.1rem; }
+.resumen-salida__ruta { margin: 0 0 0.3rem; }
+.grupo { border: 1px solid var(--arena); border-radius: var(--radio); padding: 0.75rem 1rem 0.5rem; margin: 0 0 1rem; background: #FFFDF9; }
+.grupo > legend { font-family: var(--serif); font-weight: 700; color: var(--ciruela); font-size: 1.15rem; padding: 0 0.4rem; }
+.fila-2 { display: grid; gap: 0 1rem; }
+.campo--check { flex-direction: row; align-items: center; gap: 0.6rem; font-weight: 700; }
+.campo--check input, .opcion input { width: 1.4rem; height: 1.4rem; accent-color: var(--ciruela); }
+.campo--opciones { border: 0; padding: 0; margin: 0 0 1rem; }
+.opcion { display: flex; align-items: center; gap: 0.6rem; min-height: 2.75rem; }
+.opcion label { font-weight: 600; }
+.pasajero { border: 1px dashed #C9B8A6; border-radius: var(--radio); padding: 0.5rem 0.9rem 0.75rem; margin: 0 0 0.9rem; }
+.pasajero__titulo { font-weight: 700; color: var(--ciruela); padding: 0 0.3rem; }
+.selector-cantidad { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 0.75rem; margin-bottom: 1rem; }
+.selector-cantidad .campo { margin: 0; }
+.precios-detalle { margin: 0 0 1rem; }
+.precios-detalle summary { cursor: pointer; font-weight: 700; color: var(--ciruela); min-height: 2.75rem; display: flex; align-items: center; }
+.acciones { display: flex; flex-wrap: wrap; gap: 0.75rem; margin-top: 1.5rem; }
+.pago-pendiente h2 { font-size: 1.15rem; margin-bottom: 0.3rem; }
+.insignia--reserva-confirmada, .insignia--reserva-pagada, .insignia--reserva-abordada { color: var(--exito); }
+.insignia--reserva-pendiente_pago { color: var(--amarillo); }
+.insignia--reserva-cancelada, .insignia--reserva-vencida, .insignia--reserva-no_show { color: var(--error); }
+.tabla tfoot th, .tabla tfoot td { border-top: 2px solid var(--arena); }
+
+/* Boleto con aspecto de pase de abordar */
+.boleto {
+  max-width: 34rem; margin: 0 auto; background: #FFFDF9; border-radius: calc(var(--radio) * 1.5);
+  box-shadow: var(--sombra); overflow: hidden; border: 1px solid var(--arena);
+}
+.boleto__cabeza { background: var(--ciruela); display: flex; align-items: center; justify-content: space-between; padding: 0.8rem 1rem; gap: 0.5rem; }
+.boleto__cabeza img { width: 11rem; height: auto; }
+.boleto__tipo { color: var(--arena); margin: 0; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; font-size: 0.8rem; }
+.boleto__cuerpo { display: grid; gap: 1rem; padding: 1rem; border-bottom: 2px dashed #C9B8A6; }
+.boleto__etiqueta { margin: 0; font-size: 0.8rem; color: #5E4654; }
+.boleto__codigo { font-size: 2.3rem; margin: 0; letter-spacing: 0.04em; }
+.boleto__ruta { font-family: var(--serif); font-size: 1.15rem; color: var(--ciruela); margin: 0.2rem 0 0; }
+.boleto__qr { text-align: center; }
+.qr { width: 11rem; height: 11rem; display: block; margin: 0 auto; background: #fff; }
+.boleto__pasajeros { padding: 0.8rem 1rem; }
+.boleto__pasajeros h2 { font-size: 1.05rem; }
+.boleto__pie { background: var(--arena); padding: 0.7rem 1rem; font-size: 0.9rem; }
+
+/* ---------- Panel operativo (F5) ---------- */
+.cabeza-pagina { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 0.5rem 1rem; margin-bottom: 0.5rem; }
+.cabeza-pagina h1 { margin: 0; }
+.navegar-dias { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem; margin: 0.75rem 0 1rem; }
+.navegar-dias__fecha { display: flex; gap: 0.4rem; align-items: center; margin: 0; }
+.navegar-dias__fecha .campo__control { width: auto; }
+.acciones-fila { display: flex; flex-wrap: wrap; gap: 0.25rem 0.75rem; align-items: center; }
+.acciones-fila a, .boton-enlace { min-height: 2.75rem; display: inline-flex; align-items: center; }
+.acciones-fila form { margin: 0; }
+.tabla td.acciones-fila { white-space: normal; }
+.boton-enlace {
+  background: none; border: 0; padding: 0; font: inherit; color: var(--ciruela);
+  text-decoration: underline; text-underline-offset: 0.15em; cursor: pointer;
+}
+.boton-enlace:hover { color: var(--tinta); }
+.tarjeta--formulario { max-width: 44rem; }
+.datos--panel { margin: 0.75rem 0; }
+.acciones--panel { margin-top: 0.75rem; align-items: center; }
+.acciones--panel form { margin: 0; }
+.tabla__grupo th { background: #FFF6EC; font-weight: 400; border-top: 2px solid var(--arena); white-space: normal; }
+.tabla__codigo { font-family: var(--serif); font-weight: 700; color: var(--ciruela); }
+.sin-cortar { white-space: nowrap; }          /* códigos TV-XXXX y montos: no se parten en dos líneas */
+.texto-alerta { color: var(--error); }
+.opcion--grande { border-bottom: 1px solid var(--arena); padding: 0.4rem 0; }
+.opcion--grande input { width: 1.6rem; height: 1.6rem; flex: none; }
+.opcion--hecha { color: var(--exito); }
+.abordaje { margin-top: 1rem; }
+.pagos { display: grid; gap: 1rem; }
+.pago { padding: 1rem 1.1rem; }
+.pago__titulo { font-size: 1.1rem; }
+.pago__acciones { display: grid; gap: 0.75rem; margin-top: 0.75rem; }
+.pago__acciones form { margin: 0; }
+.pago__rechazo { display: grid; gap: 0.35rem; }
+.texto-whatsapp { font-family: var(--sans); white-space: pre-wrap; }
+.catalogos { display: grid; gap: 0.75rem; grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr)); }
+.impresion h1 { font-size: 1.5rem; }
+.tabla--impresion { font-size: 0.95rem; }
+.tabla--impresion .casilla { font-size: 1.2rem; text-align: center; width: 3rem; }
+
+/* ---------- Seguimiento (F6): barras, estrellas, formularios en línea ---------- */
+.barra { display: inline-block; width: 8rem; height: 0.7rem; vertical-align: middle; margin-right: 0.4rem; }
+.barra__fondo { fill: var(--arena); }
+.barra__valor { fill: var(--ciruela); }
+.tabla--barras td { white-space: nowrap; }
+.en-linea { display: inline; margin: 0 0 0 0.4rem; }
+.estrellas { color: #8A6100; font-size: 1.15rem; letter-spacing: 0.08em; }
+.opiniones { display: grid; gap: 0.6rem; }
+.opinion { background: #FFFDF9; border: 1px solid var(--arena); border-radius: var(--radio); padding: 0.75rem 1rem; }
+.opinion p { margin: 0.2rem 0; }
+.idioma-cambio { color: var(--ciruela); font-weight: 700; text-decoration: none; min-height: 2.75rem;
+  display: inline-flex; align-items: center; padding: 0 0.4rem; }
+
+/* ---------- Movimiento al pasar el mouse y pasos para reservar (D-106, D-107) ---------- */
+.boton { transition: transform 0.15s ease, background-color 0.15s ease, border-color 0.15s ease; }
+.boton:hover { transform: translateY(-1px); }
+.boton:active { transform: translateY(0); }
+.subnav a { transition: box-shadow 0.2s ease, background-color 0.2s ease; }
+.subnav a:hover { box-shadow: inset 0 -4px 0 rgb(194 122 82 / 0.7); }
+.salida, .comunidad-tarjeta, .ruta, .familia, .opinion, .paso {
+  transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+}
+.salida:hover, .comunidad-tarjeta:hover, .ruta:hover, .familia:hover, .paso:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 2px 4px rgb(42 18 32 / 0.08), 0 12px 24px rgb(42 18 32 / 0.12);
+  border-color: var(--terracota);
+}
+.comunidad-tarjeta .foto { overflow: hidden; }
+.comunidad-tarjeta .foto img { transition: transform 0.5s ease; }
+.comunidad-tarjeta:hover .foto img { transform: scale(1.06); }
+
+.pasos { display: grid; gap: 0.75rem; }
+.paso {
+  background: #FFFDF9; border: 1px solid var(--arena); border-radius: var(--radio);
+  padding: 1rem 1.1rem; box-shadow: var(--sombra); display: grid; gap: 0.35rem; align-content: start;
+}
+.paso h3 { margin: 0; font-size: 1.1rem; }
+.paso p { margin: 0; color: #5E4654; }
+.paso__numero {
+  width: 2.25rem; height: 2.25rem; border-radius: 50%; display: grid; place-items: center;
+  background: var(--ciruela); color: var(--crema); font-family: var(--serif); font-weight: 700; font-size: 1.1rem;
+}
+.ayuda-codigo { margin: 1.25rem 0 0; font-size: 0.95rem; text-align: center; color: #5E4654; }
+
+/* ---------- Panel: «Tu trabajo de hoy» y guías «¿Cómo funciona?» ---------- */
+.guia {
+  background: #FFFDF9; border: 1px solid var(--arena); border-left: 4px solid var(--terracota);
+  border-radius: 0.5rem; padding: 0 1rem; margin: 0.75rem 0 1rem;
+}
+.guia[open] { padding-bottom: 0.75rem; }
+.guia summary {
+  cursor: pointer; font-weight: 700; color: var(--ciruela); min-height: 2.75rem;
+  display: flex; align-items: center;
+}
+.guia__pasos { margin: 0; padding-left: 1.4rem; }
+.guia__pasos li { margin-bottom: 0.35rem; }
+
+.tareas { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.6rem; counter-reset: tarea; }
+.tarea {
+  counter-increment: tarea; position: relative; background: #FFFDF9; border: 1px solid var(--arena);
+  border-radius: var(--radio); padding: 0.75rem 1rem 0.75rem 3.4rem; box-shadow: var(--sombra);
+}
+.tarea::before {
+  content: counter(tarea); position: absolute; left: 0.9rem; top: 0.75rem;
+  width: 1.8rem; height: 1.8rem; border-radius: 50%; display: grid; place-items: center;
+  background: var(--ciruela); color: var(--crema); font-family: var(--serif); font-weight: 700;
+}
+.tarea a { font-weight: 700; }
+.tarea p { margin: 0.15rem 0 0; color: #5E4654; font-size: 0.95rem; }
+
+/* El pie empieza con una ola del mismo color. */
+.pie { position: relative; margin-top: 1.5rem; }
+.pie::before {
+  content: ""; position: absolute; left: 0; right: 0; top: -0.85rem; height: 0.9rem;
+  background: url("../img/olas.svg") repeat-x 0 100% / 80px 100%;
+}
+
+/* ---------- Foto de la sección como marca de agua (D-109) ----------
+   Una foto del lago por sección, fija y muy tenue detrás de todo. Solo en pantallas anchas:
+   en el celular el <img> está oculto y, como es loading="lazy", ni se descarga. El texto
+   queda sobre crema casi pura (contraste de D-06) y las tarjetas tienen su propio fondo. */
+.fondo-foto { display: none; }
+.pie .pie__credito { display: none; font-size: 0.8rem; margin-top: 0.25rem; }
+
+/* ---------- Acceso del personal: entrar y recuperar la contraseña (D-111) ---------- */
+.acceso { display: grid; gap: 1.25rem; max-width: 60rem; margin: 0.5rem auto 1rem; }
+.acceso__tarjeta { margin: 0; }
+.acceso__tarjeta h1 { text-align: center; }
+.acceso__paso {
+  text-align: center; margin: 0 0 0.25rem; font-size: 0.85rem; font-weight: 700;
+  letter-spacing: 0.06em; text-transform: uppercase; color: #8F3F12;
+}
+.acceso__intro { text-align: center; }
+.acceso__olvido { margin: -0.25rem 0 0.25rem; text-align: right; }
+.acceso__olvido a { font-weight: 700; display: inline-flex; min-height: 2.75rem; align-items: center; }
+.acceso__nota { margin: 1rem 0 0; font-size: 0.88rem; color: #5E4654; text-align: center; }
+.acceso__demo { margin-top: 1rem; font-size: 0.92rem; }
+.acceso__otras { border-top: 1px solid var(--arena); margin-top: 1.25rem; padding-top: 0.9rem; font-size: 0.95rem; }
+.acceso__otras h2 { font-size: 1.05rem; }
+.acceso__otras ul { margin: 0.25rem 0 0.75rem; padding-left: 1.2rem; }
+.acceso__marca { display: none; }
+.acceso__foto { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: -2; }
+.acceso__logo { width: 13rem; height: auto; margin-bottom: auto; }
+.acceso__titulo { color: var(--crema); font-size: 1.6rem; margin: 1.5rem 0 0.5rem; }
+.acceso__puntos { margin: 0; padding-left: 1.2rem; display: grid; gap: 0.45rem; }
+
+/* ---------- Mi cuenta y roles (D-113) ---------- */
+.cuenta { display: grid; gap: 1rem; margin-top: 1rem; }
+.cuenta__bloque { padding: 1.25rem; }
+.cuenta__bloque h2 { font-size: 1.2rem; }
+.cuenta__bloque .datos { margin: 0.5rem 0; }
+.roles { display: grid; gap: 1rem; }
+.rol { padding: 1rem 1.1rem; }
+.rol h3 { font-size: 1.1rem; display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; }
+.rol__titulo { margin: 0.6rem 0 0.2rem; font-weight: 700; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.05em; }
+.rol__titulo--hace { color: var(--exito); }
+.rol__titulo--no { color: var(--error); }
+.rol__lista { margin: 0; padding-left: 1.2rem; }
+.rol__lista li { margin-bottom: 0.25rem; }
+
+/* ---------- Respaldos (D-116) ---------- */
+.respaldo-avisos { display: grid; gap: 1rem; margin: 0.5rem 0 1rem; }
+.respaldo-aviso { padding: 1rem 1.1rem; }
+.respaldo-aviso h2 { font-size: 1.1rem; }
+.respaldo-aviso p { margin: 0.3rem 0; overflow-wrap: anywhere; }
+.respaldo-aviso--restaurar { border-left: 5px solid var(--terracota); }
+
+/* Aviso de «tu sesión se cerrará» (lo pone js/sesion.js, D-110) */
+.aviso-sesion {
+  position: fixed; left: 1rem; right: 1rem; bottom: 1rem; z-index: 20; margin: 0;
+  display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem 1rem;
+  box-shadow: 0 4px 24px rgb(42 18 32 / 0.25); background: #FFFDF9;
+}
+.aviso-sesion p { margin: 0; font-weight: 700; }
+
+/* ---------- Pantallas anchas ---------- */
+@media (min-width: 48em) {
+  /* La foto se nota más en los márgenes (24 %) y se aclara detrás de la columna del texto
+     (24 % × 0.65 ≈ 16 %): ahí el texto suave sigue sobre 4.5 : 1 aun en lo más oscuro de la foto. */
+  .fondo-foto {
+    display: block; position: fixed; inset: 0; z-index: -1;
+    width: 100%; height: 100%; object-fit: cover;
+    opacity: 0.24; pointer-events: none;
+    -webkit-mask-image: linear-gradient(90deg, #000 calc(50% - 36rem), rgb(0 0 0 / 0.65) calc(50% - 31rem),
+                                        rgb(0 0 0 / 0.65) calc(50% + 31rem), #000 calc(50% + 36rem));
+    mask-image: linear-gradient(90deg, #000 calc(50% - 36rem), rgb(0 0 0 / 0.65) calc(50% - 31rem),
+                                rgb(0 0 0 / 0.65) calc(50% + 31rem), #000 calc(50% + 36rem));
+  }
+  .pie .pie__credito { display: block; }
+  .acceso { grid-template-columns: 1fr 1fr; grid-template-areas: "marca tarjeta"; align-items: stretch; }
+  .acceso__tarjeta { grid-area: tarjeta; }
+  .acceso__marca {
+    grid-area: marca; display: flex; flex-direction: column; justify-content: flex-end;
+    position: relative; overflow: hidden; isolation: isolate; min-height: 28rem;
+    padding: 2rem; border-radius: calc(var(--radio) * 1.5); box-shadow: var(--sombra);
+    background: var(--ciruela); color: var(--crema);
+  }
+  /* Velo ciruela: el texto claro siempre se lee sobre la foto */
+  .acceso__marca::before {
+    content: ""; position: absolute; inset: 0; z-index: -1;
+    background: linear-gradient(180deg, rgb(87 43 68 / 0.55) 0%, rgb(87 43 68 / 0.78) 45%, rgb(42 18 32 / 0.94) 100%);
+  }
+  .acceso__marca a { color: var(--crema); }
+  .cuenta { grid-template-columns: 1fr 1fr; align-items: start; }
+  .roles { grid-template-columns: 1fr 1fr; }
+  .respaldo-avisos { grid-template-columns: 1fr 1fr; }
+  .aviso-sesion { left: auto; max-width: 28rem; }
+  .fila-2 { grid-template-columns: 1fr 1fr; }
+  .tareas { grid-template-columns: 1fr 1fr; }
+  .pago__acciones { grid-template-columns: auto 1fr; align-items: end; }
+  .pago__rechazo { grid-template-columns: 1fr auto; }
+  .pago__rechazo .campo__etiqueta { grid-column: 1 / -1; }
+  .boleto__cuerpo { grid-template-columns: 1fr auto; align-items: center; }
+  .portada h1 { font-size: 2.5rem; }
+  .dos-columnas { grid-template-columns: 3fr 2fr; }
+  h1 { font-size: 2.1rem; }
+  .marca img { width: auto; height: 60px; }
+  .marca__texto {                     /* el logo ya trae el nombre: queda solo para lectores de pantalla */
+    position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap;
+  }
+  .cabecera__fila { min-height: 5rem; }
+  .sesion__nombre { display: inline; }
+  .salidas { grid-template-columns: repeat(2, 1fr); }
+  .tarjeta { padding: 2rem; }
+  .pasos { grid-template-columns: repeat(3, 1fr); }
+  .portada { padding: 3.5rem 2rem 5.5rem; }
+}
+
+@media (min-width: 64em) {
+  .salidas { grid-template-columns: repeat(3, 1fr); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * { scroll-behavior: auto !important; transition: none !important; animation: none !important; }
+  .boton:hover, .salida:hover, .comunidad-tarjeta:hover, .ruta:hover, .familia:hover, .paso:hover,
+  .comunidad-tarjeta:hover .foto img { transform: none; }
+}
+
+@media print {
+  .cabecera, .subnav, .pie, .boton, .saltar, .no-imprimir, .mensajes,
+  .fondo-foto, .acceso__marca, .aviso-sesion { display: none !important; }
+  .boleto { box-shadow: none; border: 1px solid #000; }
+  .tabla--impresion th, .tabla--impresion td { border: 1px solid #000; padding: 0.3rem 0.4rem; }
+  .impresion { font-size: 11pt; }
+  body { background: #fff; }
+  .portada { background: none; box-shadow: none; }
+  .portada::before, .portada::after, .pie::before { display: none; }
+}

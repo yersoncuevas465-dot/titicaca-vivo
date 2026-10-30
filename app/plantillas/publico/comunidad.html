@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+{% from "macros_publico.html" import imagen_comunidad %}
+{% from "publico/_mapa.html" import mapa_lago %}
+{% block titulo %}{{ c.nombre }}{% endblock %}
+
+{% block contenido %}
+<p class="miga"><a href="{{ url_for('publico.comunidades') }}">← {{ t('Comunidades') }}</a></p>
+
+<article class="detalle" aria-labelledby="titulo-comunidad">
+  <h1 id="titulo-comunidad">{{ c.nombre }}</h1>
+  <div class="dos-columnas">
+    {{ imagen_comunidad(c, 'foto--grande') }}
+    <div>
+      {% if c.descripcion %}<p class="detalle__texto">{{ c.descripcion }}</p>{% endif %}
+      <dl class="datos">
+        <div><dt>{{ t('Distrito') }}</dt><dd>{{ c.distrito }} ({{ c.provincia }})</dd></div>
+        <div><dt>{{ t('Idioma originario') }}</dt><dd>{{ c.idioma_originario | idioma }}</dd></div>
+        <div><dt>{{ t('Señal de celular') }}</dt><dd>{{ c.senal | senal }}</dd></div>
+        <div><dt>{{ t('Artesanía') }}</dt><dd>{% if talleres == 1 %}{{ t('1 familia ofrece taller textil') }}{% elif talleres %}{{ t('{n} familias ofrecen taller textil', n=talleres) }}{% else %}{{ t('Pregunta en la visita') }}{% endif %}</dd></div>
+      </dl>
+      {% if c.senal != 'buena' %}
+        <p class="aviso aviso--info">{{ t('La señal es limitada: guarda tu boleto en el celular antes de salir de Puno.') }}</p>
+      {% endif %}
+    </div>
+  </div>
+
+  {% if salidas %}
+  <section class="bloque" aria-labelledby="titulo-proximas">
+    <h2 id="titulo-proximas">{{ t('Próximas salidas que pasan por {nombre}', nombre=c.nombre) }}</h2>
+    <ul class="lista-limpia lista-separada">
+      {% for s in salidas %}
+        <li>
+          <a href="{{ url_for('publico.detalle_salida', salida_id=s.salida_id) }}">{{ s.fecha_hora_zarpe | fecha_hora }} · {{ s.ruta_nombre }}</a>
+          <span class="insignia insignia--{{ s.estado_publico }}">{{ s.estado_publico | estado_publico }}</span>
+          <span class="texto-suave">{{ t('{libres} libres', libres=s.libres) }}{% if s.es_pernocte %} · {{ t('con noche aquí') }}{% endif %}</span>
+        </li>
+      {% endfor %}
+    </ul>
+  </section>
+  {% endif %}
+
+  {% if rutas %}
+  <section class="bloque" aria-labelledby="titulo-rutas-comunidad">
+    <h2 id="titulo-rutas-comunidad">{{ t('Rutas que la visitan') }}</h2>
+    <ul class="lista-limpia lista-separada">
+      {% for r in rutas %}
+        <li><a href="{{ url_for('publico.salidas', ruta=r.codigo) }}">{{ r.nombre }}</a>
+          <span class="texto-suave">· {{ t('parada {n}', n=r.orden) }}{% if r.es_pernocte %} · {{ t('se duerme aquí') }}{% else %} · {{ r.minutos_estadia }} min{% endif %}</span></li>
+      {% endfor %}
+    </ul>
+  </section>
+  {% endif %}
+
+  {% if c.latitud is not none %}
+  <section class="bloque" aria-labelledby="titulo-donde">
+    <h2 id="titulo-donde">{{ t('Dónde queda') }}</h2>
+    {{ mapa_lago(mapa, id='mapa-comunidad', descripcion=t('La comunidad está resaltada con un halo; las rutas que paran aquí, con línea continua.')) }}
+  </section>
+  {% endif %}
+
+  <section class="bloque" aria-labelledby="titulo-familias">
+    <h2 id="titulo-familias">{{ t('Familias anfitrionas') }}</h2>
+    {% if familias %}
+      <p class="texto-suave">{{ t('Solo mostramos el nombre de la casa, cuántas personas recibe y qué ofrece. Los datos de contacto los tiene la agencia.') }}</p>
+      <ul class="lista-limpia familias">
+        {% for f in familias %}
+          <li class="familia">
+            <h3 class="familia__nombre">{{ f.nombre_familia }}</h3>
+            <p class="texto-suave">{{ t('Hasta {n} personas', n=f.capacidad_personas) }}</p>
+            <ul class="etiquetas">{% for s in f.servicios | servicios %}<li>{{ s }}</li>{% endfor %}</ul>
+          </li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <p class="aviso aviso--info">{{ t('Esta comunidad todavía no tiene familias anfitrionas registradas.') }}</p>
+    {% endif %}
+  </section>
+</article>
+{% endblock %}
