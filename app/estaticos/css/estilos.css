@@ -704,6 +704,39 @@ main:focus { outline: none; }
   .buscador .boton { width: auto; }
 }
 
+/* ---------- Rutas como tarjetas (v2.4): foto, recorrido, duración y precio ---------- */
+.rutas-tarjetas {
+  display: grid; gap: 1rem; margin-bottom: 1.5rem;
+  grid-template-columns: repeat(auto-fill, minmax(16rem, 1fr));
+}
+.ruta-tarjeta {
+  position: relative; display: flex; flex-direction: column; overflow: hidden;
+  background: #FFFDF9; border: 1px solid var(--arena); border-radius: var(--radio);
+  box-shadow: var(--sombra); transition: transform 0.15s ease, border-color 0.15s ease;
+}
+.ruta-tarjeta:hover { border-color: var(--terracota); transform: translateY(-2px); }
+.ruta-tarjeta:focus-within { outline: 3px solid var(--terracota); outline-offset: 2px; }
+.ruta-tarjeta .foto__credito {                 /* el crédito, sobre la foto: no la separa del título */
+  position: absolute; left: 0; right: 0; bottom: 0; padding: 1.25rem 0.75rem 0.3rem;
+  font-size: 0.72rem; color: #fff; text-align: right;
+  background: linear-gradient(180deg, rgb(0 0 0 / 0) 0%, rgb(0 0 0 / 0.65) 100%);
+}
+.ruta-tarjeta__cuerpo { display: flex; flex-direction: column; gap: 0.4rem; flex: 1; padding: 0.6rem 1rem 1rem; }
+.ruta-tarjeta__nombre { font-size: 1.15rem; margin: 0; }
+.ruta-tarjeta__paradas { margin: 0; color: #5E4654; font-size: 0.95rem; }
+.ruta-tarjeta__datos { display: flex; flex-wrap: wrap; gap: 0.35rem; }
+.ruta-tarjeta__datos li { background: var(--arena); border-radius: 999px; padding: 0.1rem 0.65rem; font-size: 0.85rem; }
+.ruta-tarjeta__pie {
+  margin: auto 0 0; padding-top: 0.5rem; display: flex; flex-wrap: wrap; gap: 0.5rem;
+  justify-content: space-between; align-items: baseline;
+}
+.ruta-tarjeta__pie strong { font-family: var(--serif); color: var(--ciruela); font-size: 1.3rem; }
+.ruta-tarjeta__ver { font-weight: 700; color: var(--ciruela); }
+.rutas-tarjetas + .mapa { max-width: 44rem; margin: 0 auto; }
+@media (prefers-reduced-motion: reduce) {
+  .ruta-tarjeta, .ruta-tarjeta:hover { transition: none; transform: none; }
+}
+
 @media print {
   .buscador { display: none; }
 }

@@ -569,6 +569,10 @@ EN = {
     "En español e inglés": "In Spanish and English",
     "Toda la reserva en tu idioma, desde el celular y aunque la señal sea débil.":
         "The whole booking in your language, from your phone, even with a weak signal.",
+
+    # --- Rutas como tarjetas (v2.4) ---
+    "por persona": "per person",
+    "Ver salidas": "See trips",
 }
 
 # Mensajes con partes variables (números, códigos): se reconocen con un patrón.

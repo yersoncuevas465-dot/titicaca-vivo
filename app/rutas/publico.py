@@ -36,19 +36,33 @@ def _datos_del_mapa(comunidades=None, **resalte):
     return mapa.construir(comunidades, ruta.paradas_para_mapa(), **resalte)
 
 
+def _rutas_con_paradas(rutas, paradas, comunidades):
+    """v2.4: cada ruta con sus comunidades en el orden de visita y la de su foto (la última
+    parada que tenga foto). Sin consultas extra: usa las paradas que ya trae el mapa."""
+    por_slug = {c["slug"]: c for c in comunidades}
+    tarjetas = []
+    for r in rutas:
+        suyas = [por_slug[p["slug"]] for p in paradas
+                 if p["ruta_id"] == r["id"] and p["slug"] in por_slug]
+        con_foto = [c for c in suyas if imagenes.foto_comunidad(c["slug"])]
+        tarjetas.append({**r, "paradas": suyas, "foto": con_foto[-1] if con_foto else None})
+    return tarjetas
+
+
 @bp.route("/")
 def inicio():
     hoy = hoy_en_lima()
     comunidades = comunidad.listar_publicas()
+    paradas = ruta.paradas_para_mapa()               # una sola vez: el mapa y las tarjetas
     return render_template(
         "publico/inicio.html",
         hoy=hoy,
         manana=hoy + timedelta(days=1),
         salidas=salida.listar_publicas(hoy),
         alertas=alerta.vigentes(),
-        rutas=ruta.listar_activas(),
+        rutas=_rutas_con_paradas(ruta.listar_activas(), paradas, comunidades),
         comunidades=comunidades,
-        mapa=_datos_del_mapa(comunidades),
+        mapa=mapa.construir(comunidades, paradas),
         # v2.3: la comunidad de la foto grande de la portada (con su nombre y crédito)
         portada=next((c for c in comunidades if c["slug"] == imagenes.FOTO_PORTADA
                       and imagenes.foto_comunidad(c["slug"])), None),

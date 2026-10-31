@@ -189,7 +189,9 @@ def test_en_la_pagina_de_reservar_el_menu_marca_salidas(cliente):
 def test_el_boton_de_zarpe_aparece_recien_60_minutos_antes(app, salida_cerca):
     cliente = app.test_client()
     iniciar_sesion(cliente, "operador")
-    temprano = cliente.get(f"/panel/salidas/{salida_cerca(minutos=200)}/pasajeros").get_data(True)
+    # Bien separadas en la misma lancha (400 y 20 min): si se pegaran, el NOW() de la segunda
+    # podría ir un segundo después y la base las vería cruzadas.
+    temprano = cliente.get(f"/panel/salidas/{salida_cerca(minutos=400)}/pasajeros").get_data(True)
     assert ">Marcar zarpe</button>" not in temprano and "El zarpe se podrá marcar desde el" in temprano
     listo = cliente.get(f"/panel/salidas/{salida_cerca(minutos=20)}/pasajeros").get_data(True)
     assert ">Marcar zarpe</button>" in listo and "se podrá marcar" not in listo
@@ -259,3 +261,32 @@ def test_la_portada_en_ingles(cliente):
     cliente.get("/idioma/en")
     html = cliente.get("/").get_data(True)
     assert "Find your trip" in html and "Travel with peace of mind" in html and "Search trips" in html
+
+
+# --- Rutas como tarjetas (v2.4) ----------------------------------------------------------------
+
+def test_las_rutas_de_la_portada_son_tarjetas_con_foto_recorrido_y_precio(app, cliente):
+    html = cliente.get("/").get_data(True)
+    activas = consultar_valor(app, "SELECT COUNT(*) AS n FROM ruta WHERE activa = 1")
+    assert html.count('class="ruta-tarjeta"') == activas
+    assert 'class="enlace-tarjeta" href="/salidas?ruta=URO-TAQ"' in html     # toda la tarjeta lleva
+    assert "Uros → Taquile" in html and "por persona" in html                # recorrido y precio
+    tarjetas = html[html.index('class="lista-limpia rutas-tarjetas"'):html.index('class="mapa"')]
+    assert tarjetas.count("/estaticos/img/comunidades/") >= activas - 1      # casi todas con foto
+    assert 'class="foto__credito"' in tarjetas                               # con su crédito
+
+
+def test_las_tarjetas_de_rutas_no_agregan_consultas(cliente, monkeypatch):
+    import pymysql
+
+    contador = {"n": 0}
+    original = pymysql.cursors.Cursor.execute
+
+    def contar(self, consulta, args=None):
+        if consulta.lstrip().upper().startswith("SELECT"):
+            contador["n"] += 1
+        return original(self, consulta, args)
+
+    monkeypatch.setattr(pymysql.cursors.Cursor, "execute", contar)
+    assert cliente.get("/").status_code == 200
+    assert contador["n"] <= 5                       # las mismas 5 de antes: paradas, una sola vez

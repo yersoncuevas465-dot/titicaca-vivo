@@ -121,20 +121,31 @@
   <p><a href="{{ url_for('publico.salidas', fecha=manana.isoformat()) }}">{{ t('Ver las salidas de mañana →') }}</a></p>
 </section>
 
+{# Las rutas como tarjetas (v2.4), como las habitaciones de un hotel: la foto de su última
+   parada, el recorrido, la duración, si hay noche con una familia y el precio «desde».
+   Toda la tarjeta lleva a las salidas de esa ruta. #}
 <section class="bloque" aria-labelledby="titulo-rutas">
   <h2 id="titulo-rutas">{{ t('El lago y sus rutas') }}</h2>
-  <div class="dos-columnas">
-    {{ mapa_lago(mapa) }}
-    <ul class="lista-limpia rutas">
-      {% for r in rutas %}
-        <li class="ruta">
-          <h3 class="ruta__nombre"><a href="{{ url_for('publico.salidas', ruta=r.codigo) }}">{{ r.nombre }}</a></h3>
-          <p class="texto-suave">{{ r.duracion_horas | duracion }}{% if r.incluye_pernocte %} · {{ t('incluye una noche con una familia') }}{% endif %}</p>
-          {% if r.desde %}<p class="ruta__precio">{{ t('desde') }} <strong>{{ r.desde | soles }}</strong></p>{% endif %}
-        </li>
-      {% endfor %}
-    </ul>
-  </div>
+  <ul class="lista-limpia rutas-tarjetas">
+    {% for r in rutas %}
+      <li class="ruta-tarjeta">
+        {% if r.foto %}{{ imagen_comunidad(r.foto, 'foto--tarjeta') }}{% endif %}
+        <div class="ruta-tarjeta__cuerpo">
+          <h3 class="ruta-tarjeta__nombre"><a class="enlace-tarjeta" href="{{ url_for('publico.salidas', ruta=r.codigo) }}">{{ r.nombre }}</a></h3>
+          {% if r.paradas %}<p class="ruta-tarjeta__paradas">{{ r.paradas | map(attribute='nombre') | join(' → ') }}</p>{% endif %}
+          <ul class="lista-limpia ruta-tarjeta__datos">
+            <li>{{ r.duracion_horas | duracion }}</li>
+            {% if r.incluye_pernocte %}<li>{{ t('incluye una noche con una familia') }}</li>{% endif %}
+          </ul>
+          <p class="ruta-tarjeta__pie">
+            {% if r.desde %}<span>{{ t('desde') }} <strong>{{ r.desde | soles }}</strong> {{ t('por persona') }}</span>{% endif %}
+            <span class="ruta-tarjeta__ver" aria-hidden="true">{{ t('Ver salidas') }} →</span>
+          </p>
+        </div>
+      </li>
+    {% endfor %}
+  </ul>
+  {{ mapa_lago(mapa) }}
 </section>
 
 <section class="bloque" aria-labelledby="titulo-comunidades">
