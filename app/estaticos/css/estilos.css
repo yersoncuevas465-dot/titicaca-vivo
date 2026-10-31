@@ -737,6 +737,55 @@ main:focus { outline: none; }
   .ruta-tarjeta, .ruta-tarjeta:hover { transition: none; transform: none; }
 }
 
+/* ---------- Galería (v2.5): mosaico de fotos y visor en grande ----------
+   Celular: 2 columnas, la primera foto ocupa 2×2. Pantalla ancha: 4 columnas, la primera
+   2×2 y de la cuarta en adelante 2 de ancho: 6 fotos llenan 3 filas sin huecos. */
+.filtro-galeria { display: flex; flex-wrap: wrap; gap: 0.5rem; margin: 1rem 0 1.25rem; }
+.filtro-galeria__opcion {
+  display: inline-flex; align-items: center; min-height: 2.75rem; padding: 0 1rem;
+  border: 1px solid var(--arena); border-radius: 999px; background: #FFFDF9;
+  color: var(--ciruela); font-weight: 700; text-decoration: none;
+}
+.filtro-galeria__opcion[aria-current="true"] { background: var(--ciruela); border-color: var(--ciruela); color: var(--crema); }
+.galeria {
+  display: grid; gap: 0.6rem; margin-bottom: 1rem; grid-auto-flow: dense;
+  grid-template-columns: repeat(2, 1fr); grid-auto-rows: 8.5rem;
+}
+.galeria__item:first-child { grid-column: span 2; grid-row: span 2; }
+.galeria__item:last-child:nth-child(even) { grid-column: span 2; }
+.galeria__enlace {
+  position: relative; display: block; height: 100%; overflow: hidden;
+  border-radius: var(--radio); box-shadow: var(--sombra); color: #fff; text-decoration: none;
+}
+.galeria__enlace img { display: block; width: 100%; height: 100%; object-fit: cover; transition: transform 0.35s ease; }
+.galeria__enlace:hover img, .galeria__enlace:focus-visible img { transform: scale(1.05); }
+.galeria__enlace:focus-visible { outline: 3px solid var(--terracota); outline-offset: 2px; }
+.galeria__leyenda {
+  position: absolute; left: 0; right: 0; bottom: 0; display: flex; flex-direction: column;
+  padding: 1.75rem 0.8rem 0.55rem; background: linear-gradient(180deg, rgb(0 0 0 / 0) 0%, rgb(0 0 0 / 0.72) 100%);
+}
+.galeria__nombre { font-family: var(--serif); font-weight: 700; font-size: 1.15rem; line-height: 1.2; }
+.galeria__idioma { font-size: 0.85rem; }
+.galeria__credito { font-size: 0.68rem; opacity: 0.92; }
+
+.visor { width: min(42rem, 94vw); max-height: 94vh; padding: 0; border: 0; border-radius: var(--radio); background: #FFFDF9; color: var(--tinta); }
+.visor::backdrop { background: rgb(20 8 15 / 0.85); }
+.visor__figura { margin: 0; }
+.visor__imagen { display: block; width: 100%; height: auto; aspect-ratio: 8 / 5; object-fit: cover; }
+.visor__leyenda { padding: 0.8rem 1.1rem 0; }
+.visor__titulo { font-size: 1.35rem; margin: 0 0 0.25rem; }
+.visor__texto { margin: 0 0 0.35rem; }
+.visor__botones { display: flex; flex-wrap: wrap; gap: 0.5rem; justify-content: space-between; padding: 0.8rem 1.1rem 1.1rem; }
+
+@media (min-width: 48em) {
+  .galeria { grid-template-columns: repeat(4, 1fr); grid-auto-rows: 11rem; }
+  .galeria__item:nth-child(n + 4) { grid-column: span 2; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .galeria__enlace img { transition: none; }
+  .galeria__enlace:hover img, .galeria__enlace:focus-visible img { transform: none; }
+}
+
 @media print {
   .buscador { display: none; }
 }

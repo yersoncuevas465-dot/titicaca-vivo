@@ -573,6 +573,22 @@ EN = {
     # --- Rutas como tarjetas (v2.4) ---
     "por persona": "per person",
     "Ver salidas": "See trips",
+
+    # --- Galería (v2.5) ---
+    "Galería": "Gallery",
+    "Galería del lago": "Lake gallery",
+    "Las islas y comunidades que visitan nuestras rutas. Toca una foto para verla en grande.":
+        "The islands and communities our routes visit. Tap a photo to see it larger.",
+    "Filtrar por idioma": "Filter by language",
+    "Todas": "All",
+    "Ver la comunidad": "See the community",
+    "Anterior": "Previous",
+    "Siguiente": "Next",
+    "Cerrar": "Close",
+    "Todavía no hay fotos de estas comunidades.": "There are no photos of these communities yet.",
+    "Fotos de Wikimedia Commons, con el nombre de su autor y su licencia.":
+        "Photos from Wikimedia Commons, with their author's name and licence.",
+    "Ver la galería de fotos →": "See the photo gallery →",
 }
 
 # Mensajes con partes variables (números, códigos): se reconocen con un patrón.

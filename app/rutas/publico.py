@@ -21,7 +21,7 @@ from flask import (
 
 from app.modelos import alerta, comunidad, resena, ruta, salida, sistema, tarifa
 from app.seguridad import destino_seguro
-from app.servicios import clima, feriados, imagenes, mapa, tipo_cambio
+from app.servicios import clima, feriados, formato, imagenes, mapa, tipo_cambio
 
 bp = Blueprint("publico", __name__)
 
@@ -150,6 +150,20 @@ def detalle_comunidad(slug):
         salidas=comunidad.proximas_salidas(datos["id"]),
         mapa=_datos_del_mapa(resaltadas={datos["slug"]}),         # dónde queda y quién llega
     )
+
+
+@bp.route("/galeria")
+def galeria():
+    """v2.5: las fotos de las comunidades en mosaico; cada una se abre en grande con su nombre,
+    su descripción y su crédito (js/galeria.js). Se puede filtrar por idioma originario."""
+    idioma = request.args.get("idioma")
+    if idioma not in formato.IDIOMAS:                 # lista blanca: quechua o aimara
+        idioma = None
+    con_foto = [c for c in comunidad.listar_publicas() if imagenes.foto_comunidad(c["slug"])]
+    return render_template(
+        "publico/galeria.html", idioma=idioma, idiomas=formato.IDIOMAS, total=len(con_foto),
+        fotos=[c for c in con_foto if idioma in (None, c["idioma_originario"])],
+        cuantas={i: sum(c["idioma_originario"] == i for c in con_foto) for i in formato.IDIOMAS})
 
 
 @bp.route("/alertas")

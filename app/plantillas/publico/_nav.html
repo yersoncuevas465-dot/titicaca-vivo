@@ -6,6 +6,7 @@
     {# Reservar es el último paso de una salida: el menú marca «Salidas», no «Mi reserva» #}
     <a href="{{ url_for('publico.salidas') }}" {% if actual in ('publico.salidas', 'publico.detalle_salida', 'reservas.reservar') %}aria-current="page"{% endif %}>{{ t('Salidas') }}</a>
     <a href="{{ url_for('publico.comunidades') }}" {% if actual in ('publico.comunidades', 'publico.detalle_comunidad') %}aria-current="page"{% endif %}>{{ t('Comunidades') }}</a>
+    <a href="{{ url_for('publico.galeria') }}" {% if actual == 'publico.galeria' %}aria-current="page"{% endif %}>{{ t('Galería') }}</a>
     <a href="{{ url_for('publico.alertas') }}" {% if actual == 'publico.alertas' %}aria-current="page"{% endif %}>{{ t('Alertas') }}</a>
     <a href="{{ url_for('reservas.mi_reserva') }}" {% if actual and actual.startswith('reservas.') and actual != 'reservas.reservar' %}aria-current="page"{% endif %}>{{ t('Mi reserva') }}</a>
   </div>

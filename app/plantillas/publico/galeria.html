@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+{% block titulo %}{{ t('Galería del lago') }}{% endblock %}
+
+{% block contenido %}
+<h1>{{ t('Galería del lago') }}</h1>
+<p class="texto-suave">{{ t('Las islas y comunidades que visitan nuestras rutas. Toca una foto para verla en grande.') }}</p>
+
+<nav class="filtro-galeria" aria-label="{{ t('Filtrar por idioma') }}">
+  <a class="filtro-galeria__opcion" href="{{ url_for('publico.galeria') }}"
+     {% if not idioma %}aria-current="true"{% endif %}>{{ t('Todas') }} ({{ total }})</a>
+  {% for clave, nombre in idiomas.items() %}
+    <a class="filtro-galeria__opcion" href="{{ url_for('publico.galeria', idioma=clave) }}"
+       {% if idioma == clave %}aria-current="true"{% endif %}>{{ t(nombre) }} ({{ cuantas[clave] }})</a>
+  {% endfor %}
+</nav>
+
+{# Mosaico: sin JavaScript, cada foto lleva a su comunidad; con js/galeria.js se abre en el
+   visor. Los datos del visor (foto, nombre, texto y crédito) van en atributos data-. #}
+{% if fotos %}
+<ul class="lista-limpia galeria">
+  {% for c in fotos %}
+    {% set foto = estatico(foto_comunidad(c.slug)) %}
+    <li class="galeria__item">
+      <a class="galeria__enlace" href="{{ url_for('publico.detalle_comunidad', slug=c.slug) }}"
+         data-foto="{{ foto }}" data-alt="{{ t('Vista de {nombre}', nombre=c.nombre) }}"
+         data-nombre="{{ c.nombre }}" data-texto="{{ c.descripcion or '' }}" data-credito="{{ c.foto_credito or '' }}">
+        <img src="{{ foto }}" alt="{{ t('Vista de {nombre}', nombre=c.nombre) }}" width="640" height="400"
+             loading="{{ 'eager' if loop.first else 'lazy' }}" decoding="async">
+        <span class="galeria__leyenda">
+          <span class="galeria__nombre">{{ c.nombre }}</span>
+          <span class="galeria__idioma">{{ c.idioma_originario | idioma }}</span>
+          {% if c.foto_credito %}<span class="galeria__credito">{{ c.foto_credito }}</span>{% endif %}
+        </span>
+      </a>
+    </li>
+  {% endfor %}
+</ul>
+
+{% set primera = fotos[0] %}
+<dialog id="visor" class="visor" aria-labelledby="visor-titulo">
+  <figure class="visor__figura">
+    <img class="visor__imagen" src="{{ estatico(foto_comunidad(primera.slug)) }}"
+         alt="{{ t('Vista de {nombre}', nombre=primera.nombre) }}" width="640" height="400">
+    <figcaption class="visor__leyenda">
+      <h2 class="visor__titulo" id="visor-titulo">{{ primera.nombre }}</h2>
+      <p class="visor__texto">{{ primera.descripcion or '' }}</p>
+      <p class="foto__credito visor__credito">{{ primera.foto_credito or '' }}</p>
+      <a class="visor__ir" href="{{ url_for('publico.detalle_comunidad', slug=primera.slug) }}">{{ t('Ver la comunidad') }} →</a>
+    </figcaption>
+  </figure>
+  <div class="visor__botones">
+    <button type="button" class="boton boton--secundario boton--chico visor__anterior">← {{ t('Anterior') }}</button>
+    <button type="button" class="boton boton--secundario boton--chico visor__siguiente">{{ t('Siguiente') }} →</button>
+    <button type="button" class="boton boton--chico visor__cerrar">{{ t('Cerrar') }}</button>
+  </div>
+</dialog>
+<script src="{{ estatico('js/galeria.js') }}" defer></script>
+{% else %}
+  <p class="aviso aviso--info">{{ t('Todavía no hay fotos de estas comunidades.') }}</p>
+{% endif %}
+
+<p class="texto-suave">{{ t('Fotos de Wikimedia Commons, con el nombre de su autor y su licencia.') }}</p>
+{% endblock %}

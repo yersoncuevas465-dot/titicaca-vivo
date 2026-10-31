@@ -290,3 +290,34 @@ def test_las_tarjetas_de_rutas_no_agregan_consultas(cliente, monkeypatch):
     monkeypatch.setattr(pymysql.cursors.Cursor, "execute", contar)
     assert cliente.get("/").status_code == 200
     assert contador["n"] <= 5                       # las mismas 5 de antes: paradas, una sola vez
+
+
+# --- Galería (v2.5) -----------------------------------------------------------------------------
+
+def test_la_galeria_muestra_las_fotos_con_su_credito_y_el_visor(cliente):
+    from tests.test_accesibilidad import problemas
+
+    html = cliente.get("/galeria").get_data(True)
+    assert html.count('class="galeria__item"') == 6 and html.count('class="galeria__credito"') == 6
+    for slug in ("uros", "taquile", "amantani"):
+        assert f'href="/comunidades/{slug}"' in html and f'/img/comunidades/{slug}.webp' in html
+    assert '<dialog id="visor" class="visor" aria-labelledby="visor-titulo">' in html
+    assert re.search(r'<script src="/estaticos/js/galeria\.js\?v=[^"]+" defer>', html)
+    assert 'aria-current="page">Galería</a>' in html                       # el menú la marca
+    assert problemas(html) == []
+
+
+def test_la_galeria_se_filtra_por_idioma_y_lo_raro_se_ignora(app, cliente):
+    aimara = consultar_valor(app, "SELECT COUNT(*) AS n FROM comunidad "
+                                  "WHERE activa = 1 AND idioma_originario = 'aimara'")
+    html = cliente.get("/galeria?idioma=aimara").get_data(True)
+    assert html.count('class="galeria__item"') == aimara and 'aria-current="true">Aimara (' in html
+    raro = cliente.get("/galeria", query_string={"idioma": "<script>"}).get_data(True)
+    assert raro.count('class="galeria__item"') == 6 and "<script>alert" not in raro
+
+
+def test_la_galeria_en_ingles_y_la_portada_la_enlaza(cliente):
+    assert 'href="/galeria"' in cliente.get("/").get_data(True)
+    cliente.get("/idioma/en")
+    html = cliente.get("/galeria").get_data(True)
+    assert "Lake gallery" in html and ">Gallery</a>" in html and "Next" in html

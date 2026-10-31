@@ -41,6 +41,7 @@ FONDO_POR_PAGINA = (
     ("publico.salidas", "uros"),
     ("publico.detalle_salida", "uros"),
     ("reservas.reservar", None),
+    ("publico.galeria", "amantani"),
     ("publico.comunidades", "taquile"),
     ("publico.detalle_comunidad", "taquile"),   # si la comunidad todavía no tiene foto propia
     ("publico.alertas", "ticonata"),

@@ -120,7 +120,7 @@ def problemas(html):
 
 PUBLICAS = ["/", "/salidas", "/salidas?fecha=mal", "/salidas/10", "/salidas/9", "/comunidades",
             "/comunidades/amantani", "/alertas", "/mi-reserva", "/salidas/10/reservar?acompanantes=2",
-            "/entrar", "/recuperar", "/no-existe"]
+            "/entrar", "/recuperar", "/no-existe", "/galeria", "/galeria?idioma=quechua"]
 PANEL = {
     "operador": ["/panel", "/panel/salidas", "/panel/salidas/nueva", "/panel/salidas/10/editar",
                  "/panel/salidas/10/suspender", "/panel/salidas/8/pasajeros",
