@@ -545,6 +545,30 @@ EN = {
     "Tormenta eléctrica": "Thunderstorm",
     "Tormenta con granizo": "Thunderstorm with hail",
     "Sin dato del cielo": "No sky data",
+
+    # --- Portada con foto, buscador y servicios (v2.3) ---
+    "Puno · Lago Titicaca · 3 812 m": "Puno · Lake Titicaca · 3,812 m",
+    "Busca tu salida": "Find your trip",
+    "¿Qué día?": "Which day?",
+    "Buscar salidas": "Search trips",
+    "Viaja tranquilo": "Travel with peace of mind",
+    "Capitán con licencia": "Licensed captain",
+    "Cada salida lleva un capitán con licencia de navegación y la lista de pasajeros para la Capitanía.":
+        "Every trip has a captain with a navigation licence and a passenger list for the Harbour Master.",
+    "Noche con una familia": "A night with a family",
+    "Las familias anfitrionas se turnan, para que todas reciban visitantes.":
+        "Host families take turns, so that all of them receive visitors.",
+    "Paga como prefieras": "Pay your way",
+    "Yape, Plin o en el muelle, antes de subir a la lancha.": "Yape, Plin or at the dock before boarding.",
+    "Clima y alertas al día": "Up-to-date weather and alerts",
+    "Pronóstico a la hora del zarpe y alertas de SENAMHI y de la Capitanía.":
+        "Forecast for departure time and alerts from SENAMHI and the Harbour Master.",
+    "Boleto con QR": "Ticket with QR code",
+    "Tu código y tu boleto en el celular: no hace falta imprimir.":
+        "Your code and ticket on your phone: no need to print.",
+    "En español e inglés": "In Spanish and English",
+    "Toda la reserva en tu idioma, desde el celular y aunque la señal sea débil.":
+        "The whole booking in your language, from your phone, even with a weak signal.",
 }
 
 # Mensajes con partes variables (números, códigos): se reconocen con un patrón.

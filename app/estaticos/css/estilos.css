@@ -665,3 +665,45 @@ main:focus { outline: none; }
   .portada { background: none; box-shadow: none; }
   .portada::before, .portada::after, .pie::before { display: none; }
 }
+
+/* ---------- Portada con foto, buscador y servicios (v2.3) ----------
+   Como la portada de un hotel: la foto al lado del título y, montado sobre el borde
+   inferior, el buscador de salidas. La foto va a su tamaño (640 px), nítida. */
+.portada--foto { display: grid; gap: 1.25rem; text-align: left; padding: 1.5rem 1.25rem 4.25rem; }
+.portada__antetitulo {
+  margin: 0 0 0.4rem; font-size: 0.82rem; font-weight: 700; letter-spacing: 0.08em;
+  text-transform: uppercase; color: #8F3F12;
+}
+.portada--foto .portada__texto { margin: 0.5rem 0 0; max-width: 34rem; }
+.portada__foto img { border-radius: var(--radio); box-shadow: 0 10px 28px rgb(42 18 32 / 0.28); }
+.portada__foto .foto__credito { text-align: right; }
+
+.buscador { position: relative; z-index: 1; margin: -3rem 0.75rem 1.75rem; padding: 1rem 1.1rem; }
+.buscador__titulo { font-size: 1.1rem; margin: 0 0 0.6rem; }
+.buscador__campos { display: grid; gap: 0.75rem; align-items: end; }
+.buscador__campos .campo { margin: 0; }
+.buscador .boton { width: 100%; }
+.buscador__pie { margin: 0.6rem 0 0; font-size: 0.95rem; }
+
+.servicios { display: grid; gap: 1rem; grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr)); }
+.servicio {
+  background: #FFFDF9; border: 1px solid var(--arena); border-radius: var(--radio);
+  padding: 1.1rem 1.2rem; box-shadow: var(--sombra);
+}
+.servicio h3 { font-size: 1.05rem; margin: 0.5rem 0 0.25rem; }
+.servicio p { margin: 0; color: #5E4654; }
+.servicio__icono {
+  width: 2.9rem; height: 2.9rem; padding: 0.55rem; border-radius: 50%; background: var(--arena);
+  fill: none; stroke: var(--ciruela); stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round;
+}
+
+@media (min-width: 48em) {
+  .portada--foto { grid-template-columns: 1fr 1fr; align-items: center; gap: 2rem; padding: 2.5rem 2.25rem 5rem; }
+  .buscador { margin: -3.5rem 2rem 2.25rem; padding: 1.25rem 1.5rem; }
+  .buscador__campos { grid-template-columns: 1fr 1.5fr auto; }
+  .buscador .boton { width: auto; }
+}
+
+@media print {
+  .buscador { display: none; }
+}

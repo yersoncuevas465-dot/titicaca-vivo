@@ -28,6 +28,9 @@ CREDITOS = {
 }
 NOMBRES = {"uros": "Uros", "taquile": "Taquile", "amantani": "Amantaní", "llachon": "Llachón",
            "luquina-chico": "Luquina Chico", "ticonata": "Ticonata"}
+# La comunidad cuya foto va en la portada (v2.3): las islas flotantes, la imagen más conocida
+# del lago. Su nombre y su crédito salen de la base.
+FOTO_PORTADA = "uros"
 
 # Qué foto va de fondo en cada parte de la app: gana el primer prefijo del endpoint que coincide.
 # El acceso y el resumen del panel comparten foto: al entrar, el fondo no cambia.

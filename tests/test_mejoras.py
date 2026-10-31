@@ -6,6 +6,7 @@ salida, comunidad y alerta. (El capitán y el guía en dos lanchas a la vez: tes
 import itertools
 import json
 import re
+from datetime import date, timedelta
 
 import pytest
 
@@ -232,3 +233,29 @@ def test_la_alerta_muestra_donde_rige(app):
     assert "Dónde rige" in de_amantani and de_amantani.count('r="17"') == 1
     de_todo_el_lago = cliente.get("/panel/alertas/2").get_data(True)      # alerta sin comunidad
     assert 'fill-opacity="0.22"' in de_todo_el_lago and 'r="17"' not in de_todo_el_lago
+
+
+# --- Portada con foto, buscador y servicios (v2.3) ---------------------------------------------
+
+def test_la_portada_tiene_foto_buscador_y_servicios(cliente):
+    html = cliente.get("/").get_data(True)
+    # La foto de la portada sale de la base (nombre y crédito), sin datos fijos en la plantilla
+    assert re.search(r'<img src="/estaticos/img/comunidades/uros\.webp\?v=[^"]+" alt="Vista de Uros"', html)
+    assert 'fetchpriority="high"' in html and "Entropy1963" in html
+    # El buscador lleva a /salidas con el día y la ruta, con sus etiquetas
+    assert '<form class="tarjeta buscador" method="get" action="/salidas"' in html
+    assert '<label class="campo__etiqueta" for="buscar-fecha">' in html and 'name="fecha"' in html
+    assert '<label class="campo__etiqueta" for="buscar-ruta">' in html and 'value="URO-TAQ"' in html
+    assert html.count('class="servicio"') == 6 and html.count('class="servicio__icono"') == 6
+
+
+def test_el_buscador_de_la_portada_lleva_a_las_salidas_del_dia(cliente):
+    manana = (date.today() + timedelta(days=1)).isoformat()
+    respuesta = cliente.get("/salidas", query_string={"fecha": manana, "ruta": ""})
+    assert respuesta.status_code == 200 and f'value="{manana}"' in respuesta.get_data(True)
+
+
+def test_la_portada_en_ingles(cliente):
+    cliente.get("/idioma/en")
+    html = cliente.get("/").get_data(True)
+    assert "Find your trip" in html and "Travel with peace of mind" in html and "Search trips" in html

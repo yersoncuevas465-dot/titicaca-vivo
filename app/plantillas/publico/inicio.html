@@ -4,10 +4,78 @@
 {% block titulo %}{{ t('Salidas en lancha por el lago Titicaca') }}{% endblock %}
 
 {% block contenido %}
-<section class="portada" aria-labelledby="titulo-portada">
-  <h1 id="titulo-portada">{{ t('Vive el lago con las comunidades que lo habitan') }}</h1>
-  <p class="portada__texto">{{ t('Elige tu salida en lancha, reserva tu lugar y duerme en casa de una familia anfitriona.') }}</p>
-  <p><a class="boton" href="{{ url_for('publico.salidas') }}">{{ t('Ver todas las salidas') }}</a></p>
+{# Portada con foto y, montado sobre su borde, el buscador de salidas (como la barra de
+   reserva de un hotel). La foto va a su tamaño (640 px): nítida, sin estirarla. #}
+<section class="portada portada--foto" aria-labelledby="titulo-portada">
+  <div class="portada__contenido">
+    <p class="portada__antetitulo">{{ t('Puno · Lago Titicaca · 3 812 m') }}</p>
+    <h1 id="titulo-portada">{{ t('Vive el lago con las comunidades que lo habitan') }}</h1>
+    <p class="portada__texto">{{ t('Elige tu salida en lancha, reserva tu lugar y duerme en casa de una familia anfitriona.') }}</p>
+  </div>
+  {% if portada %}
+    <figure class="foto foto--grande portada__foto">
+      <img src="{{ estatico(foto_comunidad(portada.slug)) }}" alt="{{ t('Vista de {nombre}', nombre=portada.nombre) }}"
+           width="640" height="400" fetchpriority="high" decoding="async">
+      {% if portada.foto_credito %}<figcaption class="foto__credito">{{ portada.foto_credito }}</figcaption>{% endif %}
+    </figure>
+  {% endif %}
+</section>
+
+<form class="tarjeta buscador" method="get" action="{{ url_for('publico.salidas') }}" aria-labelledby="titulo-buscador">
+  <h2 id="titulo-buscador" class="buscador__titulo">{{ t('Busca tu salida') }}</h2>
+  <div class="buscador__campos">
+    <div class="campo">
+      <label class="campo__etiqueta" for="buscar-fecha">{{ t('¿Qué día?') }}</label>
+      <input class="campo__control" type="date" id="buscar-fecha" name="fecha"
+             value="{{ hoy.isoformat() }}" min="{{ hoy.isoformat() }}">
+    </div>
+    <div class="campo">
+      <label class="campo__etiqueta" for="buscar-ruta">{{ t('Ruta') }}</label>
+      <select class="campo__control" id="buscar-ruta" name="ruta">
+        <option value="">{{ t('Todas las rutas') }}</option>
+        {% for r in rutas %}<option value="{{ r.codigo }}">{{ r.nombre }}</option>{% endfor %}
+      </select>
+    </div>
+    <button class="boton" type="submit">{{ t('Buscar salidas') }}</button>
+  </div>
+  <p class="buscador__pie"><a href="{{ url_for('publico.salidas') }}">{{ t('Ver todas las salidas') }}</a></p>
+</form>
+
+{# Lo que cuida la agencia en cada viaje: íconos SVG propios (sin archivos extra ni CDN) #}
+<section class="bloque" aria-labelledby="titulo-servicios">
+  <h2 id="titulo-servicios">{{ t('Viaja tranquilo') }}</h2>
+  <ul class="lista-limpia servicios">
+    <li class="servicio">
+      <svg class="servicio__icono" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M3 15h18l-2.5 4.5h-13zM12 3v12M12 4.5l6 8.5h-6"/></svg>
+      <h3>{{ t('Capitán con licencia') }}</h3>
+      <p>{{ t('Cada salida lleva un capitán con licencia de navegación y la lista de pasajeros para la Capitanía.') }}</p>
+    </li>
+    <li class="servicio">
+      <svg class="servicio__icono" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 11l8-6 8 6v8a1 1 0 0 1-1 1h-4v-5H9v5H5a1 1 0 0 1-1-1z"/></svg>
+      <h3>{{ t('Noche con una familia') }}</h3>
+      <p>{{ t('Las familias anfitrionas se turnan, para que todas reciban visitantes.') }}</p>
+    </li>
+    <li class="servicio">
+      <svg class="servicio__icono" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="7" y="2.5" width="10" height="19" rx="2"/><path d="M11 18.5h2"/></svg>
+      <h3>{{ t('Paga como prefieras') }}</h3>
+      <p>{{ t('Yape, Plin o en el muelle, antes de subir a la lancha.') }}</p>
+    </li>
+    <li class="servicio">
+      <svg class="servicio__icono" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="8" cy="8" r="3"/><path d="M8 2v1.5M2 8h1.5M3.8 3.8l1 1M12.2 3.8l-1 1M7.5 19h9a3.5 3.5 0 0 0 0-7 5 5 0 0 0-9.3 1.7A2.7 2.7 0 0 0 7.5 19z"/></svg>
+      <h3>{{ t('Clima y alertas al día') }}</h3>
+      <p>{{ t('Pronóstico a la hora del zarpe y alertas de SENAMHI y de la Capitanía.') }}</p>
+    </li>
+    <li class="servicio">
+      <svg class="servicio__icono" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 4h6v6H4zM14 4h6v6h-6zM4 14h6v6H4zM14 14h2v2h-2zM18 18h2v2h-2zM14 18h2M18 14h2"/></svg>
+      <h3>{{ t('Boleto con QR') }}</h3>
+      <p>{{ t('Tu código y tu boleto en el celular: no hace falta imprimir.') }}</p>
+    </li>
+    <li class="servicio">
+      <svg class="servicio__icono" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 4.5h11a1 1 0 0 1 1 1V12a1 1 0 0 1-1 1H9l-4 3v-3H4a1 1 0 0 1-1-1V5.5a1 1 0 0 1 1-1zM18 8.5h2a1 1 0 0 1 1 1V16a1 1 0 0 1-1 1h-1v3l-4-3h-4"/></svg>
+      <h3>{{ t('En español e inglés') }}</h3>
+      <p>{{ t('Toda la reserva en tu idioma, desde el celular y aunque la señal sea débil.') }}</p>
+    </li>
+  </ul>
 </section>
 
 <section class="bloque" aria-labelledby="titulo-como">

@@ -21,7 +21,7 @@ from flask import (
 
 from app.modelos import alerta, comunidad, resena, ruta, salida, sistema, tarifa
 from app.seguridad import destino_seguro
-from app.servicios import clima, feriados, mapa, tipo_cambio
+from app.servicios import clima, feriados, imagenes, mapa, tipo_cambio
 
 bp = Blueprint("publico", __name__)
 
@@ -49,6 +49,9 @@ def inicio():
         rutas=ruta.listar_activas(),
         comunidades=comunidades,
         mapa=_datos_del_mapa(comunidades),
+        # v2.3: la comunidad de la foto grande de la portada (con su nombre y crédito)
+        portada=next((c for c in comunidades if c["slug"] == imagenes.FOTO_PORTADA
+                      and imagenes.foto_comunidad(c["slug"])), None),
     )
 
 
