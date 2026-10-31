@@ -24,6 +24,7 @@ TABLAS = (
     "rol", "usuario", "comunidad", "familia_anfitriona", "embarcacion", "ruta", "ruta_parada",
     "temporada", "tipo_pasajero", "tarifa", "salida", "turista", "reserva", "reserva_pasajero",
     "pago", "hospedaje", "abordaje", "alerta_lago", "resena", "bitacora",
+    "producto",                                   # v2.9: la tabla 21 (módulo de productos)
 )
 
 _NOMBRE_BASE_VALIDO = re.compile(r"^[A-Za-z0-9_]{1,64}$")
@@ -215,7 +216,7 @@ def reiniciar_base(config, nombre_base=None):
 
 
 def contar_filas(conexion):
-    """Devuelve [(tabla, filas)] de las 20 tablas (evidencia del nivel Bronce)."""
+    """Devuelve [(tabla, filas)] de las 21 tablas (evidencia del nivel Bronce)."""
     # Una sola consulta: cada SELECT cuenta una tabla y UNION ALL los junta en una lista.
     # Los nombres salen de la constante TABLAS, nunca de lo que escribe un usuario.
     consulta = " UNION ALL ".join(

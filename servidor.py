@@ -211,7 +211,7 @@ def mostrar_aviso(opciones, config):
     print(f"  Panel del personal:    {url}/entrar")
     if config["ENTORNO"] != "produccion":
         print("      admin / Admin-Titicaca26    ·    operador / Operador-Titicaca26")
-        print("      (los 6 usuarios y las reservas de prueba están en USUARIOS_DEMO.txt)")
+        print("      (los 9 usuarios y las reservas de prueba están en USUARIOS_DEMO.txt)")
         if config.get("CORREO_SIMULAR"):
             print("  ¿Olvidaste tu contraseña?: el código de 6 dígitos aparece AQUÍ, en esta")
             print("      ventana ([CORREO SIMULADO]), porque el correo está en modo simulación.")

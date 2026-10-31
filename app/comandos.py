@@ -119,7 +119,7 @@ def restaurar(archivo, si, sin_respaldo):
 
 @grupo_bd.command("contar")
 def contar():
-    """Muestra cuántas filas tiene cada una de las 20 tablas."""
+    """Muestra cuántas filas tiene cada una de las 21 tablas."""
     _mostrar_conteo()
 
 

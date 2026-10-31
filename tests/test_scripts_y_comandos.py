@@ -47,7 +47,7 @@ def test_los_scripts_reales_se_dividen_bien():
 def test_flask_bd_contar(app):
     resultado = app.test_cli_runner().invoke(args=["bd", "contar"])
     assert resultado.exit_code == 0
-    assert "20 tablas" in resultado.output
+    assert "21 tablas" in resultado.output
 
 
 def test_flask_bd_reiniciar_recrea_la_base_de_pruebas(app):

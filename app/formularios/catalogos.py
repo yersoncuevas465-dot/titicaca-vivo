@@ -141,7 +141,7 @@ class FormularioUsuario(FormularioBase):
     correo = _texto("Correo", 120, obligatorio=False, render_kw={"inputmode": "email"})
     telefono = _texto("Teléfono", 16, obligatorio=False, render_kw={"inputmode": "tel"})
     rol_id = SelectField("Rol", coerce=int, validate_choice=False)
-    comunidad_id = SelectField("Comunidad (solo guías)", coerce=int, validate_choice=False)
+    comunidad_id = SelectField("Comunidad (guías y residentes)", coerce=int, validate_choice=False)
     licencia_navegacion = _texto("Licencia de navegación (solo capitanes)", 30,
                                  obligatorio=False)
     contrasena = PasswordField("Contraseña", validators=[Optional(), Length(max=128)],

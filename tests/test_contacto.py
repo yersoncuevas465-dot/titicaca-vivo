@@ -1,5 +1,5 @@
 """Contacto (v2.6): la página, el formulario (validación, trampa para robots y límite por IP) y
-el correo a la agencia. El mensaje no se guarda en la base (el modelo tiene 20 tablas): llega
+el correo a la agencia. El mensaje no se guarda en la base (el modelo del enunciado tiene 20 tablas): llega
 por correo y la bitácora anota solo que llegó, sin el texto ni los datos de la persona."""
 
 import json

@@ -18,13 +18,14 @@ SET time_zone = '-05:00';                 -- RN-15: hora de Lima
 SET @hoy = CURDATE();                     -- todas las fechas de la semilla parten de aquí
 
 -- ---------------------------------------------------------------------
--- 1. rol (4 filas: el enunciado fija exactamente 4 códigos de rol)
+-- 1. rol (5 filas: los 4 códigos del enunciado y, desde la v2.9, el residente)
 -- ---------------------------------------------------------------------
 INSERT INTO rol (id, codigo, nombre, descripcion) VALUES
 (1, 'admin',    'Administrador', 'Usuarios, roles, catálogos y bitácora'),
 (2, 'operador', 'Operador',      'Toda la operación de la agencia: salidas, pagos, abordaje, alertas y hospedajes'),
 (3, 'guia',     'Guía',          'Ve sus salidas asignadas y sus pasajeros; registra el abordaje'),
-(4, 'capitan',  'Capitán',       'Ve sus salidas y el manifiesto; registra el abordaje y marca el zarpe');
+(4, 'capitan',  'Capitán',       'Ve sus salidas y el manifiesto; registra el abordaje y marca el zarpe'),
+(5, 'residente', 'Residente',    'Vive en una comunidad: publica sus artesanías y productos, nada más');
 
 -- ---------------------------------------------------------------------
 -- 3. comunidad (reales; ver docs/fase-0-analisis.md, supuesto S-26)
@@ -68,7 +69,10 @@ INSERT INTO usuario (id, rol_id, nombre_usuario, nombre_completo, correo, telefo
 (3, 3, 'guia.elena', 'Elena Yucra Cruz', 'elena.yucra@titicaca-vivo.example', '900000103', '$2b$12$ZPPYwRsLVaYETC51q47Uoec7fi10huPeTV4vkR0lahHtt6w1inJIy', 3, NULL, 1, @hoy - INTERVAL 200 DAY),
 (4, 3, 'guia.marco', 'Marco Cutipa Flores', NULL, '900000104', '$2b$12$RLVgv/CShrud4naymJ.H4eYHOagB4FXwEVDrUK/gEWVcyHNVOQ5Mi', 4, NULL, 1, @hoy - INTERVAL 200 DAY),
 (5, 4, 'capitan.teodoro', 'Teodoro Choque Pari', NULL, '900000105', '$2b$12$1BskS9.d79w1IHY02/IGiu881DUXmY4zhzEQM9r7LOKzo5oHuvxB6', NULL, 'LIC-PUN-00123', 1, @hoy - INTERVAL 200 DAY),
-(6, 4, 'capitan.fermin', 'Fermín Ccama Turpo', NULL, '900000106', '$2b$12$Dk.Q/O56JEa3.qhZpExKF..WuSE0acGyv.2x2tksLcwu7MMqS6bzW', NULL, 'LIC-PUN-00456', 1, @hoy - INTERVAL 200 DAY);
+(6, 4, 'capitan.fermin', 'Fermín Ccama Turpo', NULL, '900000106', '$2b$12$Dk.Q/O56JEa3.qhZpExKF..WuSE0acGyv.2x2tksLcwu7MMqS6bzW', NULL, 'LIC-PUN-00456', 1, @hoy - INTERVAL 200 DAY),
+(7, 5, 'residente.juana', 'Juana Machaca Huatta', NULL, '900000107', '$2b$12$JnPyEhH.KqbACQDxVpf2N.eSVKazEoqOZfkoj7UtSNHr/PJmalKY.', 2, NULL, 1, @hoy - INTERVAL 200 DAY),
+(8, 5, 'residente.felix', 'Félix Cari Ticona', 'felix.cari@titicaca-vivo.example', '900000108', '$2b$12$9jv51PVT6hwmwEznfirI3OZ8X3SckzimdAXQfwqnPVW6Fgc4S0GxW', 3, NULL, 1, @hoy - INTERVAL 200 DAY),
+(9, 5, 'residente.sonia', 'Sonia Suaña Lujano', NULL, '900000109', '$2b$12$.om2FC53zVWroYjxhCpI0uGN0MlXtiXGqwdHI4VM67NIEMdl2dmCO', 1, NULL, 1, @hoy - INTERVAL 200 DAY);
 -- [[USUARIOS_FIN]]
 
 -- ---------------------------------------------------------------------
@@ -514,3 +518,40 @@ INSERT INTO bitacora (usuario_id, accion, tabla_afectada, registro_id, detalle, 
 UPDATE usuario SET ultimo_acceso = TIMESTAMP(@hoy - INTERVAL 1 DAY, '08:02') WHERE id = 1;
 UPDATE usuario SET ultimo_acceso = NOW() - INTERVAL 70 MINUTE WHERE id = 2;
 UPDATE usuario SET ultimo_acceso = NOW() - INTERVAL 50 MINUTE WHERE id = 3;
+
+-- ---------------------------------------------------------------------
+-- 21. producto (v2.9) · 3 de la agencia y 7 de los residentes (Juana en
+--     Taquile, Félix en Amantaní y Sonia en los Uros). Uno está retirado.
+-- ---------------------------------------------------------------------
+INSERT INTO producto (residente_id, comunidad_id, nombre, categoria, descripcion, precio, lugar,
+                      estado, creado_en) VALUES
+(NULL, NULL, 'Chalina de baby alpaca', 'textil',
+ 'Tejida en telar de pedal, 180 × 30 cm. Colores naturales: beige, gris y marrón. Suave y abrigadora para las noches en el lago.',
+ 85.00, 'Oficina de la agencia en el puerto de Puno y a bordo de la lancha', 'publicado', @hoy - INTERVAL 40 DAY),
+(NULL, NULL, 'Mate de muña de las islas', 'alimento',
+ 'Bolsa de 50 g de muña seca, cosechada por las familias anfitrionas. Se toma como infusión: ideal para la altura.',
+ 12.00, 'Oficina de la agencia en el puerto de Puno', 'publicado', @hoy - INTERVAL 38 DAY),
+(NULL, NULL, 'Postales del lago Titicaca', 'recuerdo',
+ 'Juego de 6 postales con fotos de los Uros, Taquile y Amantaní, impresas en papel reciclado.',
+ 15.00, 'Oficina de la agencia en el puerto de Puno', 'publicado', @hoy - INTERVAL 35 DAY),
+(7, 2, 'Chullo tejido a mano', 'textil',
+ 'Gorro de lana de oveja teñida con plantas, tejido con agujas finas por los varones de la isla. Sus colores dicen si quien lo usa es soltero o casado.',
+ 60.00, 'Tienda comunal de la plaza principal (pregunta por Juana)', 'publicado', @hoy - INTERVAL 20 DAY),
+(7, 2, 'Chumpi: faja calendario', 'textil',
+ 'Faja de 1 m tejida en telar por las mujeres de Taquile. Sus figuras cuentan los meses del año agrícola. Pieza única.',
+ 120.00, 'Tienda comunal de la plaza principal (pregunta por Juana)', 'publicado', @hoy - INTERVAL 18 DAY),
+(8, 3, 'Tapiz de lana de oveja', 'textil',
+ 'Tapiz de 60 × 40 cm con el cerro Pachatata y las terrazas de la isla. Tintes naturales; hecho por la familia Cari.',
+ 90.00, 'Casa de la familia Cari, a 10 minutos del muelle principal', 'publicado', @hoy - INTERVAL 15 DAY),
+(8, 3, 'Pachatata tallado en piedra', 'artesania',
+ 'Réplica de 12 cm del templo del cerro, tallada en piedra de la isla. Pesa poco y viaja bien en la mochila.',
+ 35.00, 'Feria artesanal junto al muelle principal', 'publicado', @hoy - INTERVAL 12 DAY),
+(8, 3, 'Quinua de Amantaní', 'alimento',
+ 'Bolsa de 1 kg de quinua blanca de las terrazas de la isla, lavada y lista para cocinar.',
+ 18.00, 'Casa de la familia Cari, a 10 minutos del muelle principal', 'retirado', @hoy - INTERVAL 10 DAY),
+(9, 1, 'Bordado de los Uros', 'textil',
+ 'Tela de 40 × 40 cm bordada a mano con escenas del lago: totora, aves y balsas. Colores vivos.',
+ 45.00, 'Puesto de artesanías de la isla donde atraca la lancha', 'publicado', @hoy - INTERVAL 6 DAY),
+(9, 1, 'Balsa de totora en miniatura', 'artesania',
+ 'Balsa de 30 cm hecha con totora seca del lago, con proa de puma. Liviana y fácil de llevar.',
+ 25.00, 'Puesto de artesanías de la isla donde atraca la lancha', 'publicado', @hoy - INTERVAL 3 DAY);

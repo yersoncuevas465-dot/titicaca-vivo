@@ -28,6 +28,8 @@
          {% if actual.startswith('panel.resena') %}aria-current="page"{% endif %}>Reseñas</a>
       <a href="{{ url_for('panel.reclamaciones') }}"
          {% if actual.startswith('panel.reclamacion') %}aria-current="page"{% endif %}>Reclamaciones</a>
+      <a href="{{ url_for('panel.productos') }}"
+         {% if actual.startswith('panel.producto') %}aria-current="page"{% endif %}>Productos</a>
       <a href="{{ url_for('panel.indicadores_panel') }}"
          {% if actual == 'panel.indicadores_panel' %}aria-current="page"{% endif %}>Indicadores</a>
       <a href="{{ url_for('catalogos.inicio') }}"
@@ -40,6 +42,10 @@
          {% if actual.startswith('panel.bitacora') %}aria-current="page"{% endif %}>Bitácora</a>
       <a href="{{ url_for('panel.respaldos') }}"
          {% if actual.startswith('panel.respaldo') %}aria-current="page"{% endif %}>Respaldos</a>
+    {% endif %}
+    {% if rol == 'residente' %}
+      <a href="{{ url_for('panel.productos') }}"
+         {% if actual.startswith('panel.producto') %}aria-current="page"{% endif %}>Mis productos</a>
     {% endif %}
     <a href="{{ url_for('panel.mi_cuenta') }}"
        {% if actual.startswith('panel.mi_') %}aria-current="page"{% endif %}>Mi cuenta</a>

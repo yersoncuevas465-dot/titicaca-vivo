@@ -289,7 +289,7 @@ def test_las_tarjetas_de_rutas_no_agregan_consultas(cliente, monkeypatch):
 
     monkeypatch.setattr(pymysql.cursors.Cursor, "execute", contar)
     assert cliente.get("/").status_code == 200
-    assert contador["n"] <= 5                       # las mismas 5 de antes: paradas, una sola vez
+    assert contador["n"] <= 6                       # las 5 de antes (paradas, una vez) + productos
 
 
 # --- Galería (v2.5) -----------------------------------------------------------------------------

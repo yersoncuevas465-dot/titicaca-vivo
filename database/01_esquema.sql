@@ -1,5 +1,5 @@
 -- =====================================================================
--- 01_esquema.sql · Titicaca Vivo · Las 20 tablas del modelo
+-- 01_esquema.sql · Titicaca Vivo · Las 21 tablas del modelo (la 21, producto, desde la v2.9)
 -- MariaDB 10.4+ · InnoDB · utf8mb4 / utf8mb4_spanish_ci
 --
 -- Cómo importarlo:
@@ -18,7 +18,7 @@ SET time_zone = '-05:00';
 
 SET FOREIGN_KEY_CHECKS = 0;
 DROP VIEW IF EXISTS v_disponibilidad_salida, v_ingresos_familia;
-DROP TABLE IF EXISTS bitacora, resena, alerta_lago, abordaje, hospedaje, pago,
+DROP TABLE IF EXISTS producto, bitacora, resena, alerta_lago, abordaje, hospedaje, pago,
   reserva_pasajero, reserva, turista, salida, tarifa, tipo_pasajero, temporada,
   ruta_parada, ruta, embarcacion, familia_anfitriona, usuario, comunidad, rol;
 SET FOREIGN_KEY_CHECKS = 1;
@@ -35,7 +35,7 @@ CREATE TABLE rol (
   descripcion VARCHAR(255) NULL,
   PRIMARY KEY (id),
   UNIQUE KEY uk_rol_codigo (codigo),
-  CONSTRAINT ck_rol_codigo CHECK (codigo IN ('admin','operador','guia','capitan'))
+  CONSTRAINT ck_rol_codigo CHECK (codigo IN ('admin','operador','guia','capitan','residente'))
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish_ci;
 
 -- 3. comunidad (antes comunidad_destino). Va antes que usuario por la FK del guía.
@@ -442,4 +442,29 @@ CREATE TABLE bitacora (
   KEY ix_bitacora_creado (creado_en),
   CONSTRAINT fk_bitacora_usuario FOREIGN KEY (usuario_id) REFERENCES usuario (id) ON DELETE RESTRICT,
   CONSTRAINT ck_bitacora_detalle CHECK (detalle IS NULL OR JSON_VALID(detalle))
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish_ci;
+
+-- 21. producto (v2.9): artesanías y productos que se venden en las islas. Los publica un
+--     residente (solo en su comunidad) o la agencia (el operador). El operador puede ocultar
+--     cualquiera; quien lo publicó lo retira o lo vuelve a publicar.
+CREATE TABLE producto (
+  id             INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  residente_id   INT UNSIGNED NULL,               -- quién lo publica; NULL: lo ofrece la agencia
+  comunidad_id   INT UNSIGNED NULL,               -- dónde está; NULL: en Puno, con la agencia
+  nombre         VARCHAR(80)  NOT NULL,
+  categoria      ENUM('textil','artesania','alimento','recuerdo') NOT NULL,
+  descripcion    VARCHAR(600) NOT NULL,           -- características: material, medidas, colores
+  precio         DECIMAL(8,2) NOT NULL,
+  lugar          VARCHAR(160) NOT NULL,           -- dónde encontrarlo: tienda, casa, feria...
+  estado         ENUM('publicado','retirado','oculto') NOT NULL DEFAULT 'publicado',
+  creado_en      DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  actualizado_en DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (id),
+  KEY ix_producto_residente (residente_id),
+  KEY ix_producto_comunidad (comunidad_id),
+  KEY ix_producto_estado (estado, creado_en),
+  CONSTRAINT fk_producto_residente FOREIGN KEY (residente_id) REFERENCES usuario (id) ON DELETE RESTRICT,
+  CONSTRAINT fk_producto_comunidad FOREIGN KEY (comunidad_id) REFERENCES comunidad (id) ON DELETE RESTRICT,
+  CONSTRAINT ck_producto_precio CHECK (precio > 0 AND precio <= 10000),
+  CONSTRAINT ck_producto_del_residente CHECK (residente_id IS NULL OR comunidad_id IS NOT NULL)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish_ci;

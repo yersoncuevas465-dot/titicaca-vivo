@@ -1,0 +1,20 @@
+{% extends "panel/base_panel.html" %}
+{% block titulo %}Panel{% endblock %}
+
+{# v2.9: el residente solo publica sus productos (D-119): no ve salidas, pasajeros ni pagos #}
+{% block contenido %}
+<h1>Resumen</h1>
+<p class="texto-suave">{{ current_user.nombre_completo }} · Residente de {{ cuantos.comunidad }}</p>
+
+<section aria-labelledby="titulo-trabajo" class="bloque">
+  <h2 id="titulo-trabajo">Tus productos</h2>
+  <ol class="tareas">
+    <li class="tarea"><a href="{{ url_for('panel.producto_formulario') }}">Publicar un producto</a>
+      <p>Su nombre, precio, características y dónde lo encuentran. Se publica en {{ cuantos.comunidad }} y se ve al instante.</p></li>
+    <li class="tarea"><a href="{{ url_for('panel.productos') }}">Ver y editar mis productos</a>
+      <p>{{ cuantos.publicados }} publicado(s) · {{ cuantos.retirados }} retirado(s){% if cuantos.ocultos %} · {{ cuantos.ocultos }} oculto(s) por la agencia{% endif %}. Cambia el precio, retira lo que se acabó o vuelve a publicarlo.</p></li>
+    <li class="tarea"><a href="{{ url_for('publico.productos', lugar=cuantos.comunidad_slug) }}">Ver cómo lo ve el turista</a>
+      <p>La página «Productos» de {{ cuantos.comunidad }}, como la ve quien visita la isla.</p></li>
+  </ol>
+</section>
+{% endblock %}

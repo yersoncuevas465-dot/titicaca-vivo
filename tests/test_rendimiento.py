@@ -15,7 +15,8 @@ from tests.conftest import iniciar_sesion, reservar_en
 LIMITE = 100 * 1024
 PUBLICAS = ["/", "/salidas", "/salidas/10", "/comunidades", "/comunidades/amantani", "/alertas",
             "/mi-reserva", "/salidas/10/reservar", "/galeria", "/contacto",
-            "/privacidad", "/condiciones", "/libro-de-reclamaciones", "/experiencias", "/grupos"]
+            "/privacidad", "/condiciones", "/libro-de-reclamaciones", "/experiencias", "/grupos",
+            "/productos"]
 PANEL = {
     "operador": ["/panel", "/panel/salidas", "/panel/salidas/8/pasajeros", "/panel/pagos",
                  "/panel/abordaje/TV-WWUQ", "/panel/alertas", "/panel/alertas/1", "/panel/hospedajes",
@@ -23,8 +24,9 @@ PANEL = {
                  "/panel/catalogos/familias", "/panel/catalogos/rutas/3/paradas",
                  "/panel/salidas/8/pasajeros?formato=whatsapp", "/panel/mi-cuenta",
                  "/panel/reservas", "/panel/reservas/TV-33VR", "/salidas/10/reservar",
-                 "/panel/reclamaciones"],
+                 "/panel/reclamaciones", "/panel/productos"],
     "admin": ["/panel/bitacora", "/panel/usuarios", "/panel/usuarios/nuevo", "/panel/respaldos"],
+    "residente.juana": ["/panel", "/panel/productos", "/panel/productos/nuevo"],
 }
 
 

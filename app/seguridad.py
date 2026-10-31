@@ -17,7 +17,7 @@ from flask_limiter.util import get_remote_address
 from flask_login import LoginManager, current_user, logout_user
 from flask_wtf.csrf import CSRFProtect
 
-from app.modelos import ROLES_PERSONAL
+from app.modelos import ROLES_CON_CUENTA
 
 gestor_sesiones = LoginManager()
 proteccion_csrf = CSRFProtect()
@@ -104,7 +104,7 @@ def requiere_rol(*roles):
     El modelo vuelve a revisar el rol (modelos.exigir_rol): doble verificación.
     """
     for rol in roles:
-        if rol not in ROLES_PERSONAL:
+        if rol not in ROLES_CON_CUENTA:
             raise ValueError(f"Rol desconocido en @requiere_rol: {rol}")
 
     def decorador(vista):

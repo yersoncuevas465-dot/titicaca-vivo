@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% from "macros_publico.html" import tarjeta_salida, tarjeta_alerta, imagen_comunidad %}
+{% from "macros_publico.html" import tarjeta_salida, tarjeta_alerta, imagen_comunidad, tarjeta_producto %}
 {% from "publico/_mapa.html" import mapa_lago %}
 {% block titulo %}{{ t('Salidas en lancha por el lago Titicaca') }}{% endblock %}
 
@@ -168,4 +168,15 @@
   </ul>
   <p><a href="{{ url_for('publico.galeria') }}">{{ t('Ver la galería de fotos →') }}</a></p>
 </section>
+
+{% if productos %}
+<section class="bloque" aria-labelledby="titulo-productos">
+  <h2 id="titulo-productos">{{ t('Artesanías y productos de las islas') }}</h2>
+  <p class="texto-suave">{{ t('Los publican las familias de cada comunidad y la agencia: con su precio y dónde encontrarlos.') }}</p>
+  <ul class="lista-limpia productos">
+    {% for p in productos %}{{ tarjeta_producto(p, breve=true, nivel=3) }}{% endfor %}
+  </ul>
+  <p><a href="{{ url_for('publico.productos') }}">{{ t('Ver todos los productos →') }}</a></p>
+</section>
+{% endif %}
 {% endblock %}

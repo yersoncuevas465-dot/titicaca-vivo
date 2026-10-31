@@ -8,11 +8,11 @@
   <h1>Usuarios del personal</h1>
   <a class="boton" href="{{ url_for('panel.usuario_formulario') }}">Nuevo usuario</a>
 </div>
-<p class="texto-suave">El guía necesita una comunidad y el capitán su licencia de navegación. Un usuario
+<p class="texto-suave">El guía y el residente necesitan una comunidad, y el capitán su licencia de navegación. Un usuario
   desactivado pierde la sesión en su siguiente clic. Las contraseñas se guardan solo como hash bcrypt.</p>
 
 {% call como_funciona() %}
-  <li><strong>Nuevo usuario</strong>: nombre, usuario, rol, correo y contraseña. El guía necesita su comunidad y el capitán su licencia de navegación.</li>
+  <li><strong>Nuevo usuario</strong>: nombre, usuario, rol, correo y contraseña. El guía y el residente necesitan su comunidad, y el capitán su licencia de navegación.</li>
   <li><strong>Editar</strong> cambia los datos, el rol o la contraseña. Si cambias la contraseña de alguien, sus sesiones abiertas se cierran solas.</li>
   <li><strong>Desactivar</strong> deja a la persona sin acceso al instante (pierde la sesión en su siguiente clic); <strong>Activar</strong> se lo devuelve. Un guía o capitán con salidas por venir no se desactiva hasta cambiarlas.</li>
   <li>Sin correo, la persona no puede recuperar su contraseña sola: se marca en la lista.</li>

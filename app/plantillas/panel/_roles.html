@@ -2,7 +2,7 @@
    y el admin en Usuarios: cada rol ve y hace solo lo suyo. #}
 {% set FUNCIONES = {
   'admin': {
-    'hace': ['Da de alta al personal, cambia roles y contraseñas, y activa o desactiva cuentas.',
+    'hace': ['Da de alta al personal y a los residentes, cambia roles y contraseñas, y activa o desactiva cuentas.',
              'Mantiene los catálogos: rutas, lanchas, tarifas, temporadas, comunidades y familias.',
              'Revisa la bitácora (y la descarga en Excel) y los indicadores.',
              'Mira toda la operación del día: salidas, pagos, alertas, hospedajes y reseñas.'],
@@ -12,7 +12,8 @@
              'Verifica o rechaza los pagos de Yape y Plin, cobra en el muelle y atiende devoluciones.',
              'Registra las alertas del lago y suspende las salidas afectadas en un solo paso.',
              'Embarca a los pasajeros con el QR, asigna las familias anfitrionas y modera las reseñas.',
-             'Mantiene los catálogos y ve los indicadores.'],
+             'Mantiene los catálogos y ve los indicadores.',
+             'Publica los productos de la agencia y oculta el de un residente que no corresponda.'],
     'no_hace': ['No maneja usuarios ni la bitácora: eso es del administrador.']},
   'guia': {
     'hace': ['Ve solo las salidas que tiene asignadas y la lista de sus pasajeros.',
@@ -24,6 +25,12 @@
              'Descarga el manifiesto (PDF) y registra el abordaje con el QR.',
              'Marca el zarpe: quien no subió queda como «no se presentó».'],
     'no_hace': ['No ve salidas de otros, ni pagos, ni catálogos.']},
+  'residente': {
+    'hace': ['Publica sus artesanías y productos con su precio, sus características y dónde encontrarlos.',
+             'Los publica en su comunidad (la de su cuenta) y se ven al instante en la página «Productos».',
+             'Cambia el precio, retira lo que se acabó o lo vuelve a publicar.'],
+    'no_hace': ['No ve salidas, pasajeros, reservas ni pagos: no es personal de la agencia.',
+                'No edita los productos de otros. Si la agencia oculta uno suyo, solo ella lo vuelve a mostrar.']},
 } %}
 
 {% macro funciones_rol(rol) %}

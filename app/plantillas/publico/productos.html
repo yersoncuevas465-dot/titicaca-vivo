@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% from "macros_publico.html" import tarjeta_producto %}
+{% block titulo %}{{ t('Productos y artesanías') }}{% endblock %}
+
+{# Productos (v2.9): todo sale de la base; los publican la agencia y los residentes de cada isla #}
+{% block contenido %}
+<h1>{{ t('Productos y artesanías') }}</h1>
+<p class="texto-suave">{{ t('Lo que hacen y venden las familias de las islas y la agencia, con su precio, sus características y dónde encontrarlo.') }}</p>
+{% if idioma_actual() == 'en' %}<p class="texto-suave">{{ t('Las descripciones las escriben la agencia y los residentes, en español.') }}</p>{% endif %}
+
+<nav class="filtro-galeria" aria-label="{{ t('Filtrar por lugar') }}">
+  <a class="filtro-galeria__opcion" href="{{ url_for('publico.productos', categoria=categoria) }}"
+     {% if not lugar %}aria-current="true"{% endif %}>{{ t('Todos los lugares') }} ({{ total }})</a>
+  {% for clave, (nombre, cuantos) in lugares.items() %}
+    <a class="filtro-galeria__opcion" href="{{ url_for('publico.productos', lugar=clave, categoria=categoria) }}"
+       {% if lugar == clave %}aria-current="true"{% endif %}>{{ nombre }} ({{ cuantos }})</a>
+  {% endfor %}
+</nav>
+<nav class="filtro-galeria" aria-label="{{ t('Filtrar por tipo') }}">
+  <a class="filtro-galeria__opcion" href="{{ url_for('publico.productos', lugar=lugar) }}"
+     {% if not categoria %}aria-current="true"{% endif %}>{{ t('Todo') }} ({{ en_el_lugar }})</a>
+  {% for clave, etiqueta in categorias.items() if por_categoria[clave] %}
+    <a class="filtro-galeria__opcion" href="{{ url_for('publico.productos', lugar=lugar, categoria=clave) }}"
+       {% if categoria == clave %}aria-current="true"{% endif %}>{{ t(etiqueta) }} ({{ por_categoria[clave] }})</a>
+  {% endfor %}
+</nav>
+
+{% if productos %}
+<ul class="lista-limpia productos">
+  {% for p in productos %}{{ tarjeta_producto(p) }}{% endfor %}
+</ul>
+{% else %}
+  <p class="aviso aviso--info">{{ t('No hay productos con ese filtro todavía.') }}</p>
+{% endif %}
+
+<section class="tarjeta llamado" aria-labelledby="titulo-vender">
+  <h2 id="titulo-vender">{{ t('¿Vives en una isla y quieres vender aquí?') }}</h2>
+  <p>{{ t('La agencia te crea una cuenta de residente: publicas tus artesanías y productos con su precio y se ven aquí al instante.') }}</p>
+  <p><a class="boton" href="{{ url_for('publico.contacto') }}">{{ t('Pedir mi cuenta de residente') }}</a></p>
+</section>
+{% endblock %}

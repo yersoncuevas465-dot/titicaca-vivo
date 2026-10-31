@@ -60,8 +60,8 @@ def test_un_respaldo_restaurado_deja_la_base_identica(app, carpeta):
         hecho = respaldo.crear("consola", ip="consola")
     ruta = carpeta / hecho["nombre"]
     texto = ruta.read_text(encoding="utf-8")
-    assert hecho["tablas"] == 20 and hecho["filas"] > 200 and hecho["tipo"] == "Consola"
-    assert texto.startswith(respaldo.CABECERA) and f"{respaldo.FIN}: 20 tablas" in texto
+    assert hecho["tablas"] == 21 and hecho["filas"] > 200 and hecho["tipo"] == "Consola"
+    assert texto.startswith(respaldo.CABECERA) and f"{respaldo.FIN}: 21 tablas" in texto
     assert "DEFINER" not in texto and "DELIMITER $$" in texto        # se restaura con cualquier usuario
     # Los triggers se crean DESPUÉS de cargar los datos: no frenan la carga
     assert texto.index("INSERT INTO `reserva_pasajero`") < texto.index("CREATE TRIGGER trg_reserva_pasajero_bi")
@@ -90,7 +90,7 @@ def test_el_respaldo_se_divide_en_sentencias_como_en_phpmyadmin(app, carpeta):
     sentencias = bd.dividir_sentencias((carpeta / hecho["nombre"]).read_text(encoding="utf-8"))
     triggers = [s for s in sentencias if s.startswith("CREATE TRIGGER")]
     assert len(triggers) == 4 and all(s.rstrip().endswith("END") for s in triggers)
-    assert sum(s.startswith("CREATE TABLE") for s in sentencias) == 20
+    assert sum(s.startswith("CREATE TABLE") for s in sentencias) == 21
 
 
 def test_no_se_restaura_un_archivo_que_no_es_un_respaldo_completo(app, carpeta):
@@ -218,7 +218,7 @@ def test_el_admin_ve_cuando_fue_el_ultimo_respaldo(app, cliente, carpeta):
 def test_flask_bd_respaldar_y_restaurar(app, carpeta):
     consola = app.test_cli_runner()
     hecho = consola.invoke(args=["bd", "respaldar"])
-    assert hecho.exit_code == 0 and "Listo:" in hecho.output and "20 tablas" in hecho.output
+    assert hecho.exit_code == 0 and "Listo:" in hecho.output and "21 tablas" in hecho.output
     nombre = next(carpeta.glob("respaldo_*_consola.sql")).name
     vuelta = consola.invoke(args=["bd", "restaurar", nombre, "--si"])    # basta con el nombre
     assert vuelta.exit_code == 0, vuelta.output

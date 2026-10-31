@@ -183,6 +183,15 @@ Pedido del equipo: dejar el sistema tan detallado como NeoClinic (su otro proyec
 | D-117 | **Restaurar** solo desde la consola: `flask bd restaurar <archivo>`, con confirmación, y **antes guarda un respaldo «antes de restaurar»**. Solo acepta un respaldo completo (su cabecera y su «Fin del respaldo»). `flask bd reiniciar` también guarda antes un respaldo «antes de reiniciar» (se salta con `--sin-respaldo`). | Restaurar o reiniciar borra la base: un clic en el panel sería demasiado fácil de dar por error. Con el respaldo previo, cualquier reinicio o restauración equivocada se deshace. Un archivo cortado a la mitad dejaría la base sin tablas. |
 | D-118 | **Respaldo automático** cada 24 horas (`RESPALDO_CADA_HORAS`) mientras corre `servidor.py`, en un hilo que revisa cada hora (y al arrancar). Y un **reporte general** para Excel (un ZIP con reservas, pagos, salidas y hospedajes en CSV) **sin documentos, teléfonos ni correos** de los turistas. | Si nadie se acuerda de respaldar, igual hay una copia del día. El hilo solo vive en el servidor: ni `flask run` ni las pruebas lo encienden. El reporte es para revisar la operación en Excel; para recuperar la base está el `.sql`. |
 
+### Decisiones del módulo de productos (31/10/2026)
+
+Pedido del equipo: que la agencia y los residentes de cada isla ofrezcan sus artesanías y productos, con su precio, sus características y dónde encontrarlos, y que los residentes tengan cuenta.
+
+| ID | Decisión | Por qué |
+|---|---|---|
+| D-119 | **Tabla 21 `producto` y rol 5 `residente`.** Va más allá del enunciado (20 tablas y 4 roles): **el equipo debe confirmarlo**. El admin crea la cuenta del residente en Usuarios, con su comunidad; en el panel solo ve «Resumen», «Mis productos» y «Mi cuenta» (403 en todo lo del personal). | Un producto se crea, se edita y se retira: necesita su propia tabla (la bitácora no se edita). El residente no podía ser guía: el guía ve listas de pasajeros con datos personales. |
+| D-120 | El residente publica **solo en su comunidad** (la de su cuenta, no la del formulario) y edita solo lo suyo; el operador publica los de la agencia (en Puno o en una comunidad) y **oculta** el de un residente que no corresponda. Lo oculto solo lo vuelve a mostrar el operador; lo retirado, quien lo publicó. Si el admin desactiva al residente, sus productos dejan de verse; con productos, no se le cambia el rol ni la comunidad. | Nadie publica por otro y la agencia quita lo que no corresponde sin borrar nada: cada cambio queda en la bitácora. |
+
 ### D-06. Contraste medido de la paleta "Esencia Andina"
 
 | Texto sobre fondo | Contraste | Uso permitido |

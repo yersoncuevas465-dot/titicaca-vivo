@@ -165,6 +165,19 @@ def _salidas_asignadas(cur, usuario_id):
     return cur.fetchone()["salidas"]
 
 
+def _productos_del_residente(cur, usuario_id):
+    # v2.9: devuelve cuántos productos publicó el residente (en cualquier estado) y su comunidad.
+    cur.execute(
+        """
+        SELECT COUNT(*) AS cuantos, MAX(comunidad_id) AS comunidad_id
+        FROM producto
+        WHERE residente_id = %s
+        """,
+        (usuario_id,),
+    )
+    return cur.fetchone()
+
+
 def guardar(actor, usuario_id, datos, ip=None):
     """Crea o edita un usuario del personal. La contraseña solo se cambia si se escribe una."""
     exigir_rol(actor, "admin")
@@ -196,13 +209,14 @@ def guardar(actor, usuario_id, datos, ip=None):
         if rol is None:
             e["rol_id"] = "Elige un rol."
         comunidad_id, licencia = None, None
-        if rol == "guia":          # el guía pertenece a una comunidad (sección 6)
+        if rol in ("guia", "residente"):   # el guía (sección 6) y el residente (v2.9): su comunidad
             comunidad_id = v.entero(datos, "comunidad_id", e, 1, 4294967295)
             # Devuelve 1 si la comunidad existe y está activa.
             cur.execute("SELECT COUNT(*) AS hay FROM comunidad WHERE id = %s AND activa = 1",
                         (comunidad_id,))
-            if "comunidad_id" not in e and not cur.fetchone()["hay"]:
-                e["comunidad_id"] = "El guía necesita una comunidad activa."
+            if not cur.fetchone()["hay"]:      # también con «— Ninguna —» (0): el mensaje claro
+                e["comunidad_id"] = ("El guía necesita una comunidad activa." if rol == "guia"
+                                     else "El residente necesita una comunidad activa.")
         if rol == "capitan":       # el capitán necesita licencia de navegación (sección 6)
             licencia = v.texto(datos, "licencia_navegacion", e, 3, 30,
                                nombre="la licencia de navegación")
@@ -230,6 +244,14 @@ def guardar(actor, usuario_id, datos, ip=None):
                 if salidas:
                     e["rol_id" if rol != actual["rol"] else "activo"] = (
                         f"Tiene {salidas} salida(s) por venir asignada(s): cámbialas primero.")
+            if actual and actual["rol"] == "residente":
+                # Sus productos están en su comunidad: no cambia de rol ni de comunidad (v2.9)
+                productos = _productos_del_residente(cur, usuario_id)
+                if productos["cuantos"] and (rol != "residente"
+                                             or comunidad_id != productos["comunidad_id"]):
+                    e["rol_id" if rol != "residente" else "comunidad_id"] = (
+                        f"Tiene {productos['cuantos']} producto(s) publicados en su comunidad: no "
+                        "se le cambia el rol ni la comunidad. Si dejó de vender, desactívalo.")
         if e:
             raise ErrorValidacion(e)
 

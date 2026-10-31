@@ -41,11 +41,19 @@ from app.formularios.panel import (
     FormularioRechazo,
     FormularioSalida,
 )
-from app.modelos import ROLES_PERSONAL, ErrorNegocio, ErrorValidacion, comunidad, cuenta
+from app.modelos import (
+    ROLES_CON_CUENTA,
+    ROLES_PERSONAL,
+    ErrorNegocio,
+    ErrorValidacion,
+    comunidad,
+    cuenta,
+)
 from app.modelos import abordaje as modelo_abordaje
 from app.modelos import bitacora as modelo_bitacora
 from app.modelos import pago as modelo_pago
 from app.modelos import panel as modelo_panel
+from app.modelos import producto as modelo_producto
 from app.modelos import reclamacion as modelo_reclamacion
 from app.modelos import reprogramacion as modelo_reprogramacion
 from app.modelos import reserva as modelo_reserva
@@ -90,8 +98,11 @@ def procesar(formulario, accion, mensaje, destino):
 # --- Resumen y bitácora (F2) --------------------------------------------------------------------
 
 @bp.route("")
-@requiere_rol(*ROLES_PERSONAL)
+@requiere_rol(*ROLES_CON_CUENTA)
 def inicio():
+    if current_user.rol == "residente":              # v2.9: solo sus productos
+        return render_template("panel/inicio_residente.html",
+                               cuantos=modelo_producto.resumen_residente(current_user))
     datos = modelo_panel.resumen(current_user)
     # El admin ve cuándo fue el último respaldo (solo mira la carpeta: no consulta la base)
     ultimo_respaldo = modelo_respaldo.ultimo() if current_user.rol == "admin" else None
@@ -175,13 +186,13 @@ def _pagina_mi_cuenta(clave=None, contacto=None, sueltos=(), codigo=200):
 
 
 @bp.route("/mi-cuenta")
-@requiere_rol(*ROLES_PERSONAL)
+@requiere_rol(*ROLES_CON_CUENTA)
 def mi_cuenta():
     return _pagina_mi_cuenta()
 
 
 @bp.route("/mi-cuenta/contrasena", methods=["POST"])
-@requiere_rol(*ROLES_PERSONAL)
+@requiere_rol(*ROLES_CON_CUENTA)
 def mi_contrasena():
     formulario = FormularioCambiarContrasena(prefix="clave")
 
@@ -199,7 +210,7 @@ def mi_contrasena():
 
 
 @bp.route("/mi-cuenta/contacto", methods=["POST"])
-@requiere_rol(*ROLES_PERSONAL)
+@requiere_rol(*ROLES_CON_CUENTA)
 def mi_contacto():
     formulario = FormularioContacto(prefix="contacto")
     respuesta, sueltos, codigo = procesar(
@@ -210,7 +221,7 @@ def mi_contacto():
 
 
 @bp.route("/sesion")
-@requiere_rol(*ROLES_PERSONAL)
+@requiere_rol(*ROLES_CON_CUENTA)
 def sesion_activa():
     """D-110: el navegador avisa que la persona sigue trabajando (escribe o hace clic) aunque
     no cambie de página. Si la sesión ya se cerró por inactividad, responde 401."""

@@ -27,6 +27,7 @@ from app.modelos import (
     abordaje,
     alerta,
     comunidad,
+    producto,
     resena,
     ruta,
     salida,
@@ -91,6 +92,7 @@ def inicio():
         # v2.3: la comunidad de la foto grande de la portada (con su nombre y crédito)
         portada=next((c for c in comunidades if c["slug"] == imagenes.FOTO_PORTADA
                       and imagenes.foto_comunidad(c["slug"])), None),
+        productos=producto.destacados(3),          # v2.9: lo último de las islas
     )
 
 

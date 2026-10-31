@@ -18,7 +18,7 @@ ENTORNO = os.getenv("ENTORNO", "desarrollo")
 
 
 class Config:
-    VERSION = "2.8.0"             # también sirve para que el navegador renueve CSS e imágenes
+    VERSION = "2.9.0"             # también sirve para que el navegador renueve CSS e imágenes
     ENTORNO = ENTORNO
     SECRET_KEY = os.getenv("SECRET_KEY")
 

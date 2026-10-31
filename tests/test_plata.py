@@ -119,7 +119,8 @@ def test_consultas_por_pagina_no_crecen_con_los_datos(app, cliente, monkeypatch)
     monkeypatch.setattr(pymysql.cursors.Cursor, "execute", contar)
     # La salida y la comunidad llevan su mapa (v2.1): 2 consultas fijas más, las mismas que usa la
     # portada (comunidades y paradas de todas las rutas en UNA consulta), tenga 1 o 50 paradas.
-    esperadas = {"/": 5, "/salidas": 3, "/salidas/10": 7, "/comunidades": 2,
+    # La portada suma 1 desde la v2.9: los 3 productos más nuevos (LIMIT), haya 3 o 300.
+    esperadas = {"/": 6, "/salidas": 3, "/salidas/10": 7, "/comunidades": 2,
                  "/comunidades/amantani": 6, "/alertas": 1}
     for url, maximo in esperadas.items():
         contador["n"] = 0

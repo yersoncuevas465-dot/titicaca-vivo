@@ -175,7 +175,7 @@ En el `.env` de producción van `ENTORNO=produccion` y `URL_PUBLICA=https://<tu 
 python scripts/empaquetar.py
 ```
 
-Esto arma `..\entrega\titicaca_vivo-2.8.0.zip`, fuera de la carpeta del proyecto. El ZIP:
+Esto arma `..\entrega\titicaca_vivo-2.9.0.zip`, fuera de la carpeta del proyecto. El ZIP:
 
 - no lleva `.env`, entornos virtuales, cachés, `logs/` ni `.coverage`;
 - **no se arma** si algún archivo contiene la `SECRET_KEY` o la `BD_CONTRASENA` del `.env`.

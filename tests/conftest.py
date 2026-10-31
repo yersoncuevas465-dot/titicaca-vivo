@@ -24,6 +24,9 @@ CLAVES = {
     "guia.marco": "Guia-Titicaca26",
     "capitan.teodoro": "Capitan-Titicaca26",
     "capitan.fermin": "Capitan-Titicaca26",
+    "residente.juana": "Residente-Titicaca26",      # v2.9: Taquile
+    "residente.felix": "Residente-Titicaca26",      # Amantaní
+    "residente.sonia": "Residente-Titicaca26",      # Uros
 }
 
 # Códigos de error de MariaDB que se comprueban en las pruebas

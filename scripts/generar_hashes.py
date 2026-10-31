@@ -22,7 +22,7 @@ COSTO_BCRYPT = 12
 
 # Cada fila: (id, rol_id, nombre_usuario, nombre_completo, correo, telefono,
 #             comunidad_id, licencia, contraseña)
-# Personas ficticias. Roles: 1 admin, 2 operador, 3 guia, 4 capitan.
+# Personas ficticias. Roles: 1 admin, 2 operador, 3 guia, 4 capitan, 5 residente (v2.9).
 USUARIOS_DEMO = [
     (1, 1, "admin", "Lucía Mamani Quispe", "admin@titicaca-vivo.example", "900000101",
      None, None, "Admin-Titicaca26"),
@@ -36,6 +36,12 @@ USUARIOS_DEMO = [
      None, "LIC-PUN-00123", "Capitan-Titicaca26"),
     (6, 4, "capitan.fermin", "Fermín Ccama Turpo", None, "900000106",
      None, "LIC-PUN-00456", "Capitan-Titicaca26"),
+    (7, 5, "residente.juana", "Juana Machaca Huatta", None, "900000107",
+     2, None, "Residente-Titicaca26"),
+    (8, 5, "residente.felix", "Félix Cari Ticona", "felix.cari@titicaca-vivo.example", "900000108",
+     3, None, "Residente-Titicaca26"),
+    (9, 5, "residente.sonia", "Sonia Suaña Lujano", None, "900000109",
+     1, None, "Residente-Titicaca26"),
 ]
 
 

@@ -696,6 +696,34 @@ EN = {
     "Escribe cuántas personas son (de 2 a 300).": "Write how many people you are (2 to 300).",
     "Elige una fecha desde hoy y dentro del próximo año.": "Choose a date from today and within the next year.",
     "Elige una ruta de la lista.": "Choose a route from the list.",
+    # --- Productos y artesanías (v2.9) ---
+    "Productos": "Products",
+    "Productos y artesanías": "Products and crafts",
+    "Lo que hacen y venden las familias de las islas y la agencia, con su precio, sus características y dónde encontrarlo.":
+        "What the island families and the agency make and sell, with its price, its features and where to find it.",
+    "Las descripciones las escriben la agencia y los residentes, en español.":
+        "Descriptions are written by the agency and the residents, in Spanish.",
+    "Filtrar por lugar": "Filter by place",
+    "Todos los lugares": "All places",
+    "Filtrar por tipo": "Filter by type",
+    "Todo": "Everything",
+    "Tejidos y bordados": "Weaving and embroidery",
+    "Tallados y artesanías": "Carvings and crafts",
+    "Productos del campo": "Farm products",
+    "Recuerdos": "Souvenirs",
+    "Dónde está": "Where it is",
+    "Lo ofrece": "Sold by",
+    "residente de {comunidad}": "resident of {comunidad}",
+    "La agencia Titicaca Vivo": "The Titicaca Vivo agency",
+    "No hay productos con ese filtro todavía.": "There are no products with that filter yet.",
+    "¿Vives en una isla y quieres vender aquí?": "Do you live on an island and want to sell here?",
+    "La agencia te crea una cuenta de residente: publicas tus artesanías y productos con su precio y se ven aquí al instante.":
+        "The agency creates a resident account for you: you post your crafts and products with their price, and they show up here right away.",
+    "Pedir mi cuenta de residente": "Ask for my resident account",
+    "Artesanías y productos de las islas": "Crafts and products from the islands",
+    "Los publican las familias de cada comunidad y la agencia: con su precio y dónde encontrarlos.":
+        "Posted by the families of each community and by the agency, with their price and where to find them.",
+    "Ver todos los productos →": "See all products →",
 }
 
 # Mensajes con partes variables (números, códigos): se reconocen con un patrón.

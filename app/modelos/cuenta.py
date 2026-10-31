@@ -21,7 +21,7 @@ import pymysql
 from flask import current_app
 
 from app import bd
-from app.modelos import ERROR_DUPLICADO, ROLES_PERSONAL, ErrorNegocio, ErrorValidacion, exigir_rol
+from app.modelos import ERROR_DUPLICADO, ROLES_CON_CUENTA, ErrorNegocio, ErrorValidacion, exigir_rol
 from app.modelos import validacion as v
 from app.modelos.validacion import indice_duplicado
 from app.servicios import correo
@@ -245,7 +245,7 @@ def restablecer_con_codigo(pedido, codigo, nueva, repetida, ip):
 # --- «Mi cuenta» --------------------------------------------------------------------------------
 
 def mis_datos(actor):
-    exigir_rol(actor, *ROLES_PERSONAL)
+    exigir_rol(actor, *ROLES_CON_CUENTA)
     # Devuelve los datos de la propia cuenta con su rol y su comunidad (LEFT JOIN: no todos tienen).
     return bd.consultar_uno(
         """
@@ -262,7 +262,7 @@ def mis_datos(actor):
 
 
 def ultimos_movimientos(actor, cantidad=8):
-    exigir_rol(actor, *ROLES_PERSONAL)
+    exigir_rol(actor, *ROLES_CON_CUENTA)
     marcas = ", ".join(["%s"] * len(ACCIONES_DE_CUENTA))
     # Devuelve los últimos ingresos, salidas y cambios de la propia cuenta (índice por usuario).
     filas = bd.consultar(
@@ -299,7 +299,7 @@ def _cuenta_bloqueada(cur, usuario_id):
 
 def cambiar_contrasena(actor, actual, nueva, repetida, ip):
     """Cambia la propia contraseña (pide la actual). Las demás sesiones de la cuenta se cierran."""
-    exigir_rol(actor, *ROLES_PERSONAL)
+    exigir_rol(actor, *ROLES_CON_CUENTA)
     e = {}
     error = error_contrasena(nueva, actor.nombre_usuario)
     if error:
@@ -327,7 +327,7 @@ def cambiar_contrasena(actor, actual, nueva, repetida, ip):
 
 def actualizar_contacto(actor, datos, ip):
     """Cambia el propio correo (el de la recuperación) y el teléfono. Pide la contraseña actual."""
-    exigir_rol(actor, *ROLES_PERSONAL)
+    exigir_rol(actor, *ROLES_CON_CUENTA)
     e = {}
     correo_nuevo = (datos.get("correo") or "").strip().lower() or None
     if correo_nuevo and (len(correo_nuevo) > 120 or not PATRON_CORREO.match(correo_nuevo)):

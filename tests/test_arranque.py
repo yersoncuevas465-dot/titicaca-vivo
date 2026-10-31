@@ -79,7 +79,7 @@ def test_cada_error_de_conexion_dice_que_hacer(app, codigo, pista):
 def test_la_base_de_pruebas_esta_lista(app):
     problema, estado = diagnostico.revisar(app.config)
     assert problema is None
-    assert (estado["tablas"], estado["vistas"], estado["triggers"], estado["procedimientos"]) == (20, 2, 4, 1)
+    assert (estado["tablas"], estado["vistas"], estado["triggers"], estado["procedimientos"]) == (21, 2, 4, 1)
     assert estado["filas"] > 200 and estado["salidas_hoy"] >= 1
 
 
@@ -144,7 +144,7 @@ def test_servidor_revisa_todo_y_muestra_la_base(app, monkeypatch, capsys):
     config = servidor.revisar(opciones(puerto=1))
     salida = capsys.readouterr().out
     assert config is not None and config["BD_NOMBRE"] == ConfigPruebas.BD_NOMBRE
-    assert f"[ok] Base {ConfigPruebas.BD_NOMBRE}: 20 tablas, 2 vistas, 4 triggers" in salida
+    assert f"[ok] Base {ConfigPruebas.BD_NOMBRE}: 21 tablas, 2 vistas, 4 triggers" in salida
     assert "[ok] Puerto 1 libre" in salida and "[X]" not in salida
 
 

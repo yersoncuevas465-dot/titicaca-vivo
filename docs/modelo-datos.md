@@ -23,7 +23,7 @@
 
 ---
 
-## Diagrama ER (las 20 tablas)
+## Diagrama ER (las 20 tablas del enunciado y la 21, `producto`, de la v2.9)
 
 ```mermaid
 erDiagram
@@ -56,6 +56,8 @@ erDiagram
     reserva ||--o| resena : "recibe"
     usuario |o--o{ resena : "modera"
     usuario |o--o{ bitacora : "genera"
+    usuario |o--o{ producto : "publica (residente)"
+    comunidad |o--o{ producto : "lo tiene"
 
     rol {
         INT id PK
@@ -268,6 +270,18 @@ erDiagram
         VARCHAR ip
         DATETIME creado_en
     }
+    producto {
+        INT id PK
+        INT residente_id FK "NULL si es de la agencia"
+        INT comunidad_id FK "NULL si está en Puno"
+        VARCHAR nombre
+        ENUM categoria
+        VARCHAR descripcion
+        DECIMAL precio "CHECK 0 a 10000"
+        VARCHAR lugar
+        ENUM estado
+        DATETIME creado_en
+    }
 ```
 
 > `temporada` aparece sola, sin líneas: se cruza con `salida` por **rango de fechas**, no por FK. La explicación está en [Relaciones](#relaciones-y-cardinalidad).
@@ -283,7 +297,7 @@ Abreviaturas de la columna **Clave**: PK = clave primaria, FK = clave foránea, 
 | Columna | Tipo | Nulo | Clave | Regla |
 |---|---|---|---|---|
 | id | INT UNSIGNED AI | no | PK | |
-| codigo | VARCHAR(20) | no | UK | CHECK `codigo IN ('admin','operador','guia','capitan')` |
+| codigo | VARCHAR(20) | no | UK | CHECK `codigo IN ('admin','operador','guia','capitan','residente')` (el residente, desde la v2.9: D-119) |
 | nombre | VARCHAR(40) | no | | Nombre visible: "Capitán", "Guía"… |
 | descripcion | VARCHAR(255) | sí | | Qué puede hacer el rol. |
 
@@ -557,6 +571,23 @@ Trigger `BEFORE INSERT`: frena la sobreventa y el documento repetido en la misma
 | ip | VARCHAR(45) | sí | | Alcanza para IPv6. |
 | creado_en | DATETIME | no | IX | DEFAULT CURRENT_TIMESTAMP |
 
+### 21. `producto`: artesanía o producto que se vende en las islas (v2.9, D-119)
+
+No está en el enunciado: es el módulo de productos que pidió el equipo. Lo publica un residente (solo en su comunidad) o la agencia.
+
+| Columna | Tipo | Nulo | Clave | Regla |
+|---|---|---|---|---|
+| id | INT UNSIGNED AI | no | PK | |
+| residente_id | INT UNSIGNED | sí | FK→usuario, IX | Quién lo publica. NULL: lo ofrece la agencia. |
+| comunidad_id | INT UNSIGNED | sí | FK→comunidad, IX | Dónde está. NULL: en Puno, con la agencia. CHECK: el de un residente siempre tiene comunidad. |
+| nombre | VARCHAR(80) | no | | |
+| categoria | ENUM | no | | `textil`, `artesania`, `alimento`, `recuerdo` |
+| descripcion | VARCHAR(600) | no | | Sus características: material, medidas, colores. |
+| precio | DECIMAL(8,2) | no | | CHECK `precio > 0 AND precio <= 10000` (soles) |
+| lugar | VARCHAR(160) | no | | Dónde lo encuentran: la tienda, la casa, la feria… |
+| estado | ENUM | no | IX(estado, creado_en) | `publicado`, `retirado` (por quien lo publicó) u `oculto` (por la agencia). Nada se borra. |
+| creado_en, actualizado_en | DATETIME | no | | DEFAULT CURRENT_TIMESTAMP (y ON UPDATE) |
+
 ---
 
 ## Relaciones y cardinalidad
@@ -564,7 +595,7 @@ Trigger `BEFORE INSERT`: frena la sobreventa y el documento repetido en la misma
 | # | Relación | Cardinalidad | FK | ON DELETE | Por qué |
 |---|---|---|---|---|---|
 | 1 | rol → usuario | 1 : N | usuario.rol_id | RESTRICT | No se borra un rol que alguien usa. |
-| 2 | comunidad → usuario (guías) | 0..1 : N | usuario.comunidad_id (NULL) | RESTRICT | El guía es de su comunidad. Los otros roles no tienen comunidad. |
+| 2 | comunidad → usuario (guías y residentes) | 0..1 : N | usuario.comunidad_id (NULL) | RESTRICT | El guía y el residente (v2.9) son de su comunidad. Los otros roles no tienen comunidad. |
 | 3 | comunidad → familia_anfitriona | 1 : N | familia_anfitriona.comunidad_id | RESTRICT | Si se borrara la comunidad, se perderían familias con historial de pagos. Se desactiva. |
 | 4 | ruta ↔ comunidad | N : M | por medio de `ruta_parada` | — | Una ruta pasa por varias comunidades y una comunidad está en varias rutas. |
 | 4a | ruta → ruta_parada | 1 : N | ruta_parada.ruta_id | **CASCADE** | Una parada no existe sin su ruta. En la práctica, la ruta solo se puede borrar si no tiene salidas ni tarifas (RESTRICT). |
@@ -593,6 +624,8 @@ Trigger `BEFORE INSERT`: frena la sobreventa y el documento repetido en la misma
 | 26 | reserva → resena | 1 : 0..1 | resena.reserva_id (UNIQUE) | RESTRICT | El UNIQUE convierte 1:N en 1:0..1. |
 | 27 | usuario → resena (modera) | 0..1 : N | resena.moderada_por | RESTRICT | |
 | 28 | usuario → bitacora | 0..1 : N | bitacora.usuario_id | RESTRICT | Los usuarios se desactivan, no se borran, así la bitácora no queda huérfana. |
+| 29 | usuario (residente) → producto | 0..1 : N | producto.residente_id (NULL = de la agencia) | RESTRICT | Un residente desactivado deja de mostrar sus productos, pero no se pierden. |
+| 30 | comunidad → producto | 0..1 : N | producto.comunidad_id (NULL = en Puno) | RESTRICT | |
 | — | temporada ~ salida | por rango de fechas | **sin FK** | — | Ver abajo. |
 
 **¿Por qué `temporada` se relaciona con `salida` sin FK?**

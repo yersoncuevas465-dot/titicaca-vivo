@@ -5,6 +5,7 @@ En las páginas del turista salen en español o en inglés (textos.idioma()); en
 
 from decimal import ROUND_HALF_UP, Decimal
 
+from app.modelos.producto import CATEGORIAS as CATEGORIAS_PRODUCTO
 from app.servicios import paises, privacidad, textos
 from app.servicios.textos import t
 
@@ -193,6 +194,7 @@ def registrar(app):
         mes_y_anio=mes_y_anio, inicial_mayuscula=inicial_mayuscula,
         soles=soles, dolares=dolares, duracion=duracion, servicios=servicios,
         detalle_bitacora=detalle_bitacora,
+        categoria_producto=lambda v: t(CATEGORIAS_PRODUCTO.get(v, v)),     # v2.9
         # Las etiquetas pasan por t(): en el panel quedan en español; al turista, en su idioma.
         estado_publico=lambda v: t(ESTADOS_PUBLICOS.get(v, v)),
         nivel_alerta=lambda v: t(NIVELES_ALERTA.get(v, v)),

@@ -1,0 +1,74 @@
+{% extends "panel/base_panel.html" %}
+{% from "panel/_macros.html" import como_funciona %}
+{% block titulo %}{% if current_user.rol == 'residente' %}Mis productos{% else %}Productos{% endif %}{% endblock %}
+
+{% block contenido %}
+<div class="detalle__cabeza">
+  <h1>{% if current_user.rol == 'residente' %}Mis productos{% else %}Productos y artesanías{% endif %}</h1>
+  {% if current_user.rol in ('operador', 'residente') %}
+    <a class="boton" href="{{ url_for('panel.producto_formulario') }}">Publicar un producto</a>
+  {% endif %}
+</div>
+<p class="texto-suave">{{ productos | length }} producto(s) · {{ productos | selectattr('estado', 'equalto', 'publicado') | list | length }} publicado(s) ·
+  <a href="{{ url_for('publico.productos') }}">ver la página de productos</a></p>
+
+{% if sueltos %}
+  <div class="resumen-errores" role="alert"><ul>{% for e in sueltos %}<li>{{ e }}</li>{% endfor %}</ul></div>
+{% endif %}
+
+{% call como_funciona() %}
+  {% if current_user.rol == 'residente' %}
+    <li>Lo que publicas se ve al instante en la página «Productos», en tu comunidad. Escribe bien dónde lo encuentran.</li>
+    <li><strong>Retirar</strong> lo quita de la página (por ejemplo, si se acabó); <strong>Volver a publicar</strong> lo muestra otra vez. Nada se borra.</li>
+    <li>Si la agencia oculta uno, corrígelo con <strong>Editar</strong>: solo la agencia lo vuelve a mostrar.</li>
+  {% elif current_user.rol == 'operador' %}
+    <li>Los de la agencia los publicas y editas tú: en Puno o en una comunidad.</li>
+    <li>Los de los residentes los editan ellos. Si uno no corresponde, <strong>Ocultar</strong> lo quita de la página hasta que lo vuelvas a mostrar.</li>
+    <li>Si un residente deja de vender, el admin desactiva su cuenta y sus productos dejan de verse.</li>
+  {% else %}
+    <li>Como administrador solo miras: los de la agencia los publica el operador y cada residente publica los suyos. Las cuentas de los residentes se crean en «Usuarios».</li>
+  {% endif %}
+{% endcall %}
+
+{% if productos %}
+{# El color de cada estado: los mismos de las salidas (verde, gris y rojo) #}
+{% set COLOR = {'publicado': 'disponible', 'retirado': 'zarpo', 'oculto': 'suspendida'} %}
+<div class="tabla-desplazable" role="region" aria-labelledby="titulo-productos" tabindex="0">
+  <table class="tabla">
+    <caption id="titulo-productos">{{ productos | length }} producto(s)</caption>
+    <thead>
+      <tr><th scope="col">Producto</th><th scope="col">Precio</th><th scope="col">Dónde</th>
+        {% if current_user.rol != 'residente' %}<th scope="col">Lo ofrece</th>{% endif %}
+        <th scope="col">Estado</th><th scope="col">Acciones</th></tr>
+    </thead>
+    <tbody>
+      {% for p in productos %}
+        <tr>
+          <td><strong>{{ p.nombre }}</strong><br><span class="texto-suave">{{ p.categoria | categoria_producto }}</span></td>
+          <td class="sin-cortar">{{ p.precio | soles }}</td>
+          <td>{{ p.comunidad or 'Puno' }} · {{ p.lugar }}</td>
+          {% if current_user.rol != 'residente' %}
+            <td>{% if p.residente %}{{ p.residente }}{% if not p.residente_activo %} <span class="texto-suave">(cuenta desactivada)</span>{% endif %}{% else %}La agencia{% endif %}</td>
+          {% endif %}
+          <td><span class="insignia insignia--{{ COLOR[p.estado] }}">{{ estados[p.estado] }}</span></td>
+          <td class="acciones-fila">
+            {% if p.editable %}<a class="boton boton--secundario boton--chico" href="{{ url_for('panel.producto_formulario', producto_id=p.id) }}">Editar<span class="visualmente-oculto"> {{ p.nombre }}</span></a>{% endif %}
+            {% for nuevo in p.cambios %}
+              <form method="post" action="{{ url_for('panel.producto_estado', producto_id=p.id) }}">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <input type="hidden" name="estado" value="{{ nuevo }}">
+                <button class="boton boton--secundario boton--chico" type="submit">
+                  {%- if nuevo == 'retirado' %}Retirar{% elif nuevo == 'oculto' %}Ocultar{% elif p.estado == 'oculto' %}Volver a mostrar{% else %}Volver a publicar{% endif -%}
+                  <span class="visualmente-oculto"> {{ p.nombre }}</span></button>
+              </form>
+            {% endfor %}
+          </td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% else %}
+  <p class="aviso aviso--info">Todavía no hay productos.{% if current_user.rol in ('operador', 'residente') %} Publica el primero con el botón de arriba.{% endif %}</p>
+{% endif %}
+{% endblock %}

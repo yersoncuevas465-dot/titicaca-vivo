@@ -44,6 +44,7 @@ FONDO_POR_PAGINA = (
     ("publico.galeria", "amantani"),
     ("publico.contacto", "llachon"),
     ("publico.experiencias", "taquile"),
+    ("publico.productos", "taquile"),           # v2.9: los textiles de Taquile
     ("publico.grupos", "amantani"),
     ("publico.libro_reclamaciones", None),
     ("publico.constancia_reclamacion", None),

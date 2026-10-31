@@ -12,10 +12,10 @@ from app import bd
 # Errores que significan "no hay servidor": MySQL apagado, otro puerto o la conexión se cortó.
 SIN_SERVIDOR = {2002, 2003, 2006, 2013}
 
-# Lo que dejan 01_esquema.sql y 02_vistas_triggers.sql (las 20 tablas están en bd.TABLAS).
+# Lo que dejan 01_esquema.sql y 02_vistas_triggers.sql (las 21 tablas están en bd.TABLAS).
 VISTAS, TRIGGERS, PROCEDIMIENTOS = 2, 4, 1
 
-RECARGAR = "Qué hacer: cárgala con  flask bd reiniciar --si  (20 tablas con los datos de prueba)."
+RECARGAR = "Qué hacer: cárgala con  flask bd reiniciar --si  (21 tablas con los datos de prueba)."
 CREAR_BD = "Qué hacer (PASO 4 de INSTRUCCIONES.txt):  python scripts/crear_bd.py"
 
 

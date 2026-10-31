@@ -6,6 +6,9 @@ otra vez (exigir_rol), además del decorador @requiere_rol de la ruta.
 """
 
 ROLES_PERSONAL = ("admin", "operador", "guia", "capitan")
+# v2.9 (D-119): el residente de una comunidad también entra al panel, pero solo para publicar
+# sus productos. No es personal de la agencia: nunca ve salidas, pasajeros ni pagos.
+ROLES_CON_CUENTA = (*ROLES_PERSONAL, "residente")
 ROLES_CATALOGO = ("admin", "operador")        # S-26: catálogos los manejan el admin y el operador
 ERROR_DUPLICADO = 1062                        # UNIQUE repetido
 ERROR_TRIGGER = 1644                          # SIGNAL SQLSTATE '45000' de un trigger

@@ -122,7 +122,8 @@ PUBLICAS = ["/", "/salidas", "/salidas?fecha=mal", "/salidas/10", "/salidas/9", 
             "/comunidades/amantani", "/alertas", "/mi-reserva", "/salidas/10/reservar?acompanantes=2",
             "/entrar", "/recuperar", "/no-existe", "/galeria", "/galeria?idioma=quechua", "/contacto",
             "/privacidad", "/condiciones", "/libro-de-reclamaciones", "/experiencias",
-            "/experiencias?actividad=noche", "/grupos"]
+            "/experiencias?actividad=noche", "/grupos", "/productos", "/productos?lugar=taquile",
+            "/productos?lugar=puno&categoria=alimento"]
 PANEL = {
     "operador": ["/panel", "/panel/salidas", "/panel/salidas/nueva", "/panel/salidas/10/editar",
                  "/panel/salidas/10/suspender", "/panel/salidas/8/pasajeros",
@@ -135,10 +136,14 @@ PANEL = {
                  "/panel/catalogos/rutas/3/paradas", "/panel/mi-cuenta",
                  "/panel/reservas", "/panel/reservas?q=prueba", "/panel/reservas?q=nadie-asi",
                  "/panel/reservas/TV-WWUQ", "/panel/reservas/TV-33VR", "/panel/reservas/TV-TX69",
-                 "/salidas/10/reservar?acompanantes=1", "/panel/reclamaciones"],
+                 "/salidas/10/reservar?acompanantes=1", "/panel/reclamaciones", "/panel/productos",
+                 "/panel/productos/nuevo", "/panel/productos/1/editar"],
     "admin": ["/panel/reservas", "/panel/reservas/TV-WWUQ", "/panel/reclamaciones", "/panel/bitacora", "/panel/bitacora?periodo=hoy", "/panel/usuarios",
-              "/panel/usuarios/nuevo", "/panel/usuarios/3", "/panel/mi-cuenta", "/panel/respaldos"],
+              "/panel/usuarios/nuevo", "/panel/usuarios/3", "/panel/mi-cuenta", "/panel/respaldos",
+              "/panel/productos"],
     "capitan.teodoro": ["/panel", "/panel/salidas/13/pasajeros", "/panel/mi-cuenta"],
+    "residente.juana": ["/panel", "/panel/productos", "/panel/productos/nuevo", "/panel/productos/4/editar",
+                        "/panel/mi-cuenta"],
 }
 
 

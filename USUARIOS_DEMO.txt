@@ -19,6 +19,12 @@ guia.marco        Guia-Titicaca26       guia      (comunidad Llachon)
 capitan.teodoro   Capitan-Titicaca26    capitan   (licencia LIC-PUN-00123)
 capitan.fermin    Capitan-Titicaca26    capitan   (licencia LIC-PUN-00456)
 
+RESIDENTES DE LAS COMUNIDADES (v2.9: solo publican sus productos)
+----------------------------------------------------------
+residente.juana   Residente-Titicaca26  residente (Taquile)
+residente.felix   Residente-Titicaca26  residente (Amantani)
+residente.sonia   Residente-Titicaca26  residente (Uros)
+
 Que hace cada uno (al entrar, "Tu trabajo de hoy" lo dice con sus botones):
   admin     Usuarios y roles, bitacora, catalogos e indicadores.
             Ve toda la operacion, pero no la ejecuta.
@@ -26,6 +32,8 @@ Que hace cada uno (al entrar, "Tu trabajo de hoy" lo dice con sus botones):
             alertas, hospedajes, resenas, catalogos e indicadores.
   guia      Solo SUS salidas: lista de pasajeros y abordaje con QR.
   capitan   Solo SUS salidas: pasajeros, manifiesto, abordaje y zarpe.
+  residente Solo SUS productos (en "Mis productos"): publicar, editar,
+            retirar y volver a publicar. Se ven en la pagina "Productos".
 
 Cada pantalla del panel tiene "Como funciona esta pagina?" con los pasos.
 

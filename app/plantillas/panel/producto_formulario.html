@@ -1,0 +1,22 @@
+{% extends "panel/base_panel.html" %}
+{% from "panel/_macros.html" import campo_panel %}
+{% from "reservas/_macros.html" import resumen %}
+{% block titulo %}{% if p %}Editar · {{ p.nombre }}{% else %}Publicar un producto{% endif %}{% endblock %}
+
+{% block contenido %}
+<p class="miga"><a href="{{ url_for('panel.productos') }}">← {% if current_user.rol == 'residente' %}Mis productos{% else %}Productos{% endif %}</a></p>
+<h1>{% if p %}Editar «{{ p.nombre }}»{% else %}Publicar un producto{% endif %}</h1>
+{% if donde %}
+  <p class="texto-suave">Se publica en <strong>{{ donde }}</strong>, tu comunidad. El turista lo ve en la página «Productos» con tu nombre.</p>
+{% endif %}
+
+<section class="tarjeta tarjeta--formulario bloque" aria-labelledby="titulo-form-producto">
+  <h2 id="titulo-form-producto">Datos del producto</h2>
+  {{ resumen(f, sueltos, "Revisa el producto") }}
+  <form method="post" action="{{ url_for('panel.producto_formulario', producto_id=p.id if p else None) }}" novalidate>
+    {{ f.csrf_token }}
+    {% for c in f %}{{ campo_panel(c) }}{% endfor %}
+    {{ f.enviar(class_='boton') }}
+  </form>
+</section>
+{% endblock %}
