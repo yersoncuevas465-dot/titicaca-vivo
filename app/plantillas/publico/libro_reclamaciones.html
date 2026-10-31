@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+{% from "macros.html" import campo, resumen_errores %}
+{% from "reservas/_macros.html" import opciones %}
+{% block titulo %}{{ t('Libro de reclamaciones') }}{% endblock %}
+
+{# Libro de reclamaciones virtual (v2.8, Ley 29571). Es un formulario legal peruano: va en
+   español; en inglés solo se avisa eso. #}
+{% block contenido %}
+<div class="libro__cabeza">
+  <svg class="servicio__icono libro__icono" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M5 4.5A1.5 1.5 0 0 1 6.5 3H19v15H6.5A1.5 1.5 0 0 0 5 19.5zM5 19.5A1.5 1.5 0 0 0 6.5 21H19v-3M9 7.5h6M9 10.5h6"/></svg>
+  <div>
+    <h1>{{ t('Libro de reclamaciones') }}</h1>
+    <p class="texto-suave">{{ proveedor }}</p>
+  </div>
+</div>
+{% if idioma_actual() == 'en' %}<p class="aviso aviso--info">{{ t('Este formulario está en español, como el libro de reclamaciones del Perú.') }}</p>{% endif %}
+
+<div lang="es">
+  <p>Conforme al Código de Protección y Defensa del Consumidor (Ley N.º 29571), contamos con un Libro de
+    Reclamaciones virtual. Registra aquí tu hoja: te llega una constancia con su número a tu correo y te
+    respondemos en un plazo máximo de {{ dias }} días hábiles.</p>
+  <ul>
+    <li><strong>Reclamo:</strong> no estás conforme con el servicio que contrataste.</li>
+    <li><strong>Queja:</strong> no estás conforme con la atención que recibiste.</li>
+  </ul>
+  <p class="texto-suave">Registrar una hoja no te impide usar otras vías de solución ni es un paso previo para
+    denunciar ante el INDECOPI.</p>
+
+  {{ resumen_errores(f, sueltos[0] if sueltos else None) }}
+  <form method="post" class="tarjeta tarjeta--formulario libro__formulario" novalidate>
+    {{ f.csrf_token }}
+    <fieldset class="grupo">
+      <legend>1. Tus datos</legend>
+      <div class="fila-2">{{ campo(f.nombres) }}{{ campo(f.apellidos) }}</div>
+      <div class="fila-2">{{ campo(f.tipo_documento) }}{{ campo(f.numero_documento) }}</div>
+      {{ campo(f.domicilio) }}
+      <div class="fila-2">{{ campo(f.correo) }}{{ campo(f.telefono) }}</div>
+      {{ campo(f.apoderado) }}
+    </fieldset>
+    <fieldset class="grupo">
+      <legend>2. El servicio que contrataste</legend>
+      {{ campo(f.servicio, ayuda=f.servicio.description) }}
+      <div class="fila-2">{{ campo(f.codigo_reserva) }}{{ campo(f.monto) }}</div>
+    </fieldset>
+    <fieldset class="grupo">
+      <legend>3. Tu reclamo o queja</legend>
+      {{ opciones(f.tipo) }}
+      {{ campo(f.detalle) }}
+      {{ campo(f.pedido) }}
+    </fieldset>
+    <div class="campo{% if f.acepto.errors %} campo--error{% endif %}">
+      {% if f.acepto.errors %}<p class="campo__error" id="acepto-error">{{ f.acepto.errors | join(' ') }}</p>{% endif %}
+      <div class="campo--check">
+        {{ f.acepto(**({'aria-invalid': 'true', 'aria-describedby': 'acepto-error'} if f.acepto.errors else {})) }}
+        {{ f.acepto.label() }}
+      </div>
+    </div>
+    <div class="trampa" aria-hidden="true">{{ f.sitio_web.label() }}{{ f.sitio_web() }}</div>
+    {{ f.enviar(class_='boton') }}
+  </form>
+</div>
+{% endblock %}

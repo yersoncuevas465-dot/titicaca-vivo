@@ -25,6 +25,8 @@
         <p>{{ contadores.pagos_por_verificar }} pago(s) de Yape o Plin esperan. Compara el número de operación con la app de la agencia.</p></li>
       <li class="tarea"><a href="{{ url_for('panel.reservas') }}">Atender a un turista</a>
         <p>Busca su reserva por código, documento, celular o nombre. Si llega al muelle o escribe por WhatsApp sin reserva, véndele desde la salida («Vender»).</p></li>
+      <li class="tarea"><a href="{{ url_for('panel.reclamaciones') }}">Responder las reclamaciones</a>
+        <p>{{ reclamaciones }} hoja(s) del libro de reclamaciones esperan respuesta. La ley da 15 días hábiles.</p></li>
       <li class="tarea"><a href="{{ url_for('panel.alertas') }}">Revisar las alertas del lago</a>
         <p>Registra el aviso de SENAMHI o la Capitanía; si es naranja o roja, suspende las salidas afectadas en un solo paso.</p></li>
       <li class="tarea"><a href="{{ url_for('panel.abordaje_buscar') }}">Embarcar a los pasajeros</a>

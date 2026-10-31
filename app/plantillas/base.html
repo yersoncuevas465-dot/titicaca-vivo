@@ -90,6 +90,8 @@
           <ul class="lista-limpia pie__enlaces">
             <li><a href="{{ url_for('publico.salidas') }}">{{ t('Salidas') }}</a></li>
             <li><a href="{{ url_for('publico.comunidades') }}">{{ t('Comunidades') }}</a></li>
+            <li><a href="{{ url_for('publico.experiencias') }}">{{ t('Experiencias') }}</a></li>
+            <li><a href="{{ url_for('publico.grupos') }}">{{ t('Viajes en grupo') }}</a></li>
             <li><a href="{{ url_for('publico.galeria') }}">{{ t('Galería') }}</a></li>
             <li><a href="{{ url_for('publico.alertas') }}">{{ t('Alertas') }}</a></li>
             <li><a href="{{ url_for('reservas.mi_reserva') }}">{{ t('Mi reserva') }}</a></li>
@@ -99,6 +101,9 @@
           <h2 class="pie__titulo" id="pie-atencion">{{ t('Atención') }}</h2>
           <ul class="lista-limpia pie__enlaces">
             <li><a href="{{ url_for('publico.contacto') }}">{{ t('Escríbenos') }}</a></li>
+            <li><a class="pie__libro" href="{{ url_for('publico.libro_reclamaciones') }}">
+              <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M5 4.5A1.5 1.5 0 0 1 6.5 3H19v15H6.5A1.5 1.5 0 0 0 5 19.5zM5 19.5A1.5 1.5 0 0 0 6.5 21H19v-3"/></svg>
+              {{ t('Libro de reclamaciones') }}</a></li>
             {% set whatsapp = whatsapp_agencia() %}
             {% if whatsapp %}<li><a href="{{ whatsapp }}" rel="noopener noreferrer" target="_blank">WhatsApp</a></li>{% endif %}
             {% if config.AGENCIA_CORREO %}<li><a href="mailto:{{ config.AGENCIA_CORREO }}">{{ config.AGENCIA_CORREO }}</a></li>{% endif %}

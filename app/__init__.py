@@ -23,9 +23,12 @@ def crear_app(config_clase=Config):
         autenticacion,
         catalogos,
         panel,
+        panel_libro,  # noqa: F401 (registra sus rutas en el panel)
         panel_reservas,  # noqa: F401 (registra sus rutas en el panel)
         panel_seguimiento,  # noqa: F401 (registra sus rutas en el panel)
         publico,
+        publico_experiencias,  # noqa: F401 (registra sus rutas en publico)
+        publico_libro,  # noqa: F401 (registra sus rutas en publico)
         reservas,
     )
     from app.servicios import formato, imagenes, textos, whatsapp

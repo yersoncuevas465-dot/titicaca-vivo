@@ -26,6 +26,8 @@
          {% if actual.startswith('panel.hospedaje') or actual == 'panel.transparencia' %}aria-current="page"{% endif %}>Hospedajes</a>
       <a href="{{ url_for('panel.resenas') }}"
          {% if actual.startswith('panel.resena') %}aria-current="page"{% endif %}>Reseñas</a>
+      <a href="{{ url_for('panel.reclamaciones') }}"
+         {% if actual.startswith('panel.reclamacion') %}aria-current="page"{% endif %}>Reclamaciones</a>
       <a href="{{ url_for('panel.indicadores_panel') }}"
          {% if actual == 'panel.indicadores_panel' %}aria-current="page"{% endif %}>Indicadores</a>
       <a href="{{ url_for('catalogos.inicio') }}"

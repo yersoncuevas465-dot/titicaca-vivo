@@ -57,8 +57,10 @@
           <td>{{ f.accion | accion_bitacora }}<br><code>{{ f.accion }}</code></td>
           <td>{{ f.tabla_afectada or '' }}{% if f.registro_id %} #{{ f.registro_id }}{% endif %}</td>
           <td>
-            {% for clave, valor in f.detalle.items() %}
-              <span class="bitacora-dato">{{ clave }}: <strong>{{ valor }}</strong></span>
+            {% for clave, valor in f.detalle | detalle_bitacora(f.accion) %}
+              {# Los textos largos (una hoja de reclamación) se acortan: el detalle completo está
+                 en su página y en la descarga a Excel #}
+              <span class="bitacora-dato">{{ clave }}: <strong>{{ valor | string | truncate(80, true, '…', 0) }}</strong></span>
             {% endfor %}
           </td>
           <td>{{ f.ip or '—' }}</td>

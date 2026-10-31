@@ -22,6 +22,8 @@ Leyenda:
 | Portada, salidas, comunidades, alertas, `/salud` | ✔ | ✔ | ✔ | ✔ | ✔ | F3 (`/salud` en F2) |
 | Reservar (formulario público) | ✔ | ✔ | ✔ | ✔ | ✔ | **F4 ✔** |
 | Contacto: enviar un mensaje a la agencia (CSRF, trampa para robots y límite por IP) | ✔ | ✔ | ✔ | ✔ | ✔ | **v2.6 ✔** |
+| Libro de reclamaciones: registrar una hoja y ver su constancia (solo quien la registró) | ✔ | ✔ | ✔ | ✔ | ✔ | **v2.8 ✔** |
+| Experiencias en las comunidades y pedido de cotización para grupos | ✔ | ✔ | ✔ | ✔ | ✔ | **v2.8 ✔** |
 | Completar los nombres con el DNI (RENIEC, `/api/dni`: con token CSRF y límite por IP) | ✔ | ✔ | ✔ | ✔ | ✔ | **v2.2 ✔** |
 | Mi reserva (código + documento), boleto, reportar pago | ◐ (solo la suya) | — | — | — | — | **F4 ✔** |
 | Boleto con QR de cualquier reserva (para imprimirlo o mandarlo) | — | 👁 | ✔ | — | — | **F10 ✔** |
@@ -42,6 +44,7 @@ Leyenda:
 | Alertas: registrar y suspender salidas | — | 👁 | ✔ | — | — | **F6 ✔** |
 | Catálogos (rutas, paradas, lanchas, tarifas, temporadas, tipos, comunidades, familias) | — | ✔ | ✔ | — | — | **F5 ✔** |
 | Moderar reseñas | — | 👁 | ✔ | — | — | **F6 ✔** |
+| Libro de reclamaciones en el panel: ver las hojas y responderlas (una vez, en 15 días hábiles) | — | 👁 | ✔ | — | — | **v2.8 ✔** |
 | Devoluciones: marcar como atendida | — | 👁 | ✔ | — | — | **F6 ✔** |
 | Indicadores | — | ✔ | ✔ | — | — | **F6 ✔** |
 | Usuarios y roles | — | ✔ | — | — | — | **F5 ✔** |

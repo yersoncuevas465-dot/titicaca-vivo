@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+{% from "macros.html" import campo, resumen_errores %}
+{% block titulo %}{{ t('Viajes en grupo') }}{% endblock %}
+
+{# Grupos (v2.8): el pedido llega por correo a la agencia; los precios salen de la base #}
+{% block contenido %}
+<h1>{{ t('Viajes en grupo') }}</h1>
+<p class="texto-suave">{{ t('Colegios, universidades, empresas o familias grandes: cuéntanos cuántos son y cuándo quieren venir, y te enviamos la cotización.') }}</p>
+
+<ul class="lista-limpia servicios">
+  <li class="servicio">
+    <svg class="servicio__icono" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>
+    <h2 class="servicio__titulo">{{ t('La salida a tu medida') }}</h2>
+    <p>{{ t('Eliges la ruta y la fecha; la agencia programa la salida y te confirma los lugares.') }}</p>
+  </li>
+  <li class="servicio">
+    <svg class="servicio__icono" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="9"/><path d="M12 7v10M9.5 9.5h4a1.75 1.75 0 0 1 0 3.5h-3a1.75 1.75 0 0 0 0 3.5h4"/></svg>
+    <h2 class="servicio__titulo">{{ t('Precio claro') }}</h2>
+    <p>{{ t('La tarifa por persona de cada ruta: abajo ves la referencia y la cotización final te llega por correo.') }}</p>
+  </li>
+  <li class="servicio">
+    <svg class="servicio__icono" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 11l8-6 8 6v8a1 1 0 0 1-1 1h-4v-5H9v5H5a1 1 0 0 1-1-1z"/></svg>
+    <h2 class="servicio__titulo">{{ t('Noche en familias') }}</h2>
+    <p>{{ t('En las rutas con noche, el grupo se reparte entre familias anfitrionas, por turnos.') }}</p>
+  </li>
+</ul>
+
+<section class="bloque" aria-labelledby="titulo-referencia">
+  <h2 id="titulo-referencia">{{ t('Precios de referencia por persona') }}</h2>
+  <div class="tabla-desplazable" role="region" aria-labelledby="titulo-referencia" tabindex="0">
+    <table class="tabla">
+      <thead><tr><th scope="col">{{ t('Ruta') }}</th><th scope="col">{{ t('Duración') }}</th><th scope="col">{{ t('Precio') }}</th></tr></thead>
+      <tbody>
+        {% for r in rutas %}
+          <tr>
+            <th scope="row">{{ r.nombre }}</th>
+            <td>{{ r.duracion_horas | duracion }}{% if r.incluye_pernocte %} · {{ t('con noche') }}{% endif %}</td>
+            <td>{% if r.desde %}{{ t('desde') }} <strong>{{ r.desde | soles }}</strong>{% else %}—{% endif %}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section class="tarjeta tarjeta--formulario bloque" aria-labelledby="titulo-cotizacion">
+  <h2 id="titulo-cotizacion">{{ t('Pide tu cotización') }}</h2>
+  {{ resumen_errores(f, error_general) }}
+  <form method="post" novalidate>
+    {{ f.csrf_token }}
+    <div class="fila-2">{{ campo(f.tipo) }}{{ campo(f.institucion) }}</div>
+    <div class="fila-2">{{ campo(f.personas) }}{{ campo(f.fecha) }}</div>
+    {{ campo(f.ruta) }}
+    <div class="fila-2">{{ campo(f.nombre) }}{{ campo(f.telefono) }}</div>
+    {{ campo(f.correo) }}
+    <p class="campo__ayuda">{{ t('Deja al menos un correo o un celular para responderte.') }}</p>
+    {{ campo(f.comentarios) }}
+    <div class="trampa" aria-hidden="true">{{ f.sitio_web.label() }}{{ f.sitio_web() }}</div>
+    {{ f.enviar(class_='boton') }}
+  </form>
+</section>
+{% endblock %}

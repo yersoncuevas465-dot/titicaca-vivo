@@ -18,7 +18,7 @@ ENTORNO = os.getenv("ENTORNO", "desarrollo")
 
 
 class Config:
-    VERSION = "2.2.0"             # también sirve para que el navegador renueve CSS e imágenes
+    VERSION = "2.8.0"             # también sirve para que el navegador renueve CSS e imágenes
     ENTORNO = ENTORNO
     SECRET_KEY = os.getenv("SECRET_KEY")
 
@@ -100,6 +100,11 @@ class Config:
     AGENCIA_WHATSAPP = os.getenv("AGENCIA_WHATSAPP", "")       # 9XXXXXXXX o +código del país
     AGENCIA_HORARIO = os.getenv("AGENCIA_HORARIO", "")
     LIMITE_MENSAJES_CONTACTO = "5 per hour"                    # por IP
+    # v2.8: el libro de reclamaciones muestra la razón social y el RUC del proveedor
+    AGENCIA_RAZON_SOCIAL = os.getenv("AGENCIA_RAZON_SOCIAL", "Titicaca Vivo")
+    AGENCIA_RUC = os.getenv("AGENCIA_RUC", "")
+    LIMITE_HOJAS_RECLAMACION = "5 per hour"                    # por IP
+    LIMITE_COTIZACIONES_GRUPO = "5 per hour"                   # por IP
 
     WTF_CSRF_TIME_LIMIT = 4 * 3600           # el formulario vale 4 horas (señal lenta)
     MAX_CONTENT_LENGTH = 1 * 1024 * 1024     # los formularios no suben archivos grandes
@@ -118,6 +123,10 @@ class ConfigPruebas(Config):
     SESSION_COOKIE_SECURE = False
     CORREO_SIMULAR = True                    # las pruebas nunca mandan correos de verdad
     APIS_EXTERNAS = False                    # ni salen a internet (test_apis.py las simula)
+    # Los datos de la agencia no salen del .env de quien corre las pruebas: así dan lo mismo
+    # en cualquier PC (cada prueba que los necesita los pone ella misma).
+    AGENCIA_CORREO = AGENCIA_WHATSAPP = AGENCIA_HORARIO = AGENCIA_RUC = ""
+    AGENCIA_RAZON_SOCIAL = "Titicaca Vivo"
     SESION_INACTIVA_MIN = 30
     # Los respaldos de las pruebas van a la carpeta temporal del sistema, no a respaldos/
     RESPALDOS_CARPETA = Path(tempfile.gettempdir()) / "titicaca_vivo_respaldos_pruebas"

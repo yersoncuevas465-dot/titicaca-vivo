@@ -36,6 +36,41 @@ def listar_publicas():
     )
 
 
+SERVICIOS = ("desayuno", "almuerzo", "cena", "vestimenta", "taller_textil")   # orden de la página
+
+
+def experiencias():
+    """v2.8: qué se puede vivir en cada comunidad, con los datos de la base: la visita más larga
+    de las rutas que paran allí, si alguna duerme allí, sus familias y lo que ofrecen."""
+    # Devuelve cada comunidad activa con, en subconsultas ya agrupadas (sin N+1): los minutos de
+    # la visita más larga y si hay noche (paradas de rutas activas), y cuántas familias activas
+    # tiene y sus servicios juntos (GROUP_CONCAT de cada SET).
+    filas = bd.consultar(
+        """
+        SELECT c.id, c.nombre, c.slug, c.idioma_originario, c.senal, c.descripcion, c.foto_credito,
+               COALESCE(p.minutos, 0) AS minutos_visita, COALESCE(p.noche, 0) AS noche,
+               COALESCE(f.familias, 0) AS familias, f.servicios
+        FROM comunidad c
+        LEFT JOIN (SELECT rp.comunidad_id, MAX(rp.minutos_estadia) AS minutos,
+                          MAX(rp.es_pernocte) AS noche
+                   FROM ruta_parada rp
+                   JOIN ruta r ON r.id = rp.ruta_id AND r.activa = 1
+                   GROUP BY rp.comunidad_id) p ON p.comunidad_id = c.id
+        LEFT JOIN (SELECT comunidad_id, COUNT(*) AS familias,
+                          GROUP_CONCAT(servicios) AS servicios
+                   FROM familia_anfitriona
+                   WHERE activa = 1
+                   GROUP BY comunidad_id) f ON f.comunidad_id = c.id
+        WHERE c.activa = 1
+        ORDER BY c.nombre
+        """
+    )
+    for fila in filas:
+        ofrecidos = set((fila["servicios"] or "").split(","))
+        fila["servicios"] = [s for s in SERVICIOS if s in ofrecidos]
+    return filas
+
+
 def buscar_por_slug(slug):
     # Devuelve la comunidad activa con ese slug (solo columnas públicas), o None.
     return bd.consultar_uno(

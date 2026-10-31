@@ -820,6 +820,34 @@ main:focus { outline: none; }
 .legal h2 { font-size: 1.25rem; margin: 1.5rem 0 0.5rem; }
 .legal li { margin: 0.4rem 0; }
 
+/* ---------- Libro de reclamaciones, experiencias y grupos (v2.8) ---------- */
+.libro__cabeza { display: flex; gap: 0.85rem; align-items: center; }
+.libro__cabeza h1 { margin: 0; }
+.libro__cabeza p { margin: 0.1rem 0 0; }
+.libro__icono { width: 3.4rem; height: 3.4rem; flex: none; }
+.texto-preformado { white-space: pre-line; overflow-wrap: anywhere; }
+.constancia { max-width: 46rem; }
+.hoja { margin-bottom: 1rem; }
+.hoja__cabeza { display: flex; flex-wrap: wrap; gap: 0.5rem 1rem; align-items: center; justify-content: space-between; }
+.hoja__titulo { font-size: 1.15rem; margin: 0; }
+.hoja__respuesta { display: grid; gap: 0.4rem; margin-top: 0.75rem; max-width: 40rem; }
+.hoja__respuesta .boton { justify-self: start; }
+.experiencias { display: grid; gap: 1rem; grid-template-columns: repeat(auto-fill, minmax(16rem, 1fr)); margin-bottom: 1.5rem; }
+.experiencia {
+  overflow: hidden; background: #FFFDF9; border: 1px solid var(--arena);
+  border-radius: var(--radio); box-shadow: var(--sombra);
+}
+.experiencia__cuerpo { padding: 0.6rem 1rem 1rem; }
+.experiencia__nombre { font-size: 1.2rem; margin: 0; }
+.experiencia__cuerpo > p { margin: 0.15rem 0 0.5rem; }
+.experiencia__lista li { padding: 0.3rem 0 0.3rem 1.4rem; border-top: 1px solid var(--arena); position: relative; }
+.experiencia__lista li::before { content: "✓"; position: absolute; left: 0.2rem; color: var(--ciruela); font-weight: 700; }
+.llamado { margin: 1.5rem 0; border-left: 5px solid var(--terracota); }
+.llamado h2 { margin-top: 0; }
+.llamado p:last-child { margin-bottom: 0; display: flex; flex-wrap: wrap; gap: 0.5rem; }
+.servicio__titulo { font-size: 1.05rem; margin: 0.5rem 0 0.25rem; }
+.pie__libro svg { width: 1.15rem; height: 1.15rem; margin-right: 0.35rem; fill: none; stroke: currentColor; stroke-width: 1.8; }
+
 @media print {
   .buscador { display: none; }
 }

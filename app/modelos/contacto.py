@@ -6,6 +6,7 @@ la bitácora anota que llegó uno: el asunto y el idioma, sin el texto ni los da
 """
 
 import re
+from datetime import date, timedelta
 
 from app import bd
 from app.modelos import ErrorValidacion, bitacora
@@ -60,3 +61,69 @@ def anotar_recibido(asunto, idioma, enviados, ip):
     with bd.transaccion() as cur:
         bitacora.anotar(cur, None, "mensaje_contacto", None, None,
                         {"asunto": asunto, "idioma": idioma, "correos_enviados": enviados}, ip)
+
+
+# --- Cotización para grupos (v2.8) -------------------------------------------------------------
+
+TIPOS_GRUPO = ("colegio", "universidad", "empresa", "familia", "otro")
+PERSONAS_GRUPO = (2, 300)
+
+
+def validar_grupo(datos, rutas, hoy):
+    """Limpia el pedido de cotización y lanza ErrorValidacion con todos los errores.
+
+    `rutas` son las rutas activas (con su precio «desde»): la elegida tiene que estar entre ellas.
+    Devuelve la ruta elegida."""
+    errores = {}
+    try:
+        validar({"nombre": datos.get("nombre"), "correo": datos.get("correo"),
+                 "telefono": datos.get("telefono"), "asunto": "grupos",
+                 "mensaje": "Pedido de cotización para un grupo."})
+    except ErrorValidacion as error:
+        errores.update(error.errores)
+    datos["nombre"] = " ".join((datos.get("nombre") or "").split())
+    datos["correo"] = (datos.get("correo") or "").strip().lower() or None
+    datos["telefono"] = re.sub(r"[\s\-()]", "", datos.get("telefono") or "") or None
+    datos["institucion"] = " ".join((datos.get("institucion") or "").split()) or None
+    datos["comentarios"] = (datos.get("comentarios") or "").strip() or None
+    if datos.get("tipo") not in TIPOS_GRUPO:
+        errores["tipo"] = "Elige qué tipo de grupo es."
+    if datos["institucion"] and len(datos["institucion"]) > 120:
+        errores["institucion"] = "Máximo 120 caracteres."
+    try:
+        personas = int(str(datos.get("personas") or "").strip())
+    except ValueError:
+        personas = None
+    datos["personas"] = personas
+    if personas is None or not PERSONAS_GRUPO[0] <= personas <= PERSONAS_GRUPO[1]:
+        errores["personas"] = (f"Escribe cuántas personas son (de {PERSONAS_GRUPO[0]} a "
+                               f"{PERSONAS_GRUPO[1]}).")
+    try:
+        fecha = date.fromisoformat(str(datos.get("fecha") or "").strip())
+    except ValueError:
+        fecha = None
+    datos["fecha"] = fecha
+    if fecha is None or not hoy <= fecha <= hoy + timedelta(days=366):
+        errores["fecha"] = "Elige una fecha desde hoy y dentro del próximo año."
+    ruta = next((r for r in rutas if r["codigo"] == datos.get("ruta")), None)
+    if ruta is None:
+        errores["ruta"] = "Elige una ruta de la lista."
+    if datos["comentarios"] and len(datos["comentarios"]) > 1000:
+        errores["comentarios"] = "Máximo 1000 caracteres."
+    if errores:
+        raise ErrorValidacion(errores)
+    return ruta
+
+
+def estimar(ruta, personas):
+    """Precio referencial del grupo: personas × el precio «desde» de la ruta (o None sin tarifa)."""
+    return ruta["desde"] * personas if ruta.get("desde") is not None else None
+
+
+def anotar_cotizacion(datos, enviados, ip):
+    """RN-14: deja en la bitácora que se pidió una cotización (sin los datos de la persona)."""
+    with bd.transaccion() as cur:
+        bitacora.anotar(cur, None, "cotizacion_grupo", None, None,
+                        {"tipo": datos["tipo"], "personas": datos["personas"],
+                         "ruta": datos["ruta"], "fecha": datos["fecha"].isoformat(),
+                         "idioma": datos.get("idioma"), "correos_enviados": enviados}, ip)

@@ -77,7 +77,13 @@ ACCIONES_BITACORA = {
     "devolucion_solicitada": "Devolución pedida",
     "devolucion_atendida": "Devolución atendida",
     "mensaje_contacto": "Mensaje de contacto recibido",
+    "reclamacion": "Hoja de reclamación registrada",
+    "reclamacion_respondida": "Hoja de reclamación respondida",
+    "cotizacion_grupo": "Cotización de grupo pedida",
 }
+# En la tabla de la bitácora, de estas acciones solo se muestran estos datos: la hoja de
+# reclamación completa (con el DNI y el domicilio) está en el libro del panel y en la descarga.
+DETALLE_CORTO = {"reclamacion": ("numero", "tipo"), "reclamacion_respondida": ("numero",)}
 SENALES = {"buena": "Buena señal", "debil": "Señal débil", "sin_senal": "Sin señal"}
 SERVICIOS = {"desayuno": "Desayuno", "almuerzo": "Almuerzo", "cena": "Cena",
              "vestimenta": "Vestimenta típica", "taller_textil": "Taller textil"}
@@ -159,6 +165,14 @@ def estado_visible(reserva):
     return reserva.get("estado")
 
 
+def detalle_bitacora(detalle, accion):
+    """Los pares (clave, valor) del detalle que muestra la tabla de la bitácora."""
+    claves = DETALLE_CORTO.get(accion)
+    if claves is None:
+        return list(detalle.items())
+    return [(clave, detalle[clave]) for clave in claves if clave in detalle]
+
+
 def soles(valor):
     """S/ 1,250.00"""
     if valor is None:
@@ -178,6 +192,7 @@ def registrar(app):
         fecha_corta=fecha_corta, fecha_larga=fecha_larga, hora=hora, fecha_hora=fecha_hora,
         mes_y_anio=mes_y_anio, inicial_mayuscula=inicial_mayuscula,
         soles=soles, dolares=dolares, duracion=duracion, servicios=servicios,
+        detalle_bitacora=detalle_bitacora,
         # Las etiquetas pasan por t(): en el panel quedan en español; al turista, en su idioma.
         estado_publico=lambda v: t(ESTADOS_PUBLICOS.get(v, v)),
         nivel_alerta=lambda v: t(NIVELES_ALERTA.get(v, v)),

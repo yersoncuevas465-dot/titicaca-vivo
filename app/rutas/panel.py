@@ -46,6 +46,7 @@ from app.modelos import abordaje as modelo_abordaje
 from app.modelos import bitacora as modelo_bitacora
 from app.modelos import pago as modelo_pago
 from app.modelos import panel as modelo_panel
+from app.modelos import reclamacion as modelo_reclamacion
 from app.modelos import reprogramacion as modelo_reprogramacion
 from app.modelos import reserva as modelo_reserva
 from app.modelos import respaldo as modelo_respaldo
@@ -94,8 +95,11 @@ def inicio():
     datos = modelo_panel.resumen(current_user)
     # El admin ve cuándo fue el último respaldo (solo mira la carpeta: no consulta la base)
     ultimo_respaldo = modelo_respaldo.ultimo() if current_user.rol == "admin" else None
+    # v2.8: hojas del libro de reclamaciones que esperan respuesta (la ley da 15 días hábiles)
+    reclamaciones = (modelo_reclamacion.pendientes(current_user)
+                     if current_user.rol in ("admin", "operador") else None)
     return render_template("panel/inicio.html", buscar=FormularioBuscarReserva(formdata=None),
-                           ultimo_respaldo=ultimo_respaldo, **datos)
+                           ultimo_respaldo=ultimo_respaldo, reclamaciones=reclamaciones, **datos)
 
 
 PERIODOS = {"hoy": "Hoy", "semana": "Esta semana", "mes": "Este mes", "anio": "Este año"}

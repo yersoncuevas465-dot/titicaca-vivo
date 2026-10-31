@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block titulo %}{{ t('Constancia de tu hoja de reclamación') }}{% endblock %}
+
+{# La constancia (v2.8): solo la ve quien registró la hoja, en su navegador. #}
+{% block contenido %}
+<article class="tarjeta constancia" aria-labelledby="titulo-constancia" lang="es">
+  <h1 id="titulo-constancia">Hoja de reclamación N.º {{ h.numero }}</h1>
+  <p class="texto-suave">{{ proveedor }} · registrada el {{ h.registrada_en | fecha_hora }}</p>
+  <dl class="datos">
+    <div><dt>Tipo</dt><dd>{{ h.tipo | capitalize }}</dd></div>
+    <div><dt>Consumidor</dt><dd>{{ h.nombres }} {{ h.apellidos }} · {{ h.tipo_documento }} {{ h.numero_documento }}</dd></div>
+    <div><dt>Domicilio</dt><dd>{{ h.domicilio }}</dd></div>
+    <div><dt>Contacto</dt><dd>{{ h.correo }}{% if h.telefono %} · {{ h.telefono }}{% endif %}</dd></div>
+    {% if h.apoderado %}<div><dt>Padre, madre o apoderado</dt><dd>{{ h.apoderado }}</dd></div>{% endif %}
+    <div><dt>Servicio</dt><dd>{{ h.servicio }}{% if h.codigo_reserva %} · {{ h.codigo_reserva }}{% endif %}{% if h.monto %} · {{ h.monto | soles }}{% endif %}</dd></div>
+  </dl>
+  <h2>Detalle</h2>
+  <p class="texto-preformado">{{ h.detalle }}</p>
+  <h2>Pedido</h2>
+  <p class="texto-preformado">{{ h.pedido }}</p>
+  {% if h.respuesta %}
+    <h2>Respuesta de la agencia</h2>
+    <p class="texto-preformado">{{ h.respuesta }}</p>
+  {% else %}
+    <p class="aviso aviso--info">Te respondemos por correo hasta el {{ h.vence_el | fecha_larga }} ({{ dias }} días hábiles).</p>
+  {% endif %}
+  <p class="texto-suave no-imprimir">Guarda esta página o imprímela (Ctrl + P). También te enviamos una copia a tu correo.</p>
+</article>
+{% endblock %}

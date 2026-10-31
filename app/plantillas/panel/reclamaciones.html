@@ -1,0 +1,61 @@
+{% extends "panel/base_panel.html" %}
+{% from "panel/_macros.html" import como_funciona %}
+{% block titulo %}Libro de reclamaciones{% endblock %}
+
+{% block contenido %}
+<h1>Libro de reclamaciones</h1>
+<p class="texto-suave">{{ hojas | length }} hoja(s) · {{ hojas | selectattr('respuesta', 'none') | list | length }} por responder</p>
+
+{% if errores %}
+  <div class="resumen-errores" role="alert"><ul>{% for e in errores.values() %}<li>{{ e }}</li>{% endfor %}</ul></div>
+{% endif %}
+
+{% call como_funciona() %}
+  <li>Cada hoja llega desde la página pública «Libro de reclamaciones» (Ley 29571) y queda en la bitácora: nadie puede editarla ni borrarla.</li>
+  <li>El plazo para responder es de {{ dias }} días hábiles desde que se registró la hoja.</li>
+  {% if puede %}
+    <li>Escribe la respuesta y lo que hizo la agencia, y pulsa <strong>Responder</strong>: llega al correo del consumidor y queda en la bitácora. Cada hoja se responde una sola vez.</li>
+  {% else %}
+    <li>Como administrador solo miras: las hojas las responde el operador.</li>
+  {% endif %}
+{% endcall %}
+
+{% for h in hojas %}
+  <article class="tarjeta hoja" id="hoja-{{ h.id }}" aria-labelledby="hoja-{{ h.id }}-titulo">
+    <div class="hoja__cabeza">
+      <h2 class="hoja__titulo" id="hoja-{{ h.id }}-titulo">N.º {{ h.numero }} · {{ h.tipo | capitalize }}</h2>
+      {% if h.respuesta %}<span class="insignia insignia--reserva-pagada">Respondida</span>
+      {% elif h.vence_el < hoy %}<span class="insignia insignia--reserva-vencida">Plazo vencido</span>
+      {% else %}<span class="insignia insignia--reserva-pendiente_pago">Por responder</span>{% endif %}
+    </div>
+    <dl class="datos datos--panel">
+      <div><dt>Registrada</dt><dd>{{ h.registrada_en | fecha_hora }} · responder hasta el {{ h.vence_el | fecha_corta }}</dd></div>
+      <div><dt>Consumidor</dt><dd>{{ h.nombres }} {{ h.apellidos }} · {{ h.tipo_documento }} {{ h.numero_documento }}</dd></div>
+      <div><dt>Contacto</dt><dd>{{ h.correo }}{% if h.telefono %} · {{ h.telefono }}{% endif %} · {{ h.domicilio }}</dd></div>
+      {% if h.apoderado %}<div><dt>Apoderado</dt><dd>{{ h.apoderado }}</dd></div>{% endif %}
+      <div><dt>Servicio</dt><dd>{{ h.servicio }}
+        {% if h.codigo_reserva %}· <a href="{{ url_for('panel.reserva_detalle', codigo=h.codigo_reserva) }}">{{ h.codigo_reserva }}</a>{% endif %}
+        {% if h.monto %}· {{ h.monto | soles }}{% endif %}</dd></div>
+    </dl>
+    <details>
+      <summary>Detalle y pedido</summary>
+      <p class="texto-preformado">{{ h.detalle }}</p>
+      <p class="texto-preformado"><strong>Pedido:</strong> {{ h.pedido }}</p>
+    </details>
+    {% if h.respuesta %}
+      <p class="aviso aviso--exito"><strong>Respuesta de {{ h.respondida_por }} ({{ h.respondida_en | fecha_hora }}):</strong> {{ h.respuesta }}</p>
+    {% elif puede %}
+      <form method="post" action="{{ url_for('panel.reclamacion_responder', hoja_id=h.id) }}" class="hoja__respuesta">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <label class="campo__etiqueta" for="respuesta-{{ h.id }}">Respuesta y acciones de la agencia</label>
+        {% if errores[h.id] %}<p class="campo__error" id="respuesta-{{ h.id }}-error">{{ errores[h.id] }}</p>{% endif %}
+        <textarea class="campo__control" id="respuesta-{{ h.id }}" name="respuesta" rows="4" maxlength="2000"
+                  {% if errores[h.id] %}aria-invalid="true" aria-describedby="respuesta-{{ h.id }}-error"{% endif %}></textarea>
+        <button class="boton" type="submit">Responder</button>
+      </form>
+    {% endif %}
+  </article>
+{% else %}
+  <p class="aviso aviso--exito">No hay hojas en el libro de reclamaciones.</p>
+{% endfor %}
+{% endblock %}

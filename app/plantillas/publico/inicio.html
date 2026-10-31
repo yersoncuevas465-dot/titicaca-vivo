@@ -78,6 +78,13 @@
   </ul>
 </section>
 
+<section class="tarjeta llamado" aria-labelledby="titulo-grupo">
+  <h2 id="titulo-grupo">{{ t('¿Vienes en grupo?') }}</h2>
+  <p>{{ t('Colegios, universidades y empresas: te armamos la salida y te enviamos la cotización.') }}</p>
+  <p><a class="boton" href="{{ url_for('publico.grupos') }}">{{ t('Pedir cotización para grupos') }}</a>
+    <a class="boton boton--secundario" href="{{ url_for('publico.experiencias') }}">{{ t('Ver experiencias') }}</a></p>
+</section>
+
 <section class="bloque" aria-labelledby="titulo-como">
   <h2 id="titulo-como">{{ t('Cómo reservar') }}</h2>
   <ol class="lista-limpia pasos">

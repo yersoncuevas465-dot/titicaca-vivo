@@ -43,6 +43,10 @@ FONDO_POR_PAGINA = (
     ("reservas.reservar", None),
     ("publico.galeria", "amantani"),
     ("publico.contacto", "llachon"),
+    ("publico.experiencias", "taquile"),
+    ("publico.grupos", "amantani"),
+    ("publico.libro_reclamaciones", None),
+    ("publico.constancia_reclamacion", None),
     ("publico.comunidades", "taquile"),
     ("publico.detalle_comunidad", "taquile"),   # si la comunidad todavía no tiene foto propia
     ("publico.alertas", "ticonata"),

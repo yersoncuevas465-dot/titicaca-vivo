@@ -637,6 +637,65 @@ EN = {
     "Política de privacidad": "Privacy policy",
     "Condiciones del servicio": "Terms of service",
     "Este texto solo está en español.": "This text is only available in Spanish.",
+
+    # --- Libro de reclamaciones, experiencias y grupos (v2.8) ---
+    "Libro de reclamaciones": "Complaints book",
+    "Este formulario está en español, como el libro de reclamaciones del Perú.":
+        "This form is in Spanish, like the official Peruvian complaints book.",
+    "Constancia de tu hoja de reclamación": "Your complaint receipt",
+    "Listo: tu hoja quedó registrada con el N.º {numero}.": "Done: your complaint was registered as No. {numero}.",
+    "Experiencias": "Experiences",
+    "Experiencias en el lago": "Experiences on the lake",
+    "Qué puedes vivir en cada comunidad, según las rutas que paran allí y lo que ofrecen sus familias anfitrionas.":
+        "What you can do in each community, based on the routes that stop there and what its host families offer.",
+    "Filtrar por experiencia": "Filter by experience",
+    "Comida casera": "Home-cooked meals",
+    "Visita de {duracion}": "{duracion} visit",
+    "Noche con una familia anfitriona": "A night with a host family",
+    "Ninguna comunidad ofrece todavía esa experiencia.": "No community offers that experience yet.",
+    "¿Vienes en grupo?": "Coming as a group?",
+    "Colegios, universidades y empresas: te armamos la salida y te enviamos la cotización.":
+        "Schools, universities and companies: we arrange the trip and send you a quote.",
+    "Pedir cotización para grupos": "Ask for a group quote",
+    "Ver experiencias": "See experiences",
+    "Viajes en grupo": "Group trips",
+    "Colegios, universidades, empresas o familias grandes: cuéntanos cuántos son y cuándo quieren venir, y te enviamos la cotización.":
+        "Schools, universities, companies or large families: tell us how many you are and when you want to come, and we will send you a quote.",
+    "La salida a tu medida": "A trip made for you",
+    "Eliges la ruta y la fecha; la agencia programa la salida y te confirma los lugares.":
+        "You choose the route and the date; the agency schedules the trip and confirms your seats.",
+    "Precio claro": "Clear prices",
+    "La tarifa por persona de cada ruta: abajo ves la referencia y la cotización final te llega por correo.":
+        "The fare per person of each route: see the reference below; the final quote arrives by email.",
+    "Noche en familias": "Nights with families",
+    "En las rutas con noche, el grupo se reparte entre familias anfitrionas, por turnos.":
+        "On routes with an overnight stay, the group is shared among host families, taking turns.",
+    "Precios de referencia por persona": "Reference prices per person",
+    "con noche": "with overnight stay",
+    "Pide tu cotización": "Ask for your quote",
+    "¡Gracias! Te enviaremos la cotización para {personas} personas. Precio referencial: desde {total}.":
+        "Thank you! We will send you the quote for {personas} people. Reference price: from {total}.",
+    "¡Gracias! Te enviaremos la cotización para {personas} personas.":
+        "Thank you! We will send you the quote for {personas} people.",
+    "No pudimos enviar tu pedido ahora. Escríbenos por WhatsApp o inténtalo en unos minutos.":
+        "We could not send your request right now. Message us on WhatsApp or try again in a few minutes.",
+    "Tipo de grupo": "Type of group",
+    "Colegio": "School",
+    "Universidad o instituto": "University or institute",
+    "Empresa o institución": "Company or institution",
+    "Familia o amigos": "Family or friends",
+    "Otro grupo": "Another group",
+    "Nombre del colegio, empresa o grupo (opcional)": "Name of the school, company or group (optional)",
+    "¿Cuántas personas?": "How many people?",
+    "Fecha que prefieren": "Preferred date",
+    "Algo más que debamos saber (opcional)": "Anything else we should know (optional)",
+    "Pedir cotización": "Ask for a quote",
+    "Escribe cuántas personas son.": "Write how many people you are.",
+    "Elige la fecha.": "Choose the date.",
+    "Elige qué tipo de grupo es.": "Choose the type of group.",
+    "Escribe cuántas personas son (de 2 a 300).": "Write how many people you are (2 to 300).",
+    "Elige una fecha desde hoy y dentro del próximo año.": "Choose a date from today and within the next year.",
+    "Elige una ruta de la lista.": "Choose a route from the list.",
 }
 
 # Mensajes con partes variables (números, códigos): se reconocen con un patrón.

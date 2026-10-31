@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% from "macros_publico.html" import imagen_comunidad %}
+{% block titulo %}{{ t('Experiencias en el lago') }}{% endblock %}
+
+{# Experiencias (v2.8): todo sale de la base (paradas, noche, servicios de las familias, señal) #}
+{% block contenido %}
+<h1>{{ t('Experiencias en el lago') }}</h1>
+<p class="texto-suave">{{ t('Qué puedes vivir en cada comunidad, según las rutas que paran allí y lo que ofrecen sus familias anfitrionas.') }}</p>
+
+<nav class="filtro-galeria" aria-label="{{ t('Filtrar por experiencia') }}">
+  <a class="filtro-galeria__opcion" href="{{ url_for('publico.experiencias') }}"
+     {% if not actividad %}aria-current="true"{% endif %}>{{ t('Todas') }} ({{ total }})</a>
+  {% for clave, etiqueta in actividades.items() %}
+    <a class="filtro-galeria__opcion" href="{{ url_for('publico.experiencias', actividad=clave) }}"
+       {% if actividad == clave %}aria-current="true"{% endif %}>{{ t(etiqueta) }} ({{ cuantas[clave] }})</a>
+  {% endfor %}
+</nav>
+
+{% if comunidades %}
+<ul class="lista-limpia experiencias">
+  {% for c in comunidades %}
+    <li class="experiencia">
+      {{ imagen_comunidad(c, 'foto--tarjeta') }}
+      <div class="experiencia__cuerpo">
+        <h2 class="experiencia__nombre"><a href="{{ url_for('publico.detalle_comunidad', slug=c.slug) }}">{{ c.nombre }}</a></h2>
+        <p class="texto-suave">{{ c.idioma_originario | idioma }} · {{ c.senal | senal }}</p>
+        <ul class="lista-limpia experiencia__lista">
+          {% if c.minutos_visita %}
+            {% set visita %}{% if c.minutos_visita < 60 %}{{ c.minutos_visita }} min{% else %}{{ (c.minutos_visita / 60) | duracion }}{% endif %}{% endset %}
+            <li>{{ t('Visita de {duracion}', duracion=visita) }}</li>
+          {% endif %}
+          {% if c.noche %}<li>{{ t('Noche con una familia anfitriona') }}</li>{% endif %}
+          {% set comidas_aqui = c.servicios | select('in', comidas) | list %}
+          {% if comidas_aqui %}<li>{{ t('Comida casera') }}: {{ comidas_aqui | join(',') | servicios | join(', ') | lower }}</li>{% endif %}
+          {% if 'taller_textil' in c.servicios %}<li>{{ t('Taller textil') }}</li>{% endif %}
+          {% if 'vestimenta' in c.servicios %}<li>{{ t('Vestimenta típica') }}</li>{% endif %}
+          {% if c.familias %}<li>{{ t('{n} familias anfitrionas', n=c.familias) }}</li>{% endif %}
+        </ul>
+      </div>
+    </li>
+  {% endfor %}
+</ul>
+{% else %}
+  <p class="aviso aviso--info">{{ t('Ninguna comunidad ofrece todavía esa experiencia.') }}</p>
+{% endif %}
+
+<section class="tarjeta llamado" aria-labelledby="titulo-grupo">
+  <h2 id="titulo-grupo">{{ t('¿Vienes en grupo?') }}</h2>
+  <p>{{ t('Colegios, universidades y empresas: te armamos la salida y te enviamos la cotización.') }}</p>
+  <p><a class="boton" href="{{ url_for('publico.grupos') }}">{{ t('Pedir cotización para grupos') }}</a></p>
+</section>
+{% endblock %}
