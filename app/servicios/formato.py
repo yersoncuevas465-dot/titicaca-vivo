@@ -76,6 +76,7 @@ ACCIONES_BITACORA = {
     "reprogramacion": "Reprogramación",
     "devolucion_solicitada": "Devolución pedida",
     "devolucion_atendida": "Devolución atendida",
+    "mensaje_contacto": "Mensaje de contacto recibido",
 }
 SENALES = {"buena": "Buena señal", "debil": "Señal débil", "sin_senal": "Sin señal"}
 SERVICIOS = {"desayuno": "Desayuno", "almuerzo": "Almuerzo", "cena": "Cena",

@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% block titulo %}{{ t('Política de privacidad') }}{% endblock %}
+
+{# Texto legal en español (v2.7). En inglés se avisa que el texto está solo en español. #}
+{% block contenido %}
+<article class="legal" aria-labelledby="titulo-legal">
+  <h1 id="titulo-legal">{{ t('Política de privacidad') }}</h1>
+  {% if idioma_actual() == 'en' %}<p class="aviso aviso--info">{{ t('Este texto solo está en español.') }}</p>{% endif %}
+  <div lang="es">
+    <p class="texto-suave">Cómo cuidamos los datos que nos das al reservar o al escribirnos, según la
+      Ley N.º 29733 de Protección de Datos Personales del Perú.</p>
+
+    <h2>Qué datos pedimos y para qué</h2>
+    <ul>
+      <li><strong>Del titular de la reserva:</strong> nombres, apellidos, documento, nacionalidad y un
+        celular o un correo. Sirven para registrar la reserva y avisarte si la salida cambia o se suspende.</li>
+      <li><strong>De cada pasajero:</strong> nombres, apellidos, documento, nacionalidad y tipo de pasajero.
+        Con ellos se arma la lista de pasajeros que lleva la lancha para la Capitanía de Puertos y se
+        verifica el embarque.</li>
+      <li><strong>En Contacto:</strong> tu nombre, tu correo o celular y tu mensaje, solo para responderte.
+        El mensaje llega por correo a la agencia: no se guarda en la base de datos.</li>
+    </ul>
+
+    <h2>Quién ve tus datos</h2>
+    <p>Solo el personal de la agencia y según su función: el operador atiende las reservas y los pagos; el
+      guía y el capitán ven únicamente a los pasajeros de su salida. No vendemos ni compartimos tus datos con
+      fines comerciales.</p>
+
+    <h2>Consultas a otros servicios</h2>
+    <ul>
+      <li>Si escribes un DNI, el servidor pregunta a RENIEC (por medio del servicio graphperu) solo los
+        nombres, para completar el formulario. Lo que queda guardado es lo que tú revisas y confirmas al
+        reservar.</li>
+      <li>El clima (Open-Meteo), el tipo de cambio (SUNAT) y los feriados (Nager.Date) se consultan sin
+        enviar ningún dato tuyo.</li>
+    </ul>
+
+    <h2>Cookies</h2>
+    <p>Usamos una sola cookie, necesaria para que la página funcione: guarda tu idioma, tu acceso a «Mi
+      reserva» en este navegador y, para el personal, su sesión. No usamos cookies de publicidad ni de
+      estadísticas.</p>
+
+    <h2>Cómo los protegemos</h2>
+    <ul>
+      <li>Cada formulario lleva un código de seguridad (CSRF) y hay límites contra intentos repetidos.</li>
+      <li>Las contraseñas del personal se guardan cifradas (bcrypt) y cada rol solo puede hacer lo suyo.</li>
+      <li>Cada cambio importante queda en una bitácora con la fecha, la hora y quién lo hizo.</li>
+      <li>Las páginas con datos personales no se guardan en la memoria del navegador.</li>
+    </ul>
+
+    <h2>Tus derechos</h2>
+    <p>Puedes pedir ver tus datos, corregirlos, oponerte a su uso o, cuando la ley lo permita, que los
+      eliminemos (derechos ARCO). Escríbenos desde <a href="{{ url_for('publico.contacto') }}">Contacto</a>
+      con el código de tu reserva.</p>
+  </div>
+</article>
+{% endblock %}

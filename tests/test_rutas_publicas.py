@@ -6,7 +6,7 @@ from zoneinfo import ZoneInfo
 
 import pytest
 
-from tests.conftest import ejecutar_y_confirmar
+from tests.conftest import ejecutar_y_confirmar, precio_en_pagina
 
 
 def hoy():
@@ -65,10 +65,11 @@ def test_filtro_invalido_da_422_con_el_error_junto_al_campo(cliente, consulta, c
     assert enlaces_a_salidas(html) == {6, 7, 8}       # igual muestra las salidas reales de hoy
 
 
-def test_detalle_de_salida(cliente):
+def test_detalle_de_salida(app, cliente):
     html = cliente.get("/salidas/10").get_data(True)
     assert html.index(">Uros<") < html.index(">Taquile<")            # paradas en orden
-    assert "S/ 80.00" in html and "S/ 120.00" in html                  # tarifas URO-TAQ 2026
+    # Tarifas URO-TAQ 2026 (80 y 120), con el recargo si ese día cae en una temporada
+    assert precio_en_pagina(app, 10, "80.00") in html and precio_en_pagina(app, 10, "120.00") in html
     assert 'href="/salidas/10/reservar"' in html                       # botón "Reservar" (F4)
 
 

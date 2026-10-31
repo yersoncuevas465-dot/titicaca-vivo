@@ -49,6 +49,14 @@ def paradas(ruta_id):
     )
 
 
+def muelles():
+    """Los muelles de donde zarpan las rutas activas (v2.6, página de contacto)."""
+    # Devuelve cada muelle de salida una sola vez (DISTINCT), en orden alfabético.
+    filas = bd.consultar(
+        "SELECT DISTINCT muelle_salida FROM ruta WHERE activa = 1 ORDER BY muelle_salida")
+    return [f["muelle_salida"] for f in filas]
+
+
 def paradas_para_mapa():
     # Devuelve, en UNA consulta, cada parada de cada ruta activa con la ubicación de su
     # comunidad, ordenadas por ruta y por orden de visita (así no hay una consulta por ruta).

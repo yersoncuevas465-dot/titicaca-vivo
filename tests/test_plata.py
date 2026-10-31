@@ -13,7 +13,7 @@ import pytest
 
 from app import crear_app
 from app.config import ConfigPruebas
-from tests.conftest import ejecutar_y_confirmar
+from tests.conftest import ejecutar_y_confirmar, precio_en_pagina
 
 PLANTILLAS = Path(__file__).resolve().parent.parent / "app" / "plantillas"
 
@@ -74,7 +74,7 @@ def test_ningun_precio_escrito_a_mano_en_las_plantillas():
      "AND vigente_desde = '2026-01-01'",
      "UPDATE tarifa SET precio_base = 80.00 WHERE ruta_id = 2 AND tipo_pasajero_id = 1 "
      "AND vigente_desde = '2026-01-01'",
-     "/salidas/10", "S/ 85.50"),
+     "/salidas/10", ("precio", 10, "85.50")),           # con el recargo de temporada, si hay
     ("UPDATE alerta_lago SET titulo = 'Oleaje (prueba Plata)' WHERE id = 1",
      "UPDATE alerta_lago SET titulo = 'Oleaje fuerte en el sector de Amantaní' WHERE id = 1",
      "/", "Oleaje (prueba Plata)"),
@@ -83,6 +83,8 @@ def test_ningun_precio_escrito_a_mano_en_las_plantillas():
      "/comunidades/amantani", "Hasta 9 personas"),
 ])
 def test_cambiar_un_dato_en_la_base_cambia_la_pagina(app, cliente, sql_cambio, sql_vuelta, url, esperado):
+    if isinstance(esperado, tuple):                  # un precio: «S/ 85.50» o, en temporada, más
+        esperado = precio_en_pagina(app, *esperado[1:])
     assert esperado not in cliente.get(url).get_data(True)
     ejecutar_y_confirmar(app, sql_cambio)
     try:

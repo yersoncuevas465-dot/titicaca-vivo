@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% block titulo %}{{ t('Condiciones del servicio') }}{% endblock %}
+
+{# Texto legal en español (v2.7). Los números salen de la configuración y de los modelos: si
+   cambia una regla, este texto cambia con ella. #}
+{% block contenido %}
+<article class="legal" aria-labelledby="titulo-legal">
+  <h1 id="titulo-legal">{{ t('Condiciones del servicio') }}</h1>
+  {% if idioma_actual() == 'en' %}<p class="aviso aviso--info">{{ t('Este texto solo está en español.') }}</p>{% endif %}
+  <div lang="es">
+    <p class="texto-suave">Lo que aceptas al reservar una salida en lancha. Son las mismas reglas con las
+      que trabaja el sistema.</p>
+
+    <h2>La reserva</h2>
+    <ul>
+      <li>Cada reserva tiene un código (TV-XXXX) y lleva hasta {{ maximo }} pasajeros, cada uno con su
+        documento.</li>
+      <li>Un mismo documento no puede viajar dos veces en la misma salida.</li>
+      <li>El precio queda fijo al reservar: es la tarifa de cada tipo de pasajero y, en temporada alta o en
+        fiestas, incluye el recargo de la temporada.</li>
+    </ul>
+
+    <h2>El pago</h2>
+    <ul>
+      <li><strong>Yape o Plin:</strong> guardamos tu lugar {{ minutos_pago }} minutos para que reportes el pago
+        en «Mi reserva». Si no lo reportas a tiempo, la reserva vence y el lugar se libera.</li>
+      <li>Cuando reportas el pago, tu lugar sigue guardado mientras lo verificamos, hasta una hora antes del
+        zarpe.</li>
+      <li><strong>En el muelle:</strong> la reserva queda confirmada y pagas antes de subir a la lancha.</li>
+    </ul>
+
+    <h2>El día del viaje</h2>
+    <ul>
+      <li>Preséntate en el muelle 30 minutos antes del zarpe con tu documento.</li>
+      <li>El embarque abre {{ abre }} minutos antes del zarpe y cierra {{ cierra }} minutos después. Quien
+        no sube queda registrado como «no se presentó».</li>
+      <li>Si la ruta incluye una noche, la familia anfitriona se asigna por turnos, para que todas reciban
+        visitantes.</li>
+    </ul>
+
+    <h2>Alertas del lago y salidas suspendidas</h2>
+    <ul>
+      <li>Si SENAMHI o la Capitanía de Puertos dan una alerta naranja o roja, la salida se suspende por
+        seguridad.</li>
+      <li>Con la salida suspendida puedes reprogramar a otra salida de la misma ruta o pedir la devolución,
+        desde «Mi reserva».</li>
+    </ul>
+
+    <h2>Opiniones</h2>
+    <p>Después del viaje puedes dejar tu opinión. Se publica cuando la agencia la revisa.</p>
+
+    <h2>Dudas</h2>
+    <p>Escríbenos desde <a href="{{ url_for('publico.contacto') }}">Contacto</a>. Tus datos se tratan según
+      nuestra <a href="{{ url_for('publico.privacidad') }}">Política de privacidad</a>.</p>
+  </div>
+</article>
+{% endblock %}

@@ -242,3 +242,22 @@ def falla_con(cursor, sql, parametros=None):
     with pytest.raises(pymysql.MySQLError) as excinfo:
         cursor.execute(sql, parametros)
     return codigo_error(excinfo), str(excinfo.value.args[1])
+
+
+def precio_en_pagina(app, salida_id, precio_base):
+    """«S/ 88.00»: la tarifa base con el recargo de la temporada de esa salida (RN-04), como la
+    muestra la página. Las salidas de la semilla van relativas a hoy y las temporadas tienen fechas
+    fijas: según el día en que se corran las pruebas, una salida puede caer en temporada (del 1 al 7
+    de noviembre, la salida 10 cae en la Semana Jubilar de Puno)."""
+    from app.modelos import tarifa
+    from app.servicios import formato
+
+    return formato.soles(tarifa.calcular_precio(precio_base, recargo_de_salida(app, salida_id)))
+
+
+def recargo_de_salida(app, salida_id):
+    """El recargo (%) de la temporada (ya guardada) en la que cae esa salida, o 0."""
+    return consultar_valor(
+        app, "SELECT COALESCE(MAX(te.recargo_porcentaje), 0) AS recargo FROM salida s "
+             "JOIN temporada te ON DATE(s.fecha_hora_zarpe) BETWEEN te.fecha_inicio AND te.fecha_fin "
+             "WHERE s.id = %s", (salida_id,))

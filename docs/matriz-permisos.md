@@ -21,6 +21,7 @@ Leyenda:
 |---|---|---|---|---|---|---|
 | Portada, salidas, comunidades, alertas, `/salud` | ✔ | ✔ | ✔ | ✔ | ✔ | F3 (`/salud` en F2) |
 | Reservar (formulario público) | ✔ | ✔ | ✔ | ✔ | ✔ | **F4 ✔** |
+| Contacto: enviar un mensaje a la agencia (CSRF, trampa para robots y límite por IP) | ✔ | ✔ | ✔ | ✔ | ✔ | **v2.6 ✔** |
 | Completar los nombres con el DNI (RENIEC, `/api/dni`: con token CSRF y límite por IP) | ✔ | ✔ | ✔ | ✔ | ✔ | **v2.2 ✔** |
 | Mi reserva (código + documento), boleto, reportar pago | ◐ (solo la suya) | — | — | — | — | **F4 ✔** |
 | Boleto con QR de cualquier reserva (para imprimirlo o mandarlo) | — | 👁 | ✔ | — | — | **F10 ✔** |

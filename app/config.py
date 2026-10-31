@@ -93,6 +93,14 @@ class Config:
     CLIMA_LUGAR = (-15.84, -70.02)           # bahía de Puno, donde zarpan las lanchas
     FERIADOS_API_URL = os.getenv("FERIADOS_API_URL", "https://date.nager.at/api/v3/PublicHolidays")
 
+    # v2.6: atención de la agencia (página Contacto y pie de página). Vacío = no se muestra.
+    # Los mensajes del formulario llegan a AGENCIA_CORREO o, si está vacío, a los operadores
+    # activos que tienen correo (los mismos de la recuperación de contraseña).
+    AGENCIA_CORREO = os.getenv("AGENCIA_CORREO", "")
+    AGENCIA_WHATSAPP = os.getenv("AGENCIA_WHATSAPP", "")       # 9XXXXXXXX o +código del país
+    AGENCIA_HORARIO = os.getenv("AGENCIA_HORARIO", "")
+    LIMITE_MENSAJES_CONTACTO = "5 per hour"                    # por IP
+
     WTF_CSRF_TIME_LIMIT = 4 * 3600           # el formulario vale 4 horas (señal lenta)
     MAX_CONTENT_LENGTH = 1 * 1024 * 1024     # los formularios no suben archivos grandes
     # CSS e imágenes: en producción, 1 día en la caché del navegador (se renuevan al cambiar

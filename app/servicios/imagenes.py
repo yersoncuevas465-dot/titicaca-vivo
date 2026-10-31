@@ -37,11 +37,12 @@ FOTO_PORTADA = "uros"
 # None = sin foto: el formulario de reserva es la página más pesada (hasta 10 pasajeros) y ahí
 # el turista solo tiene que fijarse en sus datos.
 FONDO_POR_PAGINA = (
-    ("publico.inicio", "uros"),
+    ("publico.inicio", "luquina-chico"),       # v2.7: arriba ya va la foto grande de los Uros
     ("publico.salidas", "uros"),
     ("publico.detalle_salida", "uros"),
     ("reservas.reservar", None),
     ("publico.galeria", "amantani"),
+    ("publico.contacto", "llachon"),
     ("publico.comunidades", "taquile"),
     ("publico.detalle_comunidad", "taquile"),   # si la comunidad todavía no tiene foto propia
     ("publico.alertas", "ticonata"),

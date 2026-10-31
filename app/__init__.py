@@ -3,6 +3,9 @@
 Capas: rutas (blueprints) → modelos (reglas + SQL) → plantillas.
 """
 
+from datetime import datetime
+from zoneinfo import ZoneInfo
+
 from flask import Flask, g, request, session, url_for
 
 from app.config import Config
@@ -25,7 +28,7 @@ def crear_app(config_clase=Config):
         publico,
         reservas,
     )
-    from app.servicios import formato, imagenes, textos
+    from app.servicios import formato, imagenes, textos, whatsapp
 
     registro.configurar(app)
     bd.init_app(app)
@@ -45,11 +48,23 @@ def crear_app(config_clase=Config):
         # ?v=versión: al publicar una versión nueva el navegador baja el archivo otra vez
         return url_for("static", filename=archivo, v=app.config["VERSION"])
 
+    def anio_actual():
+        return datetime.now(ZoneInfo(app.config["ZONA_HORARIA"])).year
+
+    def whatsapp_agencia():
+        """El enlace wa.me de la agencia para el pie de página (v2.7), o None sin número."""
+        numero = app.config["AGENCIA_WHATSAPP"]
+        if not numero:
+            return None
+        saludo = textos.t("Hola, quiero información sobre las salidas al lago.")
+        return whatsapp.enlace(saludo, numero)
+
     # Globales de Jinja (y no context_processor): así también las ven los macros importados.
     app.jinja_env.globals.update(estatico=estatico, foto_comunidad=imagenes.foto_comunidad,
                                  fondo_de_pagina=imagenes.fondo_de_pagina,
                                  estado_visible=formato.estado_visible,
-                                 t=textos.t, fuerte=textos.fuerte, idioma_actual=textos.idioma)
+                                 t=textos.t, fuerte=textos.fuerte, idioma_actual=textos.idioma,
+                                 anio_actual=anio_actual, whatsapp_agencia=whatsapp_agencia)
 
     @app.before_request
     def fijar_idioma():

@@ -589,6 +589,54 @@ EN = {
     "Fotos de Wikimedia Commons, con el nombre de su autor y su licencia.":
         "Photos from Wikimedia Commons, with their author's name and licence.",
     "Ver la galería de fotos →": "See the photo gallery →",
+
+    # --- Contacto (v2.6) ---
+    "Contacto": "Contact",
+    "¿Dudas sobre una salida, una reserva o un viaje en grupo? Escríbenos y te respondemos.":
+        "Questions about a trip, a booking or travelling as a group? Write to us and we will answer.",
+    "Atención": "Customer service",
+    "Escríbenos por WhatsApp": "Message us on WhatsApp",
+    "Dónde zarpamos": "Where we depart from",
+    "Ver en el mapa": "See on the map",
+    "Horario de atención": "Opening hours",
+    "¿Ya reservaste?": "Already booked?",
+    "Mira tu reserva con tu código": "See your booking with your code",
+    "Escríbenos": "Write to us",
+    "Deja al menos un correo o un celular para responderte.":
+        "Leave at least an email or a mobile number so we can answer you.",
+    "Usamos tus datos solo para responderte.": "We only use your details to answer you.",
+    "¡Gracias! Recibimos tu mensaje y te responderemos pronto.":
+        "Thank you! We received your message and will answer you soon.",
+    "No pudimos enviar tu mensaje ahora. Escríbenos por WhatsApp o inténtalo en unos minutos.":
+        "We could not send your message right now. Message us on WhatsApp or try again in a few minutes.",
+    "Hola, quiero información sobre las salidas al lago.": "Hello, I would like information about the lake trips.",
+    "Tu nombre": "Your name",
+    "Sobre qué es": "What it is about",
+    "Tu mensaje": "Your message",
+    "Deja este campo vacío": "Leave this field empty",
+    "Enviar mensaje": "Send message",
+    "Información de las salidas": "Information about the trips",
+    "Una reserva que ya hice": "A booking I already made",
+    "Viaje en grupo o con un colegio": "Group or school trip",
+    "Otro tema": "Something else",
+    "Escribe tu nombre.": "Write your name.",
+    "Escribe tu mensaje.": "Write your message.",
+    "Escribe tu nombre con letras.": "Write your name using letters.",
+    "Deja un correo o un celular para responderte.": "Leave an email or a mobile number so we can answer you.",
+    "Elige sobre qué es tu mensaje.": "Choose what your message is about.",
+    "Escribe entre 10 y 1500 caracteres.": "Write between 10 and 1500 characters.",
+
+    # --- Pie de página y páginas legales (v2.7) ---
+    "Turismo comunitario en el lago Titicaca: salidas en lancha y noches con familias anfitrionas.":
+        "Community tourism on Lake Titicaca: boat trips and nights with host families.",
+    "Explora": "Explore",
+    "Yape, Plin o efectivo en el muelle. Precios en soles, por persona.":
+        "Yape, Plin or cash at the dock. Prices in soles, per person.",
+    "Privacidad": "Privacy",
+    "Condiciones": "Terms",
+    "Política de privacidad": "Privacy policy",
+    "Condiciones del servicio": "Terms of service",
+    "Este texto solo está en español.": "This text is only available in Spanish.",
 }
 
 # Mensajes con partes variables (números, códigos): se reconocen con un patrón.

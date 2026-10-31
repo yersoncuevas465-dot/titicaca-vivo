@@ -8,6 +8,7 @@ from PIL import Image
 from app import bd
 from app.modelos import tarifa
 from app.servicios import mapa
+from tests.conftest import recargo_de_salida
 
 
 def test_proyeccion_de_las_esquinas():
@@ -72,7 +73,9 @@ def test_precio_de_una_salida_en_temporada(app):
         assert precios["adulto_extranjero"]["precio"] == Decimal("144.00")     # 120 × 1.20
         assert precios["nino"]["temporada"] == "Temporada de prueba"
         conexion.rollback()
-        assert tarifa.precios_para_salida(10)[0]["precio"] == Decimal("80.00")
+        # Sin la de prueba vuelve a 80, o a 80 con el recargo de la temporada real de ese día
+        assert tarifa.precios_para_salida(10)[0]["precio"] == tarifa.calcular_precio(
+            Decimal("80.00"), recargo_de_salida(app, 10))
 
 
 def test_tarifa_vigente_es_la_mas_reciente(app):
@@ -85,7 +88,8 @@ def test_tarifa_vigente_es_la_mas_reciente(app):
                 "VALUES (2, 1, 99.00, CURDATE() - INTERVAL 1 DAY)"
             )
         precios = {p["codigo"]: p for p in tarifa.precios_para_salida(10)}
-        assert precios["adulto_nacional"]["precio"] == Decimal("99.00")
+        assert precios["adulto_nacional"]["precio"] == tarifa.calcular_precio(
+            Decimal("99.00"), recargo_de_salida(app, 10))           # 99, con recargo si hay temporada
         conexion.rollback()
 
 

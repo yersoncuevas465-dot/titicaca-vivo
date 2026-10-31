@@ -9,5 +9,6 @@
     <a href="{{ url_for('publico.galeria') }}" {% if actual == 'publico.galeria' %}aria-current="page"{% endif %}>{{ t('Galería') }}</a>
     <a href="{{ url_for('publico.alertas') }}" {% if actual == 'publico.alertas' %}aria-current="page"{% endif %}>{{ t('Alertas') }}</a>
     <a href="{{ url_for('reservas.mi_reserva') }}" {% if actual and actual.startswith('reservas.') and actual != 'reservas.reservar' %}aria-current="page"{% endif %}>{{ t('Mi reserva') }}</a>
+    <a href="{{ url_for('publico.contacto') }}" {% if actual == 'publico.contacto' %}aria-current="page"{% endif %}>{{ t('Contacto') }}</a>
   </div>
 </nav>

@@ -412,7 +412,8 @@ def test_flask_correo_probar_en_modo_simulacion(app):
 # --- Fotos de fondo como marca de agua (D-109) ------------------------------------------------------
 
 @pytest.mark.parametrize("url, foto, autor", [
-    ("/", "uros", "Entropy1963"), ("/salidas", "uros", "Entropy1963"),
+    # v2.7: la portada ya trae la foto grande de los Uros; de fondo va Luquina Chico
+    ("/", "luquina-chico", "Murray Foubister"), ("/salidas", "uros", "Entropy1963"),
     ("/comunidades", "taquile", "Alonso Cárdenas"), ("/comunidades/amantani", "amantani", "Pastor3571"),
     ("/comunidades/llachon", "llachon", "Hilda Maria FC"), ("/alertas", "ticonata", "Titico"),
     ("/mi-reserva", "amantani", "Pastor3571"), ("/entrar", "llachon", "Hilda Maria FC"),

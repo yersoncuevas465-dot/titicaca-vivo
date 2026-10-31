@@ -1,4 +1,5 @@
-"""Páginas públicas (sin cuenta): portada, salidas, comunidades, alertas y /salud.
+"""Páginas públicas (sin cuenta): portada, salidas, comunidades, galería, contacto, alertas
+y /salud.
 
 Nivel Plata: cada página lee sus datos de la base a través de los modelos.
 """
@@ -11,6 +12,7 @@ from flask import (
     Blueprint,
     abort,
     current_app,
+    flash,
     jsonify,
     redirect,
     render_template,
@@ -19,9 +21,32 @@ from flask import (
     url_for,
 )
 
-from app.modelos import alerta, comunidad, resena, ruta, salida, sistema, tarifa
-from app.seguridad import destino_seguro
-from app.servicios import clima, feriados, formato, imagenes, mapa, tipo_cambio
+from app.formularios.contacto import ASUNTOS, FormularioContacto
+from app.modelos import (
+    ErrorValidacion,
+    abordaje,
+    alerta,
+    comunidad,
+    resena,
+    ruta,
+    salida,
+    sistema,
+    tarifa,
+)
+from app.modelos import contacto as modelo_contacto
+from app.seguridad import destino_seguro, ip_cliente, limitador
+from app.servicios import (
+    clima,
+    correo,
+    feriados,
+    formato,
+    imagenes,
+    mapa,
+    textos,
+    tipo_cambio,
+    whatsapp,
+)
+from app.servicios.textos import t, traducir_formulario
 
 bp = Blueprint("publico", __name__)
 
@@ -164,6 +189,90 @@ def galeria():
         "publico/galeria.html", idioma=idioma, idiomas=formato.IDIOMAS, total=len(con_foto),
         fotos=[c for c in con_foto if idioma in (None, c["idioma_originario"])],
         cuantas={i: sum(c["idioma_originario"] == i for c in con_foto) for i in formato.IDIOMAS})
+
+
+def _texto_del_correo(datos, asunto, idioma):
+    """El correo que recibe la agencia (en español: lo lee el personal)."""
+    return "\n".join([
+        "Llegó un mensaje desde la página Contacto de Titicaca Vivo.",
+        "",
+        f"Nombre: {datos['nombre']}",
+        f"Correo: {datos['correo'] or '—'}",
+        f"Celular o WhatsApp: {datos['telefono'] or '—'}",
+        f"Asunto: {asunto}",
+        f"Idioma de la página: {'inglés' if idioma == 'en' else 'español'}",
+        "",
+        "Mensaje:",
+        datos["mensaje"],
+        "",
+        "Responde directamente a la persona, a su correo o a su celular.",
+    ])
+
+
+@bp.route("/contacto", methods=["GET", "POST"])
+@limitador.limit(lambda: current_app.config["LIMITE_MENSAJES_CONTACTO"], methods=["POST"])
+def contacto():
+    """v2.6: atención, dónde zarpamos y el formulario. El mensaje llega por correo a la agencia
+    (simulado por defecto, como la recuperación de contraseña) y la bitácora anota que llegó."""
+    formulario = FormularioContacto()
+    error_general, codigo_http = None, 200
+    if request.method == "POST":
+        if formulario.sitio_web.data:                 # la trampa para robots vino llena
+            flash(t("¡Gracias! Recibimos tu mensaje y te responderemos pronto."), "exito")
+            return redirect(url_for("publico.contacto"), code=303)
+        datos = {campo: formulario[campo].data
+                 for campo in ("nombre", "correo", "telefono", "asunto", "mensaje")}
+        try:
+            if not formulario.validate():
+                raise ErrorValidacion({})
+            modelo_contacto.validar(datos)
+        except ErrorValidacion as error:
+            for nombre, texto in error.errores.items():
+                formulario[nombre].errors = [*formulario[nombre].errors, texto]
+            codigo_http = 422
+        else:
+            asunto = dict(ASUNTOS)[datos["asunto"]]
+            resultados = [correo.enviar(destino, f"[Titicaca Vivo] Contacto: {asunto}",
+                                        _texto_del_correo(datos, asunto, textos.idioma()))
+                          for destino in modelo_contacto.destinatarios(
+                              current_app.config["AGENCIA_CORREO"])]
+            enviados = sum(r != correo.FALLO for r in resultados)
+            if enviados:
+                modelo_contacto.anotar_recibido(datos["asunto"], textos.idioma(), enviados,
+                                                ip_cliente())
+                flash(t("¡Gracias! Recibimos tu mensaje y te responderemos pronto."), "exito")
+                return redirect(url_for("publico.contacto"), code=303)
+            error_general = t("No pudimos enviar tu mensaje ahora. Escríbenos por WhatsApp o "
+                              "inténtalo en unos minutos.")
+            codigo_http = 503
+    traducir_formulario(formulario)
+    numero = current_app.config["AGENCIA_WHATSAPP"]
+    latitud, longitud = mapa.PUNO
+    return render_template(
+        "publico/contacto.html", f=formulario, error_general=error_general,
+        muelles=ruta.muelles(), horario=current_app.config["AGENCIA_HORARIO"],
+        correo_agencia=current_app.config["AGENCIA_CORREO"],
+        whatsapp=whatsapp.enlace(t("Hola, quiero información sobre las salidas al lago."), numero)
+        if numero else None,
+        mapa_url=f"https://www.openstreetmap.org/?mlat={latitud}&mlon={longitud}"
+                 f"#map=15/{latitud}/{longitud}",
+    ), codigo_http
+
+
+@bp.route("/privacidad")
+def privacidad():
+    """v2.7: política de privacidad (Ley 29733), en español."""
+    return render_template("publico/privacidad.html")
+
+
+@bp.route("/condiciones")
+def condiciones():
+    """v2.7: condiciones del servicio. Los números salen de la configuración y de los modelos:
+    si cambia una regla (RN-05 pago, RN-12 embarque), el texto cambia con ella."""
+    return render_template(
+        "publico/condiciones.html", minutos_pago=current_app.config["MINUTOS_VENCIMIENTO_PAGO"],
+        maximo=current_app.config["MAX_PASAJEROS_POR_RESERVA"],
+        abre=abordaje.MINUTOS_ANTES, cierra=abordaje.MINUTOS_DESPUES)
 
 
 @bp.route("/alertas")

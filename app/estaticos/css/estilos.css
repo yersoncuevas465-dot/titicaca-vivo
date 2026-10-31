@@ -786,6 +786,40 @@ main:focus { outline: none; }
   .galeria__enlace:hover img, .galeria__enlace:focus-visible img { transform: none; }
 }
 
+/* ---------- Contacto (v2.6): atención a la izquierda, formulario a la derecha ---------- */
+.contacto { display: grid; gap: 1.25rem; margin-top: 1rem; }
+.contacto__lista { display: grid; gap: 0.75rem; }
+.contacto__item {
+  display: flex; gap: 0.85rem; align-items: flex-start; padding: 0.9rem 1rem;
+  background: #FFFDF9; border: 1px solid var(--arena); border-radius: var(--radio); box-shadow: var(--sombra);
+}
+.contacto__item h3 { font-size: 1rem; margin: 0 0 0.15rem; }
+.contacto__item p { margin: 0; overflow-wrap: anywhere; }
+.contacto__item .servicio__icono { flex: none; }
+.contacto__formulario textarea.campo__control { min-height: 9rem; resize: vertical; }
+.contacto__nota { margin: 0.75rem 0 0; font-size: 0.88rem; }
+/* La trampa para robots: fuera de la pantalla (no display:none, que algunos robots saltan) */
+.trampa { position: absolute; left: -10000px; top: auto; width: 1px; height: 1px; overflow: hidden; }
+@media (min-width: 48em) {
+  .contacto { grid-template-columns: 1fr 1.5fr; align-items: start; }
+}
+
+/* ---------- Pie de página completo y páginas legales (v2.7) ---------- */
+.pie a { color: var(--crema); }
+.pie__columnas {
+  display: grid; gap: 1.25rem 2rem; padding: 0.75rem 0 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
+}
+.pie__titulo { font-family: var(--serif); font-size: 1.05rem; color: var(--crema); margin: 0 0 0.4rem; }
+.pie__columna p { margin: 0; opacity: 0.92; }
+.pie__enlaces li { margin: 0.25rem 0; }
+.pie__enlaces a { display: inline-flex; min-height: 1.75rem; align-items: center; }
+.pie__legal { border-top: 1px solid rgb(254 249 243 / 0.25); padding-top: 0.75rem; }
+.pie__legal--panel { border-top: 0; padding-top: 0; }
+.legal { max-width: 46rem; }
+.legal h2 { font-size: 1.25rem; margin: 1.5rem 0 0.5rem; }
+.legal li { margin: 0.4rem 0; }
+
 @media print {
   .buscador { display: none; }
 }

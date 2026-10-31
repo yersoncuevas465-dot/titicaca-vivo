@@ -74,10 +74,49 @@
     {% block contenido %}{% endblock %}
   </main>
 
+  {# Pie de página (v2.7): completo para el turista, como el de la web de un hotel; en el
+     panel del personal, solo la última línea. Los datos de atención vienen del .env. #}
+  {% set pie_completo = request.blueprint not in ('panel', 'catalogos') %}
   <footer class="pie">
     <div class="contenedor">
-      <p>{{ t('Titicaca Vivo · Puno, Perú · Horarios en hora de Lima') }}</p>
-      {% if fondo %}<p class="pie__credito">{{ t('Foto de fondo: {credito}', credito=fondo.credito) }}</p>{% endif %}
+      {% if pie_completo %}
+      <div class="pie__columnas">
+        <section class="pie__columna" aria-labelledby="pie-marca">
+          <h2 class="pie__titulo" id="pie-marca">Titicaca Vivo</h2>
+          <p>{{ t('Turismo comunitario en el lago Titicaca: salidas en lancha y noches con familias anfitrionas.') }}</p>
+        </section>
+        <nav class="pie__columna" aria-labelledby="pie-explora">
+          <h2 class="pie__titulo" id="pie-explora">{{ t('Explora') }}</h2>
+          <ul class="lista-limpia pie__enlaces">
+            <li><a href="{{ url_for('publico.salidas') }}">{{ t('Salidas') }}</a></li>
+            <li><a href="{{ url_for('publico.comunidades') }}">{{ t('Comunidades') }}</a></li>
+            <li><a href="{{ url_for('publico.galeria') }}">{{ t('Galería') }}</a></li>
+            <li><a href="{{ url_for('publico.alertas') }}">{{ t('Alertas') }}</a></li>
+            <li><a href="{{ url_for('reservas.mi_reserva') }}">{{ t('Mi reserva') }}</a></li>
+          </ul>
+        </nav>
+        <section class="pie__columna" aria-labelledby="pie-atencion">
+          <h2 class="pie__titulo" id="pie-atencion">{{ t('Atención') }}</h2>
+          <ul class="lista-limpia pie__enlaces">
+            <li><a href="{{ url_for('publico.contacto') }}">{{ t('Escríbenos') }}</a></li>
+            {% set whatsapp = whatsapp_agencia() %}
+            {% if whatsapp %}<li><a href="{{ whatsapp }}" rel="noopener noreferrer" target="_blank">WhatsApp</a></li>{% endif %}
+            {% if config.AGENCIA_CORREO %}<li><a href="mailto:{{ config.AGENCIA_CORREO }}">{{ config.AGENCIA_CORREO }}</a></li>{% endif %}
+            {% if config.AGENCIA_HORARIO %}<li>{{ config.AGENCIA_HORARIO }}</li>{% endif %}
+          </ul>
+        </section>
+        <section class="pie__columna" aria-labelledby="pie-pagos">
+          <h2 class="pie__titulo" id="pie-pagos">{{ t('Pagos') }}</h2>
+          <p>{{ t('Yape, Plin o efectivo en el muelle. Precios en soles, por persona.') }}</p>
+        </section>
+      </div>
+      {% endif %}
+      <div class="pie__legal{% if not pie_completo %} pie__legal--panel{% endif %}">
+        <p>© {{ anio_actual() }} · {{ t('Titicaca Vivo · Puno, Perú · Horarios en hora de Lima') }}
+          {% if pie_completo %}· <a href="{{ url_for('publico.privacidad') }}">{{ t('Privacidad') }}</a>
+          · <a href="{{ url_for('publico.condiciones') }}">{{ t('Condiciones') }}</a>{% endif %}</p>
+        {% if fondo %}<p class="pie__credito">{{ t('Foto de fondo: {credito}', credito=fondo.credito) }}</p>{% endif %}
+      </div>
     </div>
   </footer>
   {% block scripts %}{% endblock %}

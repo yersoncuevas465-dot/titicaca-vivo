@@ -14,7 +14,8 @@ from tests.conftest import iniciar_sesion, reservar_en
 
 LIMITE = 100 * 1024
 PUBLICAS = ["/", "/salidas", "/salidas/10", "/comunidades", "/comunidades/amantani", "/alertas",
-            "/mi-reserva", "/salidas/10/reservar", "/galeria"]
+            "/mi-reserva", "/salidas/10/reservar", "/galeria", "/contacto",
+            "/privacidad", "/condiciones"]
 PANEL = {
     "operador": ["/panel", "/panel/salidas", "/panel/salidas/8/pasajeros", "/panel/pagos",
                  "/panel/abordaje/TV-WWUQ", "/panel/alertas", "/panel/alertas/1", "/panel/hospedajes",

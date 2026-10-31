@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% from "macros.html" import campo, resumen_errores %}
+{% block titulo %}{{ t('Contacto') }}{% endblock %}
+
+{% block contenido %}
+<h1>{{ t('Contacto') }}</h1>
+<p class="texto-suave">{{ t('¿Dudas sobre una salida, una reserva o un viaje en grupo? Escríbenos y te respondemos.') }}</p>
+
+<div class="contacto">
+  {# Datos de atención: los de la agencia vienen del .env (si están vacíos no salen) y el
+     muelle, de las rutas activas de la base #}
+  <section class="contacto__datos" aria-labelledby="titulo-atencion">
+    <h2 id="titulo-atencion">{{ t('Atención') }}</h2>
+    <ul class="lista-limpia contacto__lista">
+      {% if whatsapp %}
+        <li class="contacto__item">
+          <svg class="servicio__icono" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 4.5h11a1 1 0 0 1 1 1V12a1 1 0 0 1-1 1H9l-4 3v-3H4a1 1 0 0 1-1-1V5.5a1 1 0 0 1 1-1z"/></svg>
+          <div><h3>WhatsApp</h3>
+            <p><a href="{{ whatsapp }}" rel="noopener noreferrer" target="_blank">{{ t('Escríbenos por WhatsApp') }}</a></p></div>
+        </li>
+      {% endif %}
+      {% if correo_agencia %}
+        <li class="contacto__item">
+          <svg class="servicio__icono" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3.5 6l8.5 7 8.5-7"/></svg>
+          <div><h3>{{ t('Correo') }}</h3><p><a href="mailto:{{ correo_agencia }}">{{ correo_agencia }}</a></p></div>
+        </li>
+      {% endif %}
+      {% for muelle in muelles %}
+        <li class="contacto__item">
+          <svg class="servicio__icono" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 21s-6.5-5.6-6.5-11a6.5 6.5 0 0 1 13 0c0 5.4-6.5 11-6.5 11z"/><circle cx="12" cy="10" r="2.5"/></svg>
+          <div><h3>{{ t('Dónde zarpamos') }}</h3>
+            <p>{{ muelle }} · <a href="{{ mapa_url }}" rel="noopener noreferrer" target="_blank">{{ t('Ver en el mapa') }}</a></p></div>
+        </li>
+      {% endfor %}
+      {% if horario %}
+        <li class="contacto__item">
+          <svg class="servicio__icono" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+          <div><h3>{{ t('Horario de atención') }}</h3><p>{{ horario }}</p></div>
+        </li>
+      {% endif %}
+      <li class="contacto__item">
+        <svg class="servicio__icono" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 4h6v6H4zM14 4h6v6h-6zM4 14h6v6H4zM14 14h2v2h-2zM18 18h2v2h-2z"/></svg>
+        <div><h3>{{ t('¿Ya reservaste?') }}</h3>
+          <p><a href="{{ url_for('reservas.mi_reserva') }}">{{ t('Mira tu reserva con tu código') }}</a></p></div>
+      </li>
+    </ul>
+  </section>
+
+  <section class="tarjeta contacto__formulario" aria-labelledby="titulo-escribenos">
+    <h2 id="titulo-escribenos">{{ t('Escríbenos') }}</h2>
+    {{ resumen_errores(f, error_general) }}
+    <form method="post" novalidate>
+      {{ f.csrf_token }}
+      <div class="fila-2">{{ campo(f.nombre) }}{{ campo(f.asunto) }}</div>
+      <div class="fila-2">{{ campo(f.correo) }}{{ campo(f.telefono) }}</div>
+      <p class="campo__ayuda">{{ t('Deja al menos un correo o un celular para responderte.') }}</p>
+      {{ campo(f.mensaje) }}
+      {# Trampa para robots: fuera de la vista y del teclado; una persona no la ve #}
+      <div class="trampa" aria-hidden="true">{{ f.sitio_web.label() }}{{ f.sitio_web() }}</div>
+      {{ f.enviar(class_='boton') }}
+    </form>
+    <p class="texto-suave contacto__nota">{{ t('Usamos tus datos solo para responderte.') }}</p>
+  </section>
+</div>
+{% endblock %}
