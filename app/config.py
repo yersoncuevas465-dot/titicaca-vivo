@@ -18,7 +18,7 @@ ENTORNO = os.getenv("ENTORNO", "desarrollo")
 
 
 class Config:
-    VERSION = "2.9.0"             # también sirve para que el navegador renueve CSS e imágenes
+    VERSION = "2.9.1"             # también sirve para que el navegador renueve CSS e imágenes
     ENTORNO = ENTORNO
     SECRET_KEY = os.getenv("SECRET_KEY")
 
@@ -78,6 +78,8 @@ class Config:
     RESPALDOS_CARPETA = Path(os.getenv("RESPALDOS_CARPETA") or RAIZ_PROYECTO / "respaldos")
     RESPALDO_AUTOMATICO = os.getenv("RESPALDO_AUTOMATICO", "1") != "0"
     RESPALDO_CADA_HORAS = int(os.getenv("RESPALDO_CADA_HORAS", "24"))
+    # D-121: las fotos que suben los residentes y el operador (fuera del ZIP y de git, igual).
+    SUBIDAS_CARPETA = Path(os.getenv("SUBIDAS_CARPETA") or RAIZ_PROYECTO / "subidas")
     RESPALDOS_CONSERVAR = int(os.getenv("RESPALDOS_CONSERVAR", "15"))
 
     # v2.2: APIs externas públicas y sin clave (servicios/externas.py). Solo las llama el
@@ -107,7 +109,9 @@ class Config:
     LIMITE_COTIZACIONES_GRUPO = "5 per hour"                   # por IP
 
     WTF_CSRF_TIME_LIMIT = 4 * 3600           # el formulario vale 4 horas (señal lenta)
-    MAX_CONTENT_LENGTH = 1 * 1024 * 1024     # los formularios no suben archivos grandes
+    # Hasta 8 MB: la foto de un producto, tal como sale del celular (D-121). Los demás campos
+    # siguen con el tope de Werkzeug de 500 KB en memoria (max_form_memory_size).
+    MAX_CONTENT_LENGTH = 8 * 1024 * 1024
     # CSS e imágenes: en producción, 1 día en la caché del navegador (se renuevan al cambiar
     # VERSION); en desarrollo, sin caché para ver cada cambio al instante.
     SEND_FILE_MAX_AGE_DEFAULT = 86400 if ENTORNO == "produccion" else 0
@@ -130,4 +134,5 @@ class ConfigPruebas(Config):
     SESION_INACTIVA_MIN = 30
     # Los respaldos de las pruebas van a la carpeta temporal del sistema, no a respaldos/
     RESPALDOS_CARPETA = Path(tempfile.gettempdir()) / "titicaca_vivo_respaldos_pruebas"
+    SUBIDAS_CARPETA = Path(tempfile.gettempdir()) / "titicaca_vivo_subidas_pruebas"
     RESPALDO_AUTOMATICO = False

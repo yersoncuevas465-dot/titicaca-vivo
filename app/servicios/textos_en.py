@@ -724,6 +724,9 @@ EN = {
     "Los publican las familias de cada comunidad y la agencia: con su precio y dónde encontrarlos.":
         "Posted by the families of each community and by the agency, with their price and where to find them.",
     "Ver todos los productos →": "See all products →",
+    "La foto pesa demasiado": "The photo is too large",
+    "La foto puede pesar hasta 8 MB. Elige otra o tómala con menos resolución.":
+        "The photo can be up to 8 MB. Choose another one or take it at a lower resolution.",
 }
 
 # Mensajes con partes variables (números, códigos): se reconocen con un patrón.

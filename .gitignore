@@ -9,6 +9,8 @@ __pycache__/
 htmlcov/
 logs/*.log
 respaldos/
+# Fotos que suben los residentes y el operador (D-121): son datos, no código
+subidas/
 logs/
 # Configuración local del asistente (rutas de esta PC)
 .claude/

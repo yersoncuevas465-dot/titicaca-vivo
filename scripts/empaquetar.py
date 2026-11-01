@@ -21,7 +21,7 @@ from app.config import Config  # noqa: E402
 # Carpetas que no van, estén donde estén (entornos virtuales, cachés, control de versiones, los
 # respaldos de la base, que llevan datos personales, y la configuración local del asistente).
 CARPETAS_FUERA = {".venv", "venv", "env", "__pycache__", ".pytest_cache", ".ruff_cache",
-                  "htmlcov", ".git", "logs", "entrega", ".claude", "respaldos"}
+                  "htmlcov", ".git", "logs", "entrega", ".claude", "respaldos", "subidas"}
 # Archivos que no van: el .env (secretos), la cobertura y los guiones del video del equipo (son
 # para grabar la exposición, no parte del programa).
 ARCHIVOS_FUERA = {".env", ".coverage", "DIALOGO_VIDEO.txt", "GUION_VIDEO.md",

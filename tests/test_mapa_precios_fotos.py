@@ -96,12 +96,15 @@ def test_tarifa_vigente_es_la_mas_reciente(app):
 def test_preparar_foto_deja_webp_de_40_kb_o_menos(tmp_path, monkeypatch):
     from scripts import preparar_foto
 
-    monkeypatch.setattr(preparar_foto, "CARPETA", tmp_path)
+    monkeypatch.setattr(preparar_foto, "IMAGENES", tmp_path)
     origen = tmp_path / "grande.png"
     Image.effect_mandelbrot((2000, 1500), (-2, -1.5, 1, 1.5), 60).convert("RGB").save(origen)
     destino, peso, _ = preparar_foto.preparar(origen, "prueba")
-    assert peso <= 40 * 1024
+    assert peso <= 40 * 1024 and destino == tmp_path / "comunidades" / "prueba.webp"
     with Image.open(destino) as resultado:
         assert resultado.size == (640, 400) and resultado.format == "WEBP"
+    # v2.9: también la de un producto, con el recorte más abajo (para dejar fuera una cara)
+    destino, _, _ = preparar_foto.preparar(origen, "chullo", "productos", centro_y=0.8)
+    assert destino == tmp_path / "productos" / "chullo.webp" and destino.exists()
     with pytest.raises(ValueError):
         preparar_foto.preparar(origen, "../fuera")

@@ -555,3 +555,26 @@ INSERT INTO producto (residente_id, comunidad_id, nombre, categoria, descripcion
 (9, 1, 'Balsa de totora en miniatura', 'artesania',
  'Balsa de 30 cm hecha con totora seca del lago, con proa de puma. Liviana y fácil de llevar.',
  25.00, 'Puesto de artesanías de la isla donde atraca la lancha', 'publicado', @hoy - INTERVAL 3 DAY);
+
+-- Fotos de referencia de Wikimedia Commons (licencias libres; ver docs/creditos-imagenes.md).
+-- Cada residente la cambia por la foto de su producto desde «Editar».
+UPDATE producto SET foto = 'img/productos/chalina-alpaca.webp',
+       foto_credito = 'Foto: Deryck Chan · CC BY-SA 3.0 · Wikimedia Commons' WHERE nombre = 'Chalina de baby alpaca';
+UPDATE producto SET foto = 'img/productos/mate-muna.webp',
+       foto_credito = 'Foto: Evavequ · CC BY-SA 4.0 · Wikimedia Commons' WHERE nombre = 'Mate de muña de las islas';
+UPDATE producto SET foto = 'img/productos/postales-titicaca.webp',
+       foto_credito = 'Foto: Leonora Enking · CC BY-SA 2.0 · Wikimedia Commons' WHERE nombre = 'Postales del lago Titicaca';
+UPDATE producto SET foto = 'img/productos/chullo-taquile.webp',
+       foto_credito = 'Foto: Thomas Quine · CC BY 2.0 · Wikimedia Commons' WHERE nombre = 'Chullo tejido a mano';
+UPDATE producto SET foto = 'img/productos/chumpi-taquile.webp',
+       foto_credito = 'Foto: Draceane · CC BY-SA 4.0 · Wikimedia Commons' WHERE nombre = 'Chumpi: faja calendario';
+UPDATE producto SET foto = 'img/productos/tapiz-amantani.webp',
+       foto_credito = 'Foto: Adam Jones · CC BY-SA 2.0 · Wikimedia Commons' WHERE nombre = 'Tapiz de lana de oveja';
+UPDATE producto SET foto = 'img/productos/pachatata-piedra.webp',
+       foto_credito = 'Foto: Abelchristian111 · CC BY-SA 4.0 · Wikimedia Commons' WHERE nombre = 'Pachatata tallado en piedra';
+UPDATE producto SET foto = 'img/productos/quinua-amantani.webp',
+       foto_credito = 'Foto: Pom² · CC BY-SA 3.0 · Wikimedia Commons' WHERE nombre = 'Quinua de Amantaní';
+UPDATE producto SET foto = 'img/productos/bordado-uros.webp',
+       foto_credito = 'Foto: Yoli Marcela Hernandez · CC BY 4.0 · Wikimedia Commons' WHERE nombre = 'Bordado de los Uros';
+UPDATE producto SET foto = 'img/productos/balsa-totora.webp',
+       foto_credito = 'Foto: 5snake5 · CC0 · Wikimedia Commons' WHERE nombre = 'Balsa de totora en miniatura';

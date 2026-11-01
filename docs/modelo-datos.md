@@ -279,6 +279,7 @@ erDiagram
         VARCHAR descripcion
         DECIMAL precio "CHECK 0 a 10000"
         VARCHAR lugar
+        VARCHAR foto "NULL si no tiene"
         ENUM estado
         DATETIME creado_en
     }
@@ -585,6 +586,8 @@ No está en el enunciado: es el módulo de productos que pidió el equipo. Lo pu
 | descripcion | VARCHAR(600) | no | | Sus características: material, medidas, colores. |
 | precio | DECIMAL(8,2) | no | | CHECK `precio > 0 AND precio <= 10000` (soles) |
 | lugar | VARCHAR(160) | no | | Dónde lo encuentran: la tienda, la casa, la feria… |
+| foto | VARCHAR(120) | sí | | `img/productos/…` (las de la semilla) o `subidas/productos/…` (la que subió quien lo publicó, D-121). |
+| foto_credito | VARCHAR(160) | sí | | Autor y licencia, si la foto no es de quien lo vende. |
 | estado | ENUM | no | IX(estado, creado_en) | `publicado`, `retirado` (por quien lo publicó) u `oculto` (por la agencia). Nada se borra. |
 | creado_en, actualizado_en | DATETIME | no | | DEFAULT CURRENT_TIMESTAMP (y ON UPDATE) |
 

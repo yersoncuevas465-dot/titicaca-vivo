@@ -47,8 +47,8 @@
 {% endmacro %}
 
 
-{# v2.9: un producto o artesanía con su ícono, precio, dónde está y quién lo ofrece. En la
-   portada va «breve» (sin las características) y con <h3>. #}
+{# v2.9: un producto o artesanía con su foto (D-121), ícono, precio, dónde está y quién lo
+   ofrece. En la portada va «breve» (sin las características) y con <h3>. #}
 {% set ICONOS_PRODUCTO = {
   'textil': '<circle cx="12" cy="12" r="8"/><path d="M5 9c5 0 9 3 11 10M4.5 14c4-1 8 1 9.5 5.5M9 4.5c3 2 5.5 6 5.5 11"/>',
   'artesania': '<path d="M9 3h6M10 3v3.5C7 8 5.5 10.5 5.5 13.5 5.5 18 8.5 21 12 21s6.5-3 6.5-7.5c0-3-1.5-5.5-4.5-7V3"/>',
@@ -57,6 +57,15 @@
 } %}
 {% macro tarjeta_producto(p, breve=false, nivel=2) %}
   <li class="producto">
+    {% if p.foto %}
+      <figure class="foto">
+        <img src="{{ foto_producto(p.foto) }}" alt="{{ p.nombre }}" width="640" height="400" loading="lazy" decoding="async">
+        {% if p.foto_credito %}<figcaption class="foto__credito">{{ p.foto_credito }}</figcaption>{% endif %}
+      </figure>
+    {% else %}
+      <div class="producto__sin-foto"><svg class="producto__icono" viewBox="0 0 24 24" aria-hidden="true" focusable="false">{{ ICONOS_PRODUCTO[p.categoria] | safe }}</svg></div>
+    {% endif %}
+    <div class="producto__cuerpo">
     <p class="producto__categoria"><svg class="producto__icono" viewBox="0 0 24 24" aria-hidden="true" focusable="false">{{ ICONOS_PRODUCTO[p.categoria] | safe }}</svg>
       {{ p.categoria | categoria_producto }}</p>
     <h{{ nivel }} class="producto__nombre">{{ p.nombre }}</h{{ nivel }}>
@@ -66,5 +75,6 @@
       <div><dt>{{ t('Dónde está') }}</dt><dd>{{ p.comunidad or 'Puno' }} · {{ p.lugar }}</dd></div>
       <div><dt>{{ t('Lo ofrece') }}</dt><dd>{% if p.residente %}{{ p.residente }}, {{ t('residente de {comunidad}', comunidad=p.comunidad) }}{% else %}{{ t('La agencia Titicaca Vivo') }}{% endif %}</dd></div>
     </dl>
+    </div>
   </li>
 {% endmacro %}

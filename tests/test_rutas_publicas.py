@@ -126,8 +126,9 @@ URLS_PUBLICAS = ["/", "/salidas", "/salidas/10", "/comunidades", "/comunidades/a
 def test_paginas_publicas_pesan_menos_de_100_kb(cliente, url):
     html = cliente.get(url).get_data()
     recursos = set(re.findall(rb'(?:href|src|srcset)="(/estaticos/[^"?]+)', html))
-    # Sección 11: cada página pesa 100 KB o menos SIN contar las fotos (que además cargan diferidas)
-    recursos = {r for r in recursos if b"/img/comunidades/" not in r}
+    # Sección 11: cada página pesa 100 KB o menos SIN contar las fotos (que además cargan diferidas):
+    # las de las comunidades y, desde la v2.9, las de los productos
+    recursos = {r for r in recursos if b"/img/comunidades/" not in r and b"/img/productos/" not in r}
     peso = len(html) + sum(len(cliente.get(r.decode()).get_data()) for r in recursos)
     assert peso < 100 * 1024, (url, peso)
 

@@ -456,6 +456,8 @@ CREATE TABLE producto (
   descripcion    VARCHAR(600) NOT NULL,           -- características: material, medidas, colores
   precio         DECIMAL(8,2) NOT NULL,
   lugar          VARCHAR(160) NOT NULL,           -- dónde encontrarlo: tienda, casa, feria...
+  foto           VARCHAR(120) NULL,               -- img/productos/... (semilla) o subidas/productos/...
+  foto_credito   VARCHAR(160) NULL,               -- autor y licencia, si la foto no es de quien lo vende
   estado         ENUM('publicado','retirado','oculto') NOT NULL DEFAULT 'publicado',
   creado_en      DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,
   actualizado_en DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,

@@ -31,14 +31,15 @@ PANEL = {
 
 
 def peso_de(cliente, url):
-    """HTML + CSS + JS + SVG/PNG propios que la página pide, SIN las fotos de las comunidades.
+    """HTML + CSS + JS + SVG/PNG propios que la página pide, SIN las fotos de las comunidades
+    ni las de los productos (v2.9): son fotos con loading="lazy", se bajan al llegar a ellas.
 
     También cuenta las imágenes de fondo que pide el CSS con url(...) (D-106)."""
     respuesta = cliente.get(url)
     assert respuesta.status_code == 200, url
     html = respuesta.get_data()
     recursos = {r.decode() for r in re.findall(rb'(?:src|href)="(/estaticos/[^"]+)"', html)
-                if b"/img/comunidades/" not in r}
+                if b"/img/comunidades/" not in r and b"/img/productos/" not in r}
     for css in [r for r in recursos if urlsplit(r).path.endswith(".css")]:
         carpeta = posixpath.dirname(urlsplit(css).path)
         for ruta in re.findall(rb'url\("?([^")]+)"?\)', cliente.get(css).get_data()):

@@ -6,13 +6,15 @@ Las rutas se registran en el blueprint `panel` (url /panel/productos). Ningún S
 
 from flask import abort, flash, redirect, render_template, request, url_for
 from flask_login import current_user
+from werkzeug.datastructures import FileStorage
 
 from app.formularios import datos_de
 from app.formularios.producto import FormularioProducto
-from app.modelos import ErrorNegocio, comunidad
+from app.modelos import ErrorNegocio, ErrorValidacion, comunidad
 from app.modelos import producto as modelo_producto
 from app.rutas.panel import bp, procesar
 from app.seguridad import ip_cliente, requiere_rol
+from app.servicios import fotos
 
 AVISOS = {"retirado": "Listo: «{nombre}» ya no se muestra en la página de productos.",
           "publicado": "Listo: «{nombre}» se muestra otra vez en la página de productos.",
@@ -24,6 +26,26 @@ def _pagina(sueltos=(), codigo=200):
                            productos=modelo_producto.listar_panel(current_user),
                            categorias=modelo_producto.CATEGORIAS, estados=modelo_producto.ESTADOS,
                            sueltos=sueltos), codigo
+
+
+def _guardar(producto_id, formulario, actual):
+    """Primero la foto nueva (si vino), después el producto. Si el producto no se guarda, la foto
+    nueva se borra; si se guarda, se borra la foto subida que tenía antes."""
+    archivo, nueva = formulario.foto.data, None
+    if isinstance(archivo, FileStorage) and archivo.filename:
+        try:
+            nueva = fotos.guardar(archivo)
+        except ValueError as error:
+            raise ErrorValidacion({"foto": str(error)}) from error
+    try:
+        guardado = modelo_producto.guardar(current_user, producto_id, datos_de(formulario),
+                                           ip_cliente(), foto=nueva)
+    except Exception:
+        fotos.borrar(nueva)
+        raise
+    if nueva and actual:
+        fotos.borrar(actual["foto"])
+    return guardado
 
 
 @bp.route("/productos")
@@ -41,8 +63,9 @@ def producto_formulario(producto_id=None):
         actual = modelo_producto.buscar_para_editar(current_user, producto_id)
         if actual is None:
             abort(404)                          # no existe o no es suyo: no se dice cuál
-    formulario = FormularioProducto(data={**actual, "comunidad_id": actual["comunidad_id"] or 0}
-                                    if actual else None)
+    # La foto actual no va al campo del archivo: ese campo solo trae una foto nueva
+    formulario = FormularioProducto(data={**actual, "comunidad_id": actual["comunidad_id"] or 0,
+                                          "foto": None} if actual else None)
     comunidades = comunidad.opciones()
     if current_user.rol == "residente":
         del formulario.comunidad_id             # publica en su comunidad, la de su cuenta
@@ -54,8 +77,7 @@ def producto_formulario(producto_id=None):
         donde = None
     respuesta, sueltos, codigo = procesar(
         formulario,
-        lambda: modelo_producto.guardar(current_user, producto_id, datos_de(formulario),
-                                        ip_cliente()),
+        lambda: _guardar(producto_id, formulario, actual),
         "Listo: los cambios quedaron guardados." if actual else
         "Listo: el producto quedó publicado y ya se ve en la página de productos.",
         url_for("panel.productos"))

@@ -2,9 +2,12 @@
 el residente publica solo en su comunidad y solo lo suyo, el operador publica los de la agencia
 y oculta lo que no corresponde, el admin solo mira, y nadie más ve nada del personal."""
 
+import io
 import re
+from pathlib import Path
 
 import pytest
+from PIL import Image
 
 from tests.conftest import consultar_valor, ejecutar_y_confirmar, iniciar_sesion, token_csrf
 from tests.test_accesibilidad import problemas
@@ -255,3 +258,91 @@ def test_un_residente_con_productos_no_cambia_de_rol_ni_de_comunidad(app):
     otro_rol = admin.post("/panel/usuarios/7", data={**datos, "rol_id": "3", "comunidad_id": "2"})
     assert otro_rol.status_code == 422 and "producto(s) publicados" in otro_rol.get_data(True)
     assert consultar_valor(app, "SELECT CONCAT(rol_id, '-', comunidad_id) AS f FROM usuario WHERE id = 7") == "5-2"
+
+
+# --- Fotos (D-121) -------------------------------------------------------------------------------
+
+def foto_de_celular(tamano=(1600, 1200)):
+    """Un JPG en memoria con metadatos, como el de un celular (la marca del teléfono)."""
+    memoria, exif = io.BytesIO(), Image.Exif()
+    exif[0x010F] = "Celular de prueba"
+    Image.new("RGB", tamano, (190, 40, 90)).save(memoria, "JPEG", exif=exif)
+    memoria.seek(0)
+    return memoria
+
+
+def subidas(app):
+    return set((Path(app.config["SUBIDAS_CARPETA"]) / "productos").glob("*.webp"))
+
+
+def test_las_fotos_de_la_semilla_se_ven_con_su_credito(cliente):
+    html = cliente.get("/productos").get_data(True)
+    assert 'src="/estaticos/img/productos/chullo-taquile.webp?v=' in html
+    assert 'alt="Chullo tejido a mano"' in html and "Foto: Thomas Quine · CC BY 2.0 · Wikimedia Commons" in html
+    assert cliente.get("/estaticos/img/productos/chullo-taquile.webp").status_code == 200
+    portada = cliente.get("/").get_data(True).split('id="titulo-productos"', 1)[1]
+    assert portada.count('src="/estaticos/img/productos/') == 3                # los 3 de la portada
+
+
+def test_el_residente_sube_la_foto_de_su_producto_sin_metadatos(app):
+    juana, antes = entrar(app, "residente.juana"), subidas(app)
+    try:
+        assert publicar(juana, foto=(foto_de_celular(), "mi-foto.jpg")).status_code == 303
+        foto = consultar_valor(app, "SELECT foto FROM producto WHERE nombre = 'Ojotas de prueba'")
+        assert foto.startswith("subidas/productos/") and consultar_valor(
+            app, "SELECT foto_credito FROM producto WHERE nombre = 'Ojotas de prueba'") is None
+        url = "/fotos/productos/" + foto.rsplit("/", 1)[1]
+        assert f'src="{url}"' in juana.get("/productos?lugar=taquile").get_data(True)
+        respuesta = juana.get(url)
+        datos = respuesta.get_data()
+        respuesta.close()                                     # suelta el archivo (Windows)
+        assert respuesta.status_code == 200 and respuesta.mimetype == "image/webp"
+        assert b"Celular de prueba" not in datos                                  # sin metadatos
+        with Image.open(io.BytesIO(datos)) as imagen:
+            assert imagen.size == (640, 400) and not imagen.getexif()
+        # Al cambiarla por otra, la anterior se borra
+        producto_id = consultar_valor(app, "SELECT id FROM producto WHERE nombre = 'Ojotas de prueba'")
+        csrf = token_csrf(juana.get(f"/panel/productos/{producto_id}/editar"))
+        otra = juana.post(f"/panel/productos/{producto_id}/editar",
+                          data={**PRODUCTO, "csrf_token": csrf, "foto": (foto_de_celular((900, 900)), "otra.png")})
+        assert otra.status_code == 303 and len(subidas(app) - antes) == 1
+        assert juana.get(url).status_code == 404
+    finally:
+        for archivo in subidas(app) - antes:
+            archivo.unlink(missing_ok=True)      # la carpeta es la temporal del sistema
+        borrar_los_de_prueba(app)
+
+
+def test_editar_sin_foto_nueva_deja_la_que_tenia(app):
+    juana = entrar(app, "residente.juana")
+    csrf = token_csrf(juana.get("/panel/productos/4/editar"))
+    datos = {**PRODUCTO, "nombre": "Chullo tejido a mano", "comunidad_id": "", "csrf_token": csrf}
+    try:
+        assert juana.post("/panel/productos/4/editar", data=datos).status_code == 303
+        assert consultar_valor(app, "SELECT foto FROM producto WHERE id = 4") == "img/productos/chullo-taquile.webp"
+    finally:
+        ejecutar_y_confirmar(app, "UPDATE producto SET categoria = 'textil', precio = 60.00, "
+                                  "descripcion = 'Gorro de lana de oveja teñida con plantas, tejido con agujas "
+                                  "finas por los varones de la isla. Sus colores dicen si quien lo usa es soltero "
+                                  "o casado.', lugar = 'Tienda comunal de la plaza principal (pregunta por Juana)' "
+                                  "WHERE id = 4")
+
+
+def test_lo_que_no_es_una_foto_da_422_y_no_deja_nada(app):
+    juana, antes = entrar(app, "residente.juana"), subidas(app)
+    cuantos = consultar_valor(app, "SELECT COUNT(*) AS n FROM producto")
+    respuesta = publicar(juana, foto=(io.BytesIO(b"<script>no soy una foto</script>"), "foto.jpg"))
+    assert respuesta.status_code == 422 and 'id="foto-error"' in respuesta.get_data(True)
+    assert consultar_valor(app, "SELECT COUNT(*) AS n FROM producto") == cuantos and subidas(app) == antes
+
+
+def test_una_foto_de_mas_de_8_mb_da_413_con_su_aviso(app):
+    juana = entrar(app, "residente.juana")
+    respuesta = publicar(juana, foto=(io.BytesIO(bytes(9 * 1024 * 1024)), "enorme.jpg"))
+    assert respuesta.status_code == 413 and "La foto pesa demasiado" in respuesta.get_data(True)
+
+
+@pytest.mark.parametrize("nombre", ["..%2F..%2F.env", "abc.webp", "0123456789abcdef0123.webp",
+                                    "0123456789abcdef0123.svg"])
+def test_la_ruta_de_fotos_solo_sirve_nombres_propios(cliente, nombre):
+    assert cliente.get(f"/fotos/productos/{nombre}").status_code == 404

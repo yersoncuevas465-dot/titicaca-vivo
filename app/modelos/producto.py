@@ -54,8 +54,9 @@ def publicados():
     # de un residente desactivado ni los de una comunidad desactivada.
     return bd.consultar(
         """
-        SELECT p.id, p.nombre, p.categoria, p.descripcion, p.precio, p.lugar,
-               c.nombre AS comunidad, c.slug AS comunidad_slug, u.nombre_completo AS residente
+        SELECT p.id, p.nombre, p.categoria, p.descripcion, p.precio, p.lugar, p.foto,
+               p.foto_credito, c.nombre AS comunidad, c.slug AS comunidad_slug,
+               u.nombre_completo AS residente
         FROM producto p
         LEFT JOIN comunidad c ON c.id = p.comunidad_id
         LEFT JOIN usuario u ON u.id = p.residente_id
@@ -72,8 +73,9 @@ def destacados(cantidad=3):
     # Devuelve los N productos publicados más nuevos (las mismas reglas que publicados()).
     return bd.consultar(
         """
-        SELECT p.id, p.nombre, p.categoria, p.descripcion, p.precio, p.lugar,
-               c.nombre AS comunidad, c.slug AS comunidad_slug, u.nombre_completo AS residente
+        SELECT p.id, p.nombre, p.categoria, p.descripcion, p.precio, p.lugar, p.foto,
+               p.foto_credito, c.nombre AS comunidad, c.slug AS comunidad_slug,
+               u.nombre_completo AS residente
         FROM producto p
         LEFT JOIN comunidad c ON c.id = p.comunidad_id
         LEFT JOIN usuario u ON u.id = p.residente_id
@@ -98,7 +100,7 @@ def listar_panel(actor):
     filas = bd.consultar(
         """
         SELECT p.id, p.residente_id, p.comunidad_id, p.nombre, p.categoria, p.descripcion,
-               p.precio, p.lugar, p.estado, p.creado_en, p.actualizado_en,
+               p.precio, p.lugar, p.foto, p.estado, p.creado_en, p.actualizado_en,
                c.nombre AS comunidad, u.nombre_completo AS residente, u.activo AS residente_activo
         FROM producto p
         LEFT JOIN comunidad c ON c.id = p.comunidad_id
@@ -121,7 +123,7 @@ def buscar_para_editar(actor, producto_id):
     fila = bd.consultar_uno(
         """
         SELECT id, residente_id, comunidad_id, nombre, categoria, descripcion, precio, lugar,
-               estado
+               foto, estado
         FROM producto
         WHERE id = %s
         """,
@@ -150,11 +152,12 @@ def resumen_residente(actor):
     )
 
 
-def guardar(actor, producto_id, datos, ip=None):
+def guardar(actor, producto_id, datos, ip=None, foto=None):
     """Crea (producto_id None) o edita un producto. Devuelve su id.
 
     El residente publica en SU comunidad (la de su cuenta, no la del formulario). El operador
-    elige dónde está el de la agencia: en Puno (0) o en una comunidad activa.
+    elige dónde está el de la agencia: en Puno (0) o en una comunidad activa. `foto` es la ruta
+    de una foto nueva (servicios/fotos.py): reemplaza a la anterior y su crédito (es propia).
     """
     exigir_rol(actor, "operador", "residente")
     e = {}
@@ -194,22 +197,25 @@ def guardar(actor, producto_id, datos, ip=None):
             insertar=(
                 """
                 INSERT INTO producto (residente_id, comunidad_id, nombre, categoria, descripcion,
-                                      precio, lugar)
-                VALUES (%s, %s, %s, %s, %s, %s, %s)
+                                      precio, lugar, foto)
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
                 """,
-                (residente_id, comunidad_id, nombre, categoria, descripcion, precio, lugar),
+                (residente_id, comunidad_id, nombre, categoria, descripcion, precio, lugar, foto),
             ),
             actualizar=(
                 """
                 UPDATE producto
                 SET comunidad_id = %s, nombre = %s, categoria = %s, descripcion = %s,
-                    precio = %s, lugar = %s
+                    precio = %s, lugar = %s, foto = COALESCE(%s, foto),
+                    foto_credito = IF(%s IS NULL, foto_credito, NULL)
                 WHERE id = %s
                 """,
-                (comunidad_id, nombre, categoria, descripcion, precio, lugar, producto_id),
+                (comunidad_id, nombre, categoria, descripcion, precio, lugar, foto, foto,
+                 producto_id),
             ),
             duplicados={},
-            resumen={"nombre": nombre, "categoria": categoria, "precio": str(precio)},
+            resumen={"nombre": nombre, "categoria": categoria, "precio": str(precio),
+                     **({"foto": "nueva"} if foto else {})},
         )
 
 

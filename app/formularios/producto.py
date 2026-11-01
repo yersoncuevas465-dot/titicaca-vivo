@@ -1,6 +1,7 @@
 """Formulario de un producto (v2.9): lo llena el residente (los suyos) o el operador (los de la
 agencia). Aquí solo lo básico; el precio, la categoría y la comunidad los revisa el modelo."""
 
+from flask_wtf.file import FileField
 from wtforms import SelectField, StringField, SubmitField, TextAreaField
 from wtforms.validators import DataRequired, Length
 
@@ -32,4 +33,8 @@ class FormularioProducto(FormularioBase):
                         validators=[DataRequired("Escribe dónde lo encuentran."), Length(max=160)],
                         description="Por ejemplo: tienda comunal de la plaza, o mi casa junto al "
                                     "muelle.")
+    # D-121: la revisa servicios/fotos.py (que de verdad sea una imagen) y la deja en 640×400
+    foto = FileField("Foto del producto (opcional)",
+                     description="Una foto clara del producto: JPG, PNG o WebP de hasta 8 MB.",
+                     render_kw={"accept": "image/jpeg,image/png,image/webp"})
     enviar = SubmitField("Guardar producto")

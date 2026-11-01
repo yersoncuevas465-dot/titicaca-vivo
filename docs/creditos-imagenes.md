@@ -32,6 +32,27 @@ El crédito visible sale de la base (`comunidad.foto_credito`) y aparece debajo 
 - **CC BY-SA** ("compartir igual") también alcanza a nuestras versiones recortadas, que quedan bajo la misma licencia.
 - **Dominio público** y **CC0** no lo exigen, pero igual damos el crédito.
 
+## Fotos de los productos (Wikimedia Commons, D-121)
+
+Descargadas el 31/10/2026 a pedido del equipo: la miniatura de 1280 px de cada archivo. Se convirtieron con `scripts/preparar_foto.py --carpeta productos` (recorte 8:5, 640×400, WebP de 40 KB o menos) y quedaron en `app/estaticos/img/productos/`. El crédito visible sale de la base (`producto.foto_credito`) y aparece debajo de cada foto.
+
+Son **fotos de referencia**: cada residente las cambia por la foto de su producto desde «Editar». Las fotos que suben los residentes y el operador no van aquí: quedan en la carpeta `subidas/` (fuera de git y del ZIP) y no llevan crédito, porque son suyas.
+
+**Revisión de personas:** la del chullo muestra a un tejedor de Taquile; se recortó más abajo (`--centro-y 0.85`) para que se vean sus manos tejiendo y no su cara. Las demás son objetos, plantas o paisajes.
+
+| Producto | Archivo en Commons | Licencia | Autor | WebP |
+|---|---|---|---|---|
+| Chalina de baby alpaca | [Alpaca wool scarf.JPG](https://commons.wikimedia.org/wiki/File:Alpaca_wool_scarf.JPG) | [CC BY-SA 3.0](https://creativecommons.org/licenses/by-sa/3.0/) | Deryck Chan | 34.4 KB |
+| Mate de muña de las islas | [Muña en el Parque Lítico de Huaraz.jpg](https://commons.wikimedia.org/wiki/File:Mu%C3%B1a_en_el_Parque_L%C3%ADtico_de_Huaraz.jpg) | [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/) | Evavequ | 35.7 KB |
+| Postales del lago Titicaca | [Island of Taquile on Lake Titicaca (3400123338).jpg](https://commons.wikimedia.org/wiki/File:Island_of_Taquile_on_Lake_Titicaca_(3400123338).jpg) | [CC BY-SA 2.0](https://creativecommons.org/licenses/by-sa/2.0/) | Leonora (Ellie) Enking | 40.0 KB |
+| Chullo tejido a mano | [Knitter of Taquile.jpg](https://commons.wikimedia.org/wiki/File:Knitter_of_Taquile.jpg) | [CC BY 2.0](https://creativecommons.org/licenses/by/2.0/) | Thomas Quine | 39.7 KB |
+| Chumpi: faja calendario | [Isla Taquile, 2023 (062).jpg](https://commons.wikimedia.org/wiki/File:Isla_Taquile,_2023_(062).jpg) | [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/) | Draceane | 37.6 KB |
+| Tapiz de lana de oveja | [Andean Weaving Museum of Anthropology UBC Vancouver.jpg](https://commons.wikimedia.org/wiki/File:Andean_Weaving_Museum_of_Anthropology_UBC_Vancouver.jpg) | [CC BY-SA 2.0](https://creativecommons.org/licenses/by-sa/2.0/) | Adam Jones | 39.5 KB |
+| Pachatata tallado en piedra | [Santuario Pachatata, Isla Amantaní.jpg](https://commons.wikimedia.org/wiki/File:Santuario_Pachatata,_Isla_Amantan%C3%AD.jpg) | [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/) | Abelchristian111 | 37.9 KB |
+| Quinua de Amantaní | [Quinoa closeup.jpg](https://commons.wikimedia.org/wiki/File:Quinoa_closeup.jpg) | [CC BY-SA 3.0](https://creativecommons.org/licenses/by-sa/3.0/) | Pom² | 39.9 KB |
+| Bordado de los Uros | [Artesanías Islas Flotantes Uros.JPG](https://commons.wikimedia.org/wiki/File:Artesan%C3%ADas_Islas_Flotantes_Uros.JPG) | [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/) | Yoli Marcela Hernandez | 39.0 KB |
+| Balsa de totora en miniatura | [Uro reed boat.jpg](https://commons.wikimedia.org/wiki/File:Uro_reed_boat.jpg) | [CC0](https://creativecommons.org/publicdomain/zero/1.0/) | 5snake5 | 39.2 KB |
+
 ## Fotos de fondo (marca de agua, D-109)
 
 Son las **mismas 6 fotos** de arriba, agrandadas a 960×600 y suavizadas con `scripts/preparar_fondos.py`

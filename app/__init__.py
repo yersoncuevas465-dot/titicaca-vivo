@@ -33,7 +33,7 @@ def crear_app(config_clase=Config):
         publico_productos,  # noqa: F401 (registra sus rutas en publico)
         reservas,
     )
-    from app.servicios import formato, imagenes, textos, whatsapp
+    from app.servicios import formato, fotos, imagenes, textos, whatsapp
 
     registro.configurar(app)
     bd.init_app(app)
@@ -53,6 +53,12 @@ def crear_app(config_clase=Config):
         # ?v=versión: al publicar una versión nueva el navegador baja el archivo otra vez
         return url_for("static", filename=archivo, v=app.config["VERSION"])
 
+    def foto_producto(foto):
+        """v2.9 (D-121): la URL de la foto de un producto, de la semilla o subida."""
+        if foto.startswith(fotos.PREFIJO):
+            return url_for("publico.foto_subida", nombre=foto.removeprefix(fotos.PREFIJO))
+        return estatico(foto)
+
     def anio_actual():
         return datetime.now(ZoneInfo(app.config["ZONA_HORARIA"])).year
 
@@ -66,6 +72,7 @@ def crear_app(config_clase=Config):
 
     # Globales de Jinja (y no context_processor): así también las ven los macros importados.
     app.jinja_env.globals.update(estatico=estatico, foto_comunidad=imagenes.foto_comunidad,
+                                 foto_producto=foto_producto,
                                  fondo_de_pagina=imagenes.fondo_de_pagina,
                                  estado_visible=formato.estado_visible,
                                  t=textos.t, fuerte=textos.fuerte, idioma_actual=textos.idioma,

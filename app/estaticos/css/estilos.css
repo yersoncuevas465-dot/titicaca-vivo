@@ -1,10 +1,8 @@
-/* =====================================================================
-   Titicaca Vivo · estilos propios (sin frameworks ni CDN)
+/* Titicaca Vivo · estilos propios (sin frameworks ni CDN)
    Paleta "Esencia Andina". Mobile-first: lo básico es para el celular y
    las media queries agregan lo de pantallas anchas.
    Contraste (D-06): botones y enlaces en ciruela; terracota solo en
-   texto grande, bordes e íconos.
-   ===================================================================== */
+   texto grande, bordes e íconos. */
 
 :root {
   --ciruela: #572B44;
@@ -86,7 +84,7 @@ main:focus { outline: none; }
 .lista-limpia { list-style: none; margin: 0; padding: 0; }
 .bloque { margin-top: 1.75rem; }
 
-/* ---------- Cabecera ---------- */
+/* --- Cabecera --- */
 .cabecera { background: var(--crema); border-bottom: 3px solid var(--terracota); }
 .cabecera__fila {
   display: flex; align-items: center; justify-content: space-between;
@@ -105,7 +103,7 @@ main:focus { outline: none; }
 .sesion__panel { display: inline-flex; align-items: center; gap: 0.4rem; text-decoration: none; }
 .sesion__nombre { display: none; font-weight: 600; }
 
-/* ---------- Subnavegación del panel ---------- */
+/* --- Subnavegación del panel --- */
 .subnav { background: var(--ciruela); }
 /* En el celular el menú pasa a una segunda línea antes que esconder opciones */
 .subnav__fila { display: flex; flex-wrap: wrap; gap: 0 0.25rem; }
@@ -117,7 +115,7 @@ main:focus { outline: none; }
 .subnav a:hover { background: rgb(254 249 243 / 0.12); }
 .subnav a:focus-visible { outline-color: var(--crema); }
 
-/* ---------- Botones (mínimo 44 px de alto: dedos y guantes) ---------- */
+/* --- Botones (mínimo 44 px de alto: dedos y guantes) --- */
 .boton {
   display: inline-flex; align-items: center; justify-content: center;
   min-height: 2.75rem; padding: 0.6rem 1.2rem;
@@ -131,7 +129,7 @@ main:focus { outline: none; }
 .boton--chico { min-height: 2.75rem; padding: 0.35rem 0.85rem; font-size: 0.95rem; }
 .boton--ancho { width: 100%; margin-top: 0.5rem; }
 
-/* ---------- Tarjetas ---------- */
+/* --- Tarjetas --- */
 .tarjeta {
   background: #FFFDF9; border: 1px solid var(--arena); border-radius: calc(var(--radio) * 1.5);
   padding: 1.5rem 1.25rem; box-shadow: var(--sombra);
@@ -140,7 +138,7 @@ main:focus { outline: none; }
 .tarjeta__sello { display: block; margin: 0 auto 1rem; }
 .tarjeta--angosta h1 { text-align: center; }
 
-/* ---------- Insignias de estado ---------- */
+/* --- Insignias de estado --- */
 .insignia {
   display: inline-block; padding: 0.1rem 0.55rem; border-radius: 999px;
   font-size: 0.8rem; font-weight: 700; background: var(--arena); color: var(--ciruela);
@@ -155,7 +153,7 @@ main:focus { outline: none; }
 .insignia--naranja { color: #8F3F12; }
 .insignia--rojo { color: var(--error); }
 
-/* ---------- Avisos ---------- */
+/* --- Avisos --- */
 .mensajes { margin-bottom: 1rem; }
 .aviso {
   border-left: 5px solid var(--ciruela); background: var(--arena);
@@ -165,7 +163,7 @@ main:focus { outline: none; }
 .aviso--error { border-color: var(--error); }
 .aviso--info { border-color: var(--terracota); }
 
-/* ---------- Formularios ---------- */
+/* --- Formularios --- */
 .campo { margin-bottom: 1rem; display: flex; flex-direction: column; gap: 0.3rem; }
 .campo__etiqueta { font-weight: 700; }
 .campo__ayuda { margin: 0; font-size: 0.9rem; color: #5E4654; }
@@ -190,7 +188,7 @@ main:focus { outline: none; }
 .filtro { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 0.75rem; margin: 1rem 0; }
 .filtro .campo { margin: 0; min-width: 12rem; }
 
-/* ---------- Panel: contadores, alertas y salidas ---------- */
+/* --- Panel: contadores, alertas y salidas --- */
 .contadores {
   display: grid; grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr));
   gap: 0.75rem; margin: 0;
@@ -230,7 +228,7 @@ main:focus { outline: none; }
 .cupos meter:-moz-meter-sub-optimum::-moz-meter-bar { background: #D9A400; }
 .cupos meter:-moz-meter-sub-sub-optimum::-moz-meter-bar { background: var(--error); }
 
-/* ---------- Tablas ---------- */
+/* --- Tablas --- */
 .tabla-desplazable { overflow-x: auto; border: 1px solid var(--arena); border-radius: var(--radio); }
 .tabla { border-collapse: collapse; width: 100%; font-size: 0.92rem; background: #FFFDF9; }
 .tabla caption { text-align: left; padding: 0.6rem 0.75rem; font-weight: 700; color: var(--ciruela); }
@@ -240,7 +238,7 @@ main:focus { outline: none; }
 .bitacora-dato { display: inline-block; margin-right: 0.6rem; }
 .paginacion { display: flex; gap: 0.75rem; margin-top: 1rem; }
 
-/* ---------- Portada provisional y páginas de error ---------- */
+/* --- Portada provisional y páginas de error --- */
 /* Portada (D-106): amanecer sobre el lago, con 2 capas de olas que se mueven despacio. */
 .portada {
   position: relative; overflow: hidden; isolation: isolate;
@@ -257,16 +255,15 @@ main:focus { outline: none; }
 .portada::before { bottom: 0.6rem; height: 1.6rem; opacity: 0.10; animation: olas 22s linear infinite reverse; }
 .portada::after { bottom: 0; height: 1.4rem; opacity: 0.18; animation: olas 14s linear infinite; }
 @keyframes olas { to { background-position-x: 120px; } }
-.portada__logo { width: min(100%, 26rem); margin: 0 auto 1.5rem; display: block; }
 .portada__texto { font-size: 1.15rem; max-width: 32rem; margin: 0 auto 1rem; }
 .error-pagina { text-align: center; }
 .error-pagina__codigo { font-weight: 700; color: #5E4654; margin-bottom: 0.25rem; }
 
-/* ---------- Pie ---------- */
+/* --- Pie --- */
 .pie { background: var(--ciruela); color: var(--crema); padding: 1rem 0; font-size: 0.9rem; }
 .pie p { margin: 0; }
 
-/* ---------- Páginas públicas (F3) ---------- */
+/* --- Páginas públicas (F3) --- */
 .portada h1 { font-size: 1.9rem; }
 .miga { margin: 0 0 0.75rem; font-size: 0.95rem; }
 .dos-columnas { display: grid; gap: 1.25rem; align-items: start; }
@@ -298,7 +295,7 @@ main:focus { outline: none; }
 .dia__feriado { font-size: 0.75rem; font-weight: 700; color: #8F3F12; }
 .dia--actual .dia__feriado { color: var(--crema); }
 
-/* ---------- APIs (v2.2): clima del zarpe y DNI de RENIEC ---------- */
+/* --- APIs (v2.2): clima del zarpe y DNI de RENIEC --- */
 .clima { max-width: 40rem; }
 .clima h2 { font-size: 1.2rem; }
 .clima__resumen { display: flex; align-items: center; gap: 0.5rem; margin: 0.25rem 0 0.5rem; font-size: 1.05rem; }
@@ -312,7 +309,6 @@ main:focus { outline: none; }
 .ruta { background: #FFFDF9; border: 1px solid var(--arena); border-radius: var(--radio); padding: 0.8rem 1rem; }
 .ruta__nombre { font-size: 1.1rem; margin: 0; }
 .ruta p { margin: 0.15rem 0 0; }
-.ruta__precio strong { font-family: var(--serif); color: var(--ciruela); font-size: 1.15rem; }
 
 /* Mapa del lago */
 .mapa { margin: 0; }
@@ -376,7 +372,7 @@ main:focus { outline: none; }
 .alerta__titulo { margin: 0 0 0.25rem; }
 .alertas--pasadas .alerta { opacity: 0.85; }
 
-/* ---------- Reserva, pago y boleto (F4) ---------- */
+/* --- Reserva, pago y boleto (F4) --- */
 .resumen-salida { margin-bottom: 1.25rem; padding: 1rem 1.1rem; }
 .resumen-salida__ruta { margin: 0 0 0.3rem; }
 .grupo { border: 1px solid var(--arena); border-radius: var(--radio); padding: 0.75rem 1rem 0.5rem; margin: 0 0 1rem; background: #FFFDF9; }
@@ -418,7 +414,7 @@ main:focus { outline: none; }
 .boleto__pasajeros h2 { font-size: 1.05rem; }
 .boleto__pie { background: var(--arena); padding: 0.7rem 1rem; font-size: 0.9rem; }
 
-/* ---------- Panel operativo (F5) ---------- */
+/* --- Panel operativo (F5) --- */
 .cabeza-pagina { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 0.5rem 1rem; margin-bottom: 0.5rem; }
 .cabeza-pagina h1 { margin: 0; }
 .navegar-dias { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem; margin: 0.75rem 0 1rem; }
@@ -457,7 +453,7 @@ main:focus { outline: none; }
 .tabla--impresion { font-size: 0.95rem; }
 .tabla--impresion .casilla { font-size: 1.2rem; text-align: center; width: 3rem; }
 
-/* ---------- Seguimiento (F6): barras, estrellas, formularios en línea ---------- */
+/* --- Seguimiento (F6): barras, estrellas, formularios en línea --- */
 .barra { display: inline-block; width: 8rem; height: 0.7rem; vertical-align: middle; margin-right: 0.4rem; }
 .barra__fondo { fill: var(--arena); }
 .barra__valor { fill: var(--ciruela); }
@@ -470,7 +466,7 @@ main:focus { outline: none; }
 .idioma-cambio { color: var(--ciruela); font-weight: 700; text-decoration: none; min-height: 2.75rem;
   display: inline-flex; align-items: center; padding: 0 0.4rem; }
 
-/* ---------- Movimiento al pasar el mouse y pasos para reservar (D-106, D-107) ---------- */
+/* --- Movimiento al pasar el mouse y pasos para reservar (D-106, D-107) --- */
 .boton { transition: transform 0.15s ease, background-color 0.15s ease, border-color 0.15s ease; }
 .boton:hover { transform: translateY(-1px); }
 .boton:active { transform: translateY(0); }
@@ -501,7 +497,7 @@ main:focus { outline: none; }
 }
 .ayuda-codigo { margin: 1.25rem 0 0; font-size: 0.95rem; text-align: center; color: #5E4654; }
 
-/* ---------- Panel: «Tu trabajo de hoy» y guías «¿Cómo funciona?» ---------- */
+/* --- Panel: «Tu trabajo de hoy» y guías «¿Cómo funciona?» --- */
 .guia {
   background: #FFFDF9; border: 1px solid var(--arena); border-left: 4px solid var(--terracota);
   border-radius: 0.5rem; padding: 0 1rem; margin: 0.75rem 0 1rem;
@@ -534,14 +530,14 @@ main:focus { outline: none; }
   background: url("../img/olas.svg") repeat-x 0 100% / 80px 100%;
 }
 
-/* ---------- Foto de la sección como marca de agua (D-109) ----------
+/* --- Foto de la sección como marca de agua (D-109) ---
    Una foto del lago por sección, fija y muy tenue detrás de todo. Solo en pantallas anchas:
    en el celular el <img> está oculto y, como es loading="lazy", ni se descarga. El texto
    queda sobre crema casi pura (contraste de D-06) y las tarjetas tienen su propio fondo. */
 .fondo-foto { display: none; }
 .pie .pie__credito { display: none; font-size: 0.8rem; margin-top: 0.25rem; }
 
-/* ---------- Acceso del personal: entrar y recuperar la contraseña (D-111) ---------- */
+/* --- Acceso del personal: entrar y recuperar la contraseña (D-111) --- */
 .acceso { display: grid; gap: 1.25rem; max-width: 60rem; margin: 0.5rem auto 1rem; }
 .acceso__tarjeta { margin: 0; }
 .acceso__tarjeta h1 { text-align: center; }
@@ -563,7 +559,7 @@ main:focus { outline: none; }
 .acceso__titulo { color: var(--crema); font-size: 1.6rem; margin: 1.5rem 0 0.5rem; }
 .acceso__puntos { margin: 0; padding-left: 1.2rem; display: grid; gap: 0.45rem; }
 
-/* ---------- Mi cuenta y roles (D-113) ---------- */
+/* --- Mi cuenta y roles (D-113) --- */
 .cuenta { display: grid; gap: 1rem; margin-top: 1rem; }
 .cuenta__bloque { padding: 1.25rem; }
 .cuenta__bloque h2 { font-size: 1.2rem; }
@@ -577,7 +573,7 @@ main:focus { outline: none; }
 .rol__lista { margin: 0; padding-left: 1.2rem; }
 .rol__lista li { margin-bottom: 0.25rem; }
 
-/* ---------- Respaldos (D-116) ---------- */
+/* --- Respaldos (D-116) --- */
 .respaldo-avisos { display: grid; gap: 1rem; margin: 0.5rem 0 1rem; }
 .respaldo-aviso { padding: 1rem 1.1rem; }
 .respaldo-aviso h2 { font-size: 1.1rem; }
@@ -592,7 +588,7 @@ main:focus { outline: none; }
 }
 .aviso-sesion p { margin: 0; font-weight: 700; }
 
-/* ---------- Pantallas anchas ---------- */
+/* --- Pantallas anchas --- */
 @media (min-width: 48em) {
   /* La foto se nota más en los márgenes (24 %) y se aclara detrás de la columna del texto
      (24 % × 0.65 ≈ 16 %): ahí el texto suave sigue sobre 4.5 : 1 aun en lo más oscuro de la foto. */
@@ -666,7 +662,7 @@ main:focus { outline: none; }
   .portada::before, .portada::after, .pie::before { display: none; }
 }
 
-/* ---------- Portada con foto, buscador y servicios (v2.3) ----------
+/* --- Portada con foto, buscador y servicios (v2.3) ---
    Como la portada de un hotel: la foto al lado del título y, montado sobre el borde
    inferior, el buscador de salidas. La foto va a su tamaño (640 px), nítida. */
 .portada--foto { display: grid; gap: 1.25rem; text-align: left; padding: 1.5rem 1.25rem 4.25rem; }
@@ -704,7 +700,7 @@ main:focus { outline: none; }
   .buscador .boton { width: auto; }
 }
 
-/* ---------- Rutas como tarjetas (v2.4): foto, recorrido, duración y precio ---------- */
+/* --- Rutas como tarjetas (v2.4): foto, recorrido, duración y precio --- */
 .rutas-tarjetas {
   display: grid; gap: 1rem; margin-bottom: 1.5rem;
   grid-template-columns: repeat(auto-fill, minmax(16rem, 1fr));
@@ -737,7 +733,7 @@ main:focus { outline: none; }
   .ruta-tarjeta, .ruta-tarjeta:hover { transition: none; transform: none; }
 }
 
-/* ---------- Galería (v2.5): mosaico de fotos y visor en grande ----------
+/* --- Galería (v2.5): mosaico de fotos y visor en grande ---
    Celular: 2 columnas, la primera foto ocupa 2×2. Pantalla ancha: 4 columnas, la primera
    2×2 y de la cuarta en adelante 2 de ancho: 6 fotos llenan 3 filas sin huecos. */
 .filtro-galeria { display: flex; flex-wrap: wrap; gap: 0.5rem; margin: 1rem 0 1.25rem; }
@@ -786,7 +782,7 @@ main:focus { outline: none; }
   .galeria__enlace:hover img, .galeria__enlace:focus-visible img { transform: none; }
 }
 
-/* ---------- Contacto (v2.6): atención a la izquierda, formulario a la derecha ---------- */
+/* --- Contacto (v2.6): atención a la izquierda, formulario a la derecha --- */
 .contacto { display: grid; gap: 1.25rem; margin-top: 1rem; }
 .contacto__lista { display: grid; gap: 0.75rem; }
 .contacto__item {
@@ -804,7 +800,7 @@ main:focus { outline: none; }
   .contacto { grid-template-columns: 1fr 1.5fr; align-items: start; }
 }
 
-/* ---------- Pie de página completo y páginas legales (v2.7) ---------- */
+/* --- Pie de página completo y páginas legales (v2.7) --- */
 .pie a { color: var(--crema); }
 .pie__columnas {
   display: grid; gap: 1.25rem 2rem; padding: 0.75rem 0 1rem;
@@ -820,7 +816,7 @@ main:focus { outline: none; }
 .legal h2 { font-size: 1.25rem; margin: 1.5rem 0 0.5rem; }
 .legal li { margin: 0.4rem 0; }
 
-/* ---------- Libro de reclamaciones, experiencias y grupos (v2.8) ---------- */
+/* --- Libro de reclamaciones, experiencias y grupos (v2.8) --- */
 .libro__cabeza { display: flex; gap: 0.85rem; align-items: center; }
 .libro__cabeza h1 { margin: 0; }
 .libro__cabeza p { margin: 0.1rem 0 0; }
@@ -848,8 +844,13 @@ main:focus { outline: none; }
 .servicio__titulo { font-size: 1.05rem; margin: 0.5rem 0 0.25rem; }
 .pie__libro svg { width: 1.15rem; height: 1.15rem; margin-right: 0.35rem; fill: none; stroke: currentColor; stroke-width: 1.8; }
 
-/* ---------- Productos y artesanías (v2.9) ---------- */
-.producto { padding: 0.8rem 1rem 1rem; }
+/* --- Productos y artesanías (v2.9) --- */
+.producto__cuerpo { padding: 0.75rem 1rem 1rem; }
+.producto__sin-foto { aspect-ratio: 8 / 5; display: grid; place-items: center; background: var(--arena); }
+.producto__sin-foto svg { width: 30%; height: auto; }
+.producto__fila { display: flex; gap: 0.6rem; align-items: center; }
+.producto__miniatura { width: 4rem; height: 2.5rem; object-fit: cover; border-radius: 0.35rem; flex: none; }
+.producto__foto-actual { max-width: 20rem; margin-bottom: 1rem; }
 .producto__categoria { display: flex; gap: 0.5rem; align-items: center; margin: 0; color: #5E4654; font-size: 0.92rem; }
 .producto__icono { width: 2.3rem; height: 2.3rem; padding: 0.4rem; flex: none; }
 .producto__nombre { font-size: 1.15rem; margin: 0.5rem 0 0; }

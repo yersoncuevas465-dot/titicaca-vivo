@@ -13,6 +13,8 @@ PAGINAS = {
                                "habla con el administrador."),
     404: ("No encontramos la página", "La dirección no existe o ya no está disponible."),
     405: ("Acción no permitida", "Esta dirección no acepta esa acción."),
+    413: ("La foto pesa demasiado", "La foto puede pesar hasta 8 MB. Elige otra o tómala con "
+                                    "menos resolución."),
     429: ("Demasiados intentos", "Hiciste demasiados intentos seguidos. Espera unos minutos "
                                  "y vuelve a intentarlo."),
     500: ("Algo salió mal", "Tuvimos un problema al atender tu pedido. Ya quedó registrado; "
@@ -42,7 +44,7 @@ def _sin_base():
 
 
 def registrar(app):
-    for codigo in (400, 403, 404, 405, 429):
+    for codigo in (400, 403, 404, 405, 413, 429):
         app.register_error_handler(codigo, lambda _error, c=codigo: _pagina(c))
 
     @app.errorhandler(CSRFError)

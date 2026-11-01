@@ -5,10 +5,11 @@ Se filtra por lugar y por categoría (listas blancas). Las rutas se registran en
 `publico` (url /productos). Ningún SQL aquí.
 """
 
-from flask import render_template, request
+from flask import abort, render_template, request, send_from_directory
 
 from app.modelos import producto as modelo_producto
 from app.rutas.publico import bp
+from app.servicios import fotos
 
 EN_PUNO = "puno"         # el filtro de los productos que tiene la agencia en Puno
 
@@ -38,3 +39,13 @@ def productos():
         por_categoria={c: sum(p["categoria"] == c for p in del_lugar)
                        for c in modelo_producto.CATEGORIAS},
         productos=[p for p in del_lugar if categoria is None or p["categoria"] == categoria])
+
+
+@bp.route("/fotos/productos/<nombre>")
+def foto_subida(nombre):
+    """La foto que subió un residente o el operador (D-121): no está en los estáticos ni en git.
+
+    Solo nombres que da servicios/fotos.py (20 letras al azar y .webp): nada de rutas ajenas."""
+    if not fotos.es_nombre_valido(nombre):
+        abort(404)
+    return send_from_directory(fotos.carpeta(), nombre, mimetype="image/webp", max_age=86400)

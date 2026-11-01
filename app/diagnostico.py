@@ -65,8 +65,9 @@ def revisar(config):
     try:
         with conexion.cursor() as cur:
             # Devuelve la versión del servidor; cuántas tablas, vistas, triggers y procedimientos
-            # tiene la base de la app (lo que crean 01_esquema.sql y 02_vistas_triggers.sql), y
-            # cuándo se creó la tabla salida: la semilla pone sus fechas a partir de ESE día.
+            # tiene la base de la app (lo que crean 01_esquema.sql y 02_vistas_triggers.sql),
+            # cuándo se creó la tabla salida (la semilla pone sus fechas a partir de ESE día) y
+            # si producto ya tiene las columnas de la foto (v2.9.1).
             cur.execute(
                 """
                 SELECT VERSION() AS version,
@@ -79,7 +80,10 @@ def revisar(config):
                   (SELECT COUNT(*) FROM information_schema.ROUTINES
                    WHERE ROUTINE_SCHEMA = DATABASE()) AS procedimientos,
                   (SELECT CREATE_TIME FROM information_schema.TABLES
-                   WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'salida') AS cargada_en
+                   WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'salida') AS cargada_en,
+                  (SELECT COUNT(*) FROM information_schema.COLUMNS
+                   WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'producto'
+                     AND COLUMN_NAME = 'foto_credito') AS fotos_de_productos
                 """
             )
             estado = cur.fetchone()
@@ -89,6 +93,10 @@ def revisar(config):
                     f"{estado['tablas']} de {len(bd.TABLAS)} tablas, {estado['vistas']} de "
                     f"{VISTAS} vistas y {estado['triggers']} de {TRIGGERS} triggers.\n{RECARGAR}"
                     ), estado
+        if not estado["fotos_de_productos"]:     # v2.9.1: una base cargada antes de las fotos
+            return (f"La base '{config['BD_NOMBRE']}' es de una versión anterior: a la tabla "
+                    f"producto le faltan las fotos (v2.9.1).
+{RECARGAR}"), estado
         filas = dict(bd.contar_filas(conexion))
         with conexion.cursor() as cur:
             # Devuelve cuántas salidas no canceladas hay hoy y de hoy en adelante

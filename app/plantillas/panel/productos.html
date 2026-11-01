@@ -44,7 +44,8 @@
     <tbody>
       {% for p in productos %}
         <tr>
-          <td><strong>{{ p.nombre }}</strong><br><span class="texto-suave">{{ p.categoria | categoria_producto }}</span></td>
+          <td class="producto__fila">{% if p.foto %}<img class="producto__miniatura" src="{{ foto_producto(p.foto) }}" alt="" width="64" height="40" loading="lazy">{% endif %}
+            <span><strong>{{ p.nombre }}</strong><br><span class="texto-suave">{{ p.categoria | categoria_producto }}</span></span></td>
           <td class="sin-cortar">{{ p.precio | soles }}</td>
           <td>{{ p.comunidad or 'Puno' }} · {{ p.lugar }}</td>
           {% if current_user.rol != 'residente' %}

@@ -13,7 +13,13 @@
 <section class="tarjeta tarjeta--formulario bloque" aria-labelledby="titulo-form-producto">
   <h2 id="titulo-form-producto">Datos del producto</h2>
   {{ resumen(f, sueltos, "Revisa el producto") }}
-  <form method="post" action="{{ url_for('panel.producto_formulario', producto_id=p.id if p else None) }}" novalidate>
+  {% if p and p.foto %}
+    <figure class="foto foto--miniatura producto__foto-actual">
+      <img src="{{ foto_producto(p.foto) }}" alt="Foto actual de {{ p.nombre }}" width="640" height="400">
+      <figcaption class="foto__credito">Foto actual. Para cambiarla, elige otra abajo.</figcaption>
+    </figure>
+  {% endif %}
+  <form method="post" action="{{ url_for('panel.producto_formulario', producto_id=p.id if p else None) }}" enctype="multipart/form-data" novalidate>
     {{ f.csrf_token }}
     {% for c in f %}{{ campo_panel(c) }}{% endfor %}
     {{ f.enviar(class_='boton') }}
