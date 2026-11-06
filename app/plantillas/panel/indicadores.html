@@ -33,14 +33,15 @@
         {% for r in ocupacion %}
           <tr><td>{{ r.puesto }}</td><th scope="row">{{ r.ruta_nombre }}</th><td>{{ r.salidas }}</td>
               <td>{{ r.ocupados }} / {{ r.cupo }}</td>
-              <td>{{ barra(r.ocupacion, 100) }} {{ r.ocupacion }} %</td></tr>
+              <td>{{ barra(r.ocupacion, 100) }} ({{ r.ocupacion | porcentaje }})</td></tr>
         {% else %}<tr><td colspan="5">Sin salidas en el periodo.</td></tr>{% endfor %}
       </tbody>
     </table>
   </div>
   {% if poca %}
-    <p class="aviso aviso--info">Rutas con menos de {{ umbral }} % de ocupación:
-      {% for r in poca %}<strong>{{ r.ruta_nombre }}</strong> ({{ r.ocupacion }} %){% if not loop.last %}, {% endif %}{% endfor %}.</p>
+  <p class="aviso aviso--info">Rutas con menos de {{ umbral }} % de ocupación:
+    {% for r in poca %}<strong>{{ r.ruta_nombre }}</strong> ({{ r.ocupacion | porcentaje }}){% if not loop.last %}, {% endif %}
+  </p>
   {% endif %}
 </section>
 
