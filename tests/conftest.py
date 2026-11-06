@@ -4,6 +4,8 @@
   los scripts 01, 02 y 03 al empezar la sesión de pruebas.
 - Cada prueba trabaja dentro de una transacción que se deshace (ROLLBACK)
   al final: así una prueba nunca ensucia a la siguiente.
+- Las de tests/unitarias no usan la base y corren primero: sin MariaDB igual
+  pasan, y después sale el aviso de la base (observación de la Práctica 9).
 """
 
 import itertools
@@ -67,13 +69,20 @@ def cur(con):
         yield cursor
 
 
-@pytest.fixture(autouse=True)
-def limite_de_intentos_limpio(app):
-    """El límite de /entrar vive en memoria: se vacía antes de cada prueba.
+def pytest_collection_modifyitems(items):
+    """Primero las pruebas unitarias (no usan la base); las demás, en su mismo orden."""
+    items.sort(key=lambda item: "/unitarias/" not in item.nodeid.replace("\\", "/"))
 
-    Pide `app` porque el limitador recién tiene memoria cuando la app existe (sin esto, un
-    archivo de pruebas que no usa la app falla si se corre solo)."""
-    limitador.reset()
+
+@pytest.fixture(autouse=True)
+def limite_de_intentos_limpio(request):
+    """El límite de /entrar vive en memoria: se vacía antes de cada prueba que usa la app.
+
+    Solo cuando la prueba pide la app (directo o por `cliente`): el limitador recién tiene
+    memoria cuando la app existe. Las pruebas unitarias (tests/unitarias) no la piden, así
+    no preparan la base y corren sin MariaDB (observación de la Práctica 9)."""
+    if "app" in request.fixturenames:
+        limitador.reset()
     yield
 
 

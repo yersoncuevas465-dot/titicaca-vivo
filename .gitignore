@@ -18,3 +18,7 @@ logs/
 DIALOGO_VIDEO.txt
 GUION_VIDEO.md
 DEMO_BASE_DE_DATOS.txt
+# Reparto de tareas del equipo (es para nosotros, no parte del programa)
+TAREAS_*.txt
+# Configuración del editor de cada PC
+.vscode/

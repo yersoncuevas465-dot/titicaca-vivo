@@ -25,7 +25,8 @@ CARPETAS_FUERA = {".venv", "venv", "env", "__pycache__", ".pytest_cache", ".ruff
 # Archivos que no van: el .env (secretos), la cobertura y los guiones del video del equipo (son
 # para grabar la exposición, no parte del programa).
 ARCHIVOS_FUERA = {".env", ".coverage", "DIALOGO_VIDEO.txt", "GUION_VIDEO.md",
-                  "DEMO_BASE_DE_DATOS.txt"}
+                  "DEMO_BASE_DE_DATOS.txt", "TAREAS_EQUIPO.txt", "TAREAS_ZULEMA.txt",
+                  "TAREAS_SHANELL.txt"}
 EXTENSIONES_FUERA = {".pyc", ".pyo", ".log", ".zip"}
 SECRETOS = ("SECRET_KEY", "BD_CONTRASENA")
 

@@ -132,7 +132,9 @@ flask bd restaurar respaldo_20261030_120000.sql     # BORRA la base y deja la de
 ## Pruebas y calidad
 
 ```powershell
-pytest            # 628 pruebas; usa SOLO la base titicaca_vivo_pruebas (la borra y la crea al empezar)
+pytest                    # 819 pruebas (06/11/2026): primero las 14 unitarias y después las que usan
+                          # SOLO la base titicaca_vivo_pruebas (la borra y la crea al empezar)
+pytest tests/unitarias    # solo las unitarias: no necesitan MariaDB, corren en cualquier PC
 ruff check .      # estilo y seguridad
 pytest -v -s tests/test_mutante.py              # prueba mutante: sin FOR UPDATE hay sobreventa
 python scripts/explicar_consultas.py             # EXPLAIN de las 3 consultas más importantes
