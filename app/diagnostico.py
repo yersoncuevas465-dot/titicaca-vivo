@@ -95,8 +95,7 @@ def revisar(config):
                     ), estado
         if not estado["fotos_de_productos"]:     # v2.9.1: una base cargada antes de las fotos
             return (f"La base '{config['BD_NOMBRE']}' es de una versión anterior: a la tabla "
-                    f"producto le faltan las fotos (v2.9.1).
-{RECARGAR}"), estado
+                    f"producto le faltan las fotos (v2.9.1).\n{RECARGAR}"), estado
         filas = dict(bd.contar_filas(conexion))
         with conexion.cursor() as cur:
             # Devuelve cuántas salidas no canceladas hay hoy y de hoy en adelante
