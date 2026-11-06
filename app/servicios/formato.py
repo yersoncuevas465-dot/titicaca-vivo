@@ -5,7 +5,6 @@ En las páginas del turista salen en español o en inglés (textos.idioma()); en
 
 from decimal import ROUND_HALF_UP, Decimal
 
-from app.modelos.producto import CATEGORIAS as CATEGORIAS_PRODUCTO
 from app.servicios import paises, privacidad, textos
 from app.servicios.textos import t
 
@@ -77,14 +76,7 @@ ACCIONES_BITACORA = {
     "reprogramacion": "Reprogramación",
     "devolucion_solicitada": "Devolución pedida",
     "devolucion_atendida": "Devolución atendida",
-    "mensaje_contacto": "Mensaje de contacto recibido",
-    "reclamacion": "Hoja de reclamación registrada",
-    "reclamacion_respondida": "Hoja de reclamación respondida",
-    "cotizacion_grupo": "Cotización de grupo pedida",
 }
-# En la tabla de la bitácora, de estas acciones solo se muestran estos datos: la hoja de
-# reclamación completa (con el DNI y el domicilio) está en el libro del panel y en la descarga.
-DETALLE_CORTO = {"reclamacion": ("numero", "tipo"), "reclamacion_respondida": ("numero",)}
 SENALES = {"buena": "Buena señal", "debil": "Señal débil", "sin_senal": "Sin señal"}
 SERVICIOS = {"desayuno": "Desayuno", "almuerzo": "Almuerzo", "cena": "Cena",
              "vestimenta": "Vestimenta típica", "taller_textil": "Taller textil"}
@@ -166,19 +158,23 @@ def estado_visible(reserva):
     return reserva.get("estado")
 
 
-def detalle_bitacora(detalle, accion):
-    """Los pares (clave, valor) del detalle que muestra la tabla de la bitácora."""
-    claves = DETALLE_CORTO.get(accion)
-    if claves is None:
-        return list(detalle.items())
-    return [(clave, detalle[clave]) for clave in claves if clave in detalle]
-
-
 def soles(valor):
-    """S/ 1,250.00"""
+    """Formato peruano: S/ 1 250,00 (espacio que no se corta entre miles, coma decimal)."""
     if valor is None:
         return ""
-    return f"S/ {Decimal(valor):,.2f}"
+    texto = f"{Decimal(valor):,.2f}"                       # 1,250.00 (estilo inglés)
+    texto = texto.replace(",", "\u00a0").replace(".", ",")   # → 1 250,00
+    return f"S/ {texto}"
+
+
+def porcentaje(valor):
+    """25.0 → '25 %'; 33.3 → '33,3 %' (el espacio antes de % no se corta)."""
+    if valor is None:
+        return ""
+    texto = f"{Decimal(valor):f}"
+    if "." in texto:
+        texto = texto.rstrip("0").rstrip(".")
+    return f"{texto.replace('.', ',')}\u00a0%"
 
 
 def dolares(valor, cambio):
@@ -192,9 +188,7 @@ def registrar(app):
     app.jinja_env.filters.update(
         fecha_corta=fecha_corta, fecha_larga=fecha_larga, hora=hora, fecha_hora=fecha_hora,
         mes_y_anio=mes_y_anio, inicial_mayuscula=inicial_mayuscula,
-        soles=soles, dolares=dolares, duracion=duracion, servicios=servicios,
-        detalle_bitacora=detalle_bitacora,
-        categoria_producto=lambda v: t(CATEGORIAS_PRODUCTO.get(v, v)),     # v2.9
+        soles=soles, porcentaje=porcentaje, dolares=dolares, duracion=duracion, servicios=servicios,
         # Las etiquetas pasan por t(): en el panel quedan en español; al turista, en su idioma.
         estado_publico=lambda v: t(ESTADOS_PUBLICOS.get(v, v)),
         nivel_alerta=lambda v: t(NIVELES_ALERTA.get(v, v)),
