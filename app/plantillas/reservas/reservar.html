@@ -108,7 +108,7 @@
 </form>
 
 <template id="plantilla-acompanante">{{ fila_pasajero(plantilla, '__N__') }}</template>
-<datalist id="paises">{% for codigo, nombre in paises %}<option value="{{ codigo }}">{{ nombre }}</option>{% endfor %}</datalist>
+<datalist id="paises">{% for codigo, nombre in paises %}<option value="{{ nombre }}"></option>{% endfor %}</datalist>
 <script src="{{ estatico('js/reservar.js') }}" defer></script>
 {% if consulta_dni %}<script src="{{ estatico('js/dni.js') }}" defer></script>{% endif %}
 {% endif %}

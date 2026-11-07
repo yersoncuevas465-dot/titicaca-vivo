@@ -66,7 +66,7 @@
           completar(numero, "nombres", r.nombres);
           completar(numero, "apellidos", r.apellidos);
           var pais = hermano(numero, "nacionalidad");
-          if (pais && !pais.value.trim()) { pais.value = "PE"; }          // DNI = peruano
+          if (pais && !pais.value.trim()) { pais.value = "Perú"; }          // DNI = peruano
           estado(numero, formulario.getAttribute("data-dni-listo")
             .replace("{nombre}", r.nombres + " " + r.apellidos));
         } else {

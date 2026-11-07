@@ -229,6 +229,7 @@ EN = {
     "Documento": "ID document",
     "Número de documento": "Document number",
     "País (código)": "Country (code)",
+    "País": "Country",
     "Empieza a escribir tu país y elígelo de la lista (Perú = PE).":
         "Start typing your country and pick it from the list (Peru = PE).",
     "Celular o WhatsApp": "Mobile or WhatsApp",
