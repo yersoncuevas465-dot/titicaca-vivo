@@ -43,7 +43,7 @@
         {% if not sin_menu and current_user.is_authenticated %}
           <div class="sesion">
             <a class="sesion__panel" href="{{ url_for('panel.inicio') }}">
-              <span class="sesion__nombre">{{ current_user.nombre_usuario }}</span>
+              <span class="sesion__nombre">{{ current_user.nombre_completo }}</span>
               <span class="insignia">{{ current_user.rol_nombre }}</span>
             </a>
             <form method="post" action="{{ url_for('autenticacion.salir') }}">

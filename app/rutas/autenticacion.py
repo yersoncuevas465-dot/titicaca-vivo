@@ -92,7 +92,6 @@ def entrar():
                 modelo_usuario.registrar_inicio_sesion(usuario.id, ip_cliente())
                 current_app.logger.info("Inicio de sesión: %s desde %s",
                                         usuario.nombre_usuario, ip_cliente())
-                flash(f"Hola, {usuario.nombre_completo}.", "exito")
                 return redirect(destino)
 
     return render_template("autenticacion/entrar.html", formulario=formulario,
