@@ -193,18 +193,33 @@ def porcentaje(valor):
     return f"{texto.replace('.', ',')}\u00a0%"
 
 
+def numero(valor, decimales=None):
+    """Un número al estilo peruano: 3.461 → '3,461'; 1250 → '1 250'. Con decimales,
+    redondea: numero(4.56, 1) → '4,6'. Para el tipo de cambio y el promedio de reseñas."""
+    if valor is None:
+        return ""
+    valor = Decimal(str(valor))
+    if decimales is not None:
+        valor = valor.quantize(Decimal(1).scaleb(-decimales), ROUND_HALF_UP)
+    entero, _, fraccion = f"{valor:,f}".partition(".")
+    entero = entero.replace(",", "\u00a0")
+    return f"{entero},{fraccion}" if fraccion else entero
+
+
 def dolares(valor, cambio):
     """S/ 80.00 con el tipo de cambio de SUNAT (venta 3.461) → 'US$ 23' (aproximado)."""
     if valor is None or not cambio:
         return ""
-    return f"US$ {(Decimal(valor) / cambio['venta']).quantize(Decimal('1'), ROUND_HALF_UP):,}"
+    redondo = (Decimal(valor) / cambio["venta"]).quantize(Decimal("1"), ROUND_HALF_UP)
+    return f"US$ {redondo:,}".replace(",", "\u00a0")              # US$ 1 156
 
 
 def registrar(app):
     app.jinja_env.filters.update(
         fecha_corta=fecha_corta, fecha_larga=fecha_larga, hora=hora, fecha_hora=fecha_hora,
         mes_y_anio=mes_y_anio, inicial_mayuscula=inicial_mayuscula,
-        soles=soles, porcentaje=porcentaje, dolares=dolares, duracion=duracion, servicios=servicios,
+        soles=soles, porcentaje=porcentaje, numero=numero, dolares=dolares, duracion=duracion,
+        servicios=servicios,
         detalle_bitacora=detalle_bitacora,
         categoria_producto=lambda v: t(CATEGORIAS_PRODUCTO.get(v, v)),     # v2.9
         # Las etiquetas pasan por t(): en el panel quedan en español; al turista, en su idioma.

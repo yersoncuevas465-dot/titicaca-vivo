@@ -93,7 +93,7 @@ def asignar(cur, reserva_id, comunidad_id, fecha_noche, personas, usuario_id=Non
         (reserva_id, familia["id"], fecha_noche, personas, monto),
     )
     detalle = {"familia_id": familia["id"], "fecha_noche": fecha_noche.isoformat(),
-               "noches_30_dias": familia["noches_30_dias"], "regla": "rotacion RN-10"}
+               "noches_30_dias": familia["noches_30_dias"], "regla": "rotación justa"}
     cur.execute(
         """
         INSERT INTO bitacora (usuario_id, accion, tabla_afectada, registro_id, detalle, ip)

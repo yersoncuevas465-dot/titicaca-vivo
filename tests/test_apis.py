@@ -233,7 +233,7 @@ def test_la_salida_muestra_los_precios_en_dolares(app, apis):
     cliente = app.test_client()
     html = cliente.get("/salidas/10").get_data(True)
     assert '<th scope="col">En dólares</th>' in html and "≈ US$ " in html
-    assert "S/ 3.5 por dólar" in html and problemas(html) == []
+    assert "S/ 3,5 por dólar" in html and problemas(html) == []
     assert "(≈ US$ " in cliente.get("/salidas/10/reservar").get_data(True)
     cliente.get("/idioma/en")
     assert "In US dollars" in cliente.get("/salidas/10").get_data(True)

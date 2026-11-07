@@ -72,7 +72,7 @@
     {% endif %}
     <div class="fila-2">{{ campo(f.titular_tipo_documento) }}{{ campo(f.titular_numero_documento) }}</div>
     <div class="fila-2">{{ campo(f.titular_nombres) }}{{ campo(f.titular_apellidos) }}</div>
-    {{ campo(f.titular_nacionalidad, ayuda=t('Empieza a escribir tu país y elígelo de la lista (Perú = PE).')) }}
+    {{ campo(f.titular_nacionalidad, ayuda=t('Empieza a escribir tu país y elígelo de la lista.')) }}
     <div class="fila-2">
       {{ campo(f.telefono, ayuda=t('Celular peruano de 9 dígitos o con código de país (+33…).')) }}
       {{ campo(f.correo, ayuda=t('Deja al menos un teléfono o un correo.')) }}
@@ -101,7 +101,7 @@
     <ul class="lista-limpia">
       {% for p in precios %}<li>{{ p.nombre }}: <strong>{{ p.precio | soles }}</strong>{% if cambio %} <span class="texto-suave">(≈ {{ p.precio | dolares(cambio) }})</span>{% endif %}</li>{% endfor %}
     </ul>
-    {% if cambio %}<p class="texto-suave">{{ t('En dólares, con el tipo de cambio de SUNAT del {fecha} (S/ {venta} por dólar). Es referencial: se paga en soles.', fecha=cambio.fecha | fecha_corta, venta=cambio.venta) }}</p>{% endif %}
+    {% if cambio %}<p class="texto-suave">{{ t('En dólares, con el tipo de cambio de SUNAT del {fecha} (S/ {venta} por dólar). Es referencial: se paga en soles.', fecha=cambio.fecha | fecha_corta, venta=cambio.venta | numero) }}</p>{% endif %}
   </details>
 
   {{ f.enviar(class_='boton boton--ancho') }}

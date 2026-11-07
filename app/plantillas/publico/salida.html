@@ -70,8 +70,8 @@
     {% if precios %}
       {% set temporada = precios[0].temporada %}
       {% if temporada %}
-        <p class="aviso aviso--info">{{ t('Esta fecha cae en la temporada {temporada}: los precios incluyen un recargo de {recargo} %.',
-          temporada=fuerte(temporada), recargo=precios[0].recargo_porcentaje | round(2)) }}</p>
+        <p class="aviso aviso--info">{{ t('Esta fecha cae en la temporada {temporada}: los precios incluyen un recargo de {recargo}.',
+          temporada=fuerte(temporada), recargo=precios[0].recargo_porcentaje | porcentaje) }}</p>
       {% endif %}
       <div class="tabla-desplazable" role="region" aria-labelledby="titulo-precios" tabindex="0">
         <table class="tabla">
@@ -91,7 +91,7 @@
       </div>
       <p class="texto-suave">{{ t('El tipo de pasajero se verifica con el documento en el muelle.') }}</p>
       {% if cambio %}
-        <p class="texto-suave">{{ t('En dólares, con el tipo de cambio de SUNAT del {fecha} (S/ {venta} por dólar). Es referencial: se paga en soles.', fecha=cambio.fecha | fecha_corta, venta=cambio.venta) }}</p>
+        <p class="texto-suave">{{ t('En dólares, con el tipo de cambio de SUNAT del {fecha} (S/ {venta} por dólar). Es referencial: se paga en soles.', fecha=cambio.fecha | fecha_corta, venta=cambio.venta | numero) }}</p>
       {% endif %}
     {% else %}
       <p class="aviso aviso--info">{{ t('Esta salida todavía no tiene precios publicados.') }}</p>
@@ -102,7 +102,7 @@
   <section class="bloque" aria-labelledby="titulo-opiniones">
     <h2 id="titulo-opiniones">{{ t('Opiniones de quienes hicieron esta ruta') }}</h2>
     <p><span class="estrellas" aria-hidden="true">★</span>
-      {{ t('{promedio} de 5 · {total} opiniones', promedio=opiniones[0].promedio | round(1), total=opiniones[0].total) }}</p>
+      {{ t('{promedio} de 5 · {total} opiniones', promedio=opiniones[0].promedio | numero(1), total=opiniones[0].total) }}</p>
     <ul class="lista-limpia opiniones">
       {% for o in opiniones %}
         <li class="opinion">

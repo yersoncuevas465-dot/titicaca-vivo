@@ -1,54 +1,61 @@
 {% extends "base.html" %}
 
+{% block estilos %}<link rel="stylesheet" href="{{ estatico('css/panel.css') }}">{% endblock %}
+
+{# El menú del panel. En el muelle, con el celular, el operador necesita tres opciones a la vista:
+   Salidas de hoy, Pagos por verificar y Abordaje; lo demás va en «Más» (observación del docente,
+   Práctica 9). <details> se abre y se cierra sin JavaScript, con el dedo o con el teclado. #}
 {% block subnavegacion %}
+{% set actual = request.endpoint or '' %}
+{% set rol = current_user.rol %}
+{# Cada opción: (endpoint, texto, si es la página actual) #}
+{% set salidas = ('panel.salidas', 'Salidas de hoy', actual.startswith('panel.salida') or actual == 'panel.pasajeros') %}
+{% set pagos = ('panel.pagos', 'Pagos por verificar', actual.startswith('panel.pago') or actual == 'panel.devolucion_atendida') %}
+{% set abordaje = ('panel.abordaje_buscar', 'Abordaje', actual.startswith('panel.abordaje')) %}
+{% set resumen = ('panel.inicio', 'Resumen', actual == 'panel.inicio') %}
+{% set reservas = ('panel.reservas', 'Reservas', actual.startswith('panel.reserva')) %}
+{% set cuenta = ('panel.mi_cuenta', 'Mi cuenta', actual.startswith('panel.mi_')) %}
+{% set gestion = [
+     ('panel.alertas', 'Alertas', actual.startswith('panel.alerta')),
+     ('panel.hospedajes', 'Hospedajes', actual.startswith('panel.hospedaje') or actual == 'panel.transparencia'),
+     ('panel.resenas', 'Reseñas', actual.startswith('panel.resena')),
+     ('panel.reclamaciones', 'Reclamaciones', actual.startswith('panel.reclamacion')),
+     ('panel.productos', 'Productos', actual.startswith('panel.producto')),
+     ('panel.indicadores_panel', 'Indicadores', actual == 'panel.indicadores_panel'),
+     ('catalogos.inicio', 'Catálogos', actual.startswith('catalogos.'))] %}
+{% if rol == 'operador' %}
+  {% set principales = [salidas, pagos, abordaje] %}
+  {% set mas = [resumen, reservas] + gestion + [cuenta] %}
+{% elif rol == 'admin' %}
+  {% set principales = [salidas, pagos, reservas] %}
+  {% set mas = [resumen] + gestion + [
+       ('panel.usuarios', 'Usuarios', actual.startswith('panel.usuario')),
+       ('panel.bitacora', 'Bitácora', actual.startswith('panel.bitacora')),
+       ('panel.respaldos', 'Respaldos', actual.startswith('panel.respaldo')), cuenta] %}
+{% elif rol == 'residente' %}
+  {% set principales = [resumen, ('panel.productos', 'Mis productos', actual.startswith('panel.producto')), cuenta] %}
+  {% set mas = [] %}
+{% else %}
+  {% set principales = [resumen, abordaje, cuenta] %}
+  {% set mas = [] %}
+{% endif %}
+{% set donde = namespace(texto='') %}
+{% for _, texto, es_actual in mas if es_actual %}{% set donde.texto = texto %}{% endfor %}
 <nav class="subnav" aria-label="Panel">
   <div class="contenedor subnav__fila">
-    {% set actual = request.endpoint or '' %}
-    {% set rol = current_user.rol %}
-    <a href="{{ url_for('panel.inicio') }}"
-       {% if actual == 'panel.inicio' %}aria-current="page"{% endif %}>Resumen</a>
-    {% if rol in ('admin', 'operador') %}
-      <a href="{{ url_for('panel.salidas') }}"
-         {% if actual.startswith('panel.salida') or actual == 'panel.pasajeros' %}aria-current="page"{% endif %}>Salidas</a>
-      <a href="{{ url_for('panel.reservas') }}"
-         {% if actual.startswith('panel.reserva') %}aria-current="page"{% endif %}>Reservas</a>
+    {% for endpoint, texto, es_actual in principales %}
+    <a href="{{ url_for(endpoint) }}"{% if es_actual %} aria-current="page"{% endif %}>{{ texto }}</a>
+    {% endfor %}
+    {% if mas %}
+    <details class="subnav__mas">
+      <summary{% if donde.texto %} class="subnav__mas-actual"{% endif %}>Más{% if donde.texto %}: {{ donde.texto }}{% endif %}</summary>
+      <div class="subnav__menu">
+        {% for endpoint, texto, es_actual in mas %}
+        <a href="{{ url_for(endpoint) }}"{% if es_actual %} aria-current="page"{% endif %}>{{ texto }}</a>
+        {% endfor %}
+      </div>
+    </details>
     {% endif %}
-    {% if rol in ('operador', 'guia', 'capitan') %}
-      <a href="{{ url_for('panel.abordaje_buscar') }}"
-         {% if actual.startswith('panel.abordaje') %}aria-current="page"{% endif %}>Abordaje</a>
-    {% endif %}
-    {% if rol in ('admin', 'operador') %}
-      <a href="{{ url_for('panel.pagos') }}"
-         {% if actual.startswith('panel.pago') or actual == 'panel.devolucion_atendida' %}aria-current="page"{% endif %}>Pagos</a>
-      <a href="{{ url_for('panel.alertas') }}"
-         {% if actual.startswith('panel.alerta') %}aria-current="page"{% endif %}>Alertas</a>
-      <a href="{{ url_for('panel.hospedajes') }}"
-         {% if actual.startswith('panel.hospedaje') or actual == 'panel.transparencia' %}aria-current="page"{% endif %}>Hospedajes</a>
-      <a href="{{ url_for('panel.resenas') }}"
-         {% if actual.startswith('panel.resena') %}aria-current="page"{% endif %}>Reseñas</a>
-      <a href="{{ url_for('panel.reclamaciones') }}"
-         {% if actual.startswith('panel.reclamacion') %}aria-current="page"{% endif %}>Reclamaciones</a>
-      <a href="{{ url_for('panel.productos') }}"
-         {% if actual.startswith('panel.producto') %}aria-current="page"{% endif %}>Productos</a>
-      <a href="{{ url_for('panel.indicadores_panel') }}"
-         {% if actual == 'panel.indicadores_panel' %}aria-current="page"{% endif %}>Indicadores</a>
-      <a href="{{ url_for('catalogos.inicio') }}"
-         {% if actual.startswith('catalogos.') %}aria-current="page"{% endif %}>Catálogos</a>
-    {% endif %}
-    {% if rol == 'admin' %}
-      <a href="{{ url_for('panel.usuarios') }}"
-         {% if actual.startswith('panel.usuario') %}aria-current="page"{% endif %}>Usuarios</a>
-      <a href="{{ url_for('panel.bitacora') }}"
-         {% if actual.startswith('panel.bitacora') %}aria-current="page"{% endif %}>Bitácora</a>
-      <a href="{{ url_for('panel.respaldos') }}"
-         {% if actual.startswith('panel.respaldo') %}aria-current="page"{% endif %}>Respaldos</a>
-    {% endif %}
-    {% if rol == 'residente' %}
-      <a href="{{ url_for('panel.productos') }}"
-         {% if actual.startswith('panel.producto') %}aria-current="page"{% endif %}>Mis productos</a>
-    {% endif %}
-    <a href="{{ url_for('panel.mi_cuenta') }}"
-       {% if actual.startswith('panel.mi_') %}aria-current="page"{% endif %}>Mi cuenta</a>
   </div>
 </nav>
 {% endblock %}

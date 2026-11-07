@@ -16,7 +16,7 @@
   <p class="texto-suave">{{ a.tipo | tipo_alerta }} · {{ a.lugar }} · {{ a.fuente }} ·
     {{ a.vigente_desde | fecha_hora }} a {{ a.vigente_hasta | fecha_hora }}</p>
 
-  <h2 id="titulo-afectadas">Salidas afectadas.</h2>
+  <h2 id="titulo-afectadas">Salidas afectadas</h2>
   {% if a.nivel not in ('naranja', 'rojo') %}
     <p class="aviso aviso--info">Es una alerta {{ a.nivel | nivel_alerta | lower }}: solo informa. No marca ni suspende salidas.</p>
   {% elif afectadas %}

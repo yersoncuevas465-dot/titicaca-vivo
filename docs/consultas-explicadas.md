@@ -756,7 +756,7 @@ El hash se acorta aquí: es bcrypt con costo 12 (`$2b$12$…`).
 ### 13. Pagos por verificar (RN-06)
 
 - **Pantalla:** `/panel/pagos` (operador).
-- **Dónde está:** `pago.listar_por_verificar(actor)`, en [app/modelos/pago.py:37](../app/modelos/pago.py#L37).
+- **Dónde está:** `pago.listar_por_verificar(actor)`, en [app/modelos/pago.py:38](../app/modelos/pago.py#L38).
 - **Qué hay que saber explicar:** 4 JOIN, subconsulta con `SUM`, cola por fecha.
 
 ```sql

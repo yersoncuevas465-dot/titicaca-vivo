@@ -105,8 +105,8 @@ EN = {
     "Recorrido": "Itinerary",
     "noche con una familia": "night with a family",
     "Precios por persona": "Prices per person",
-    "Esta fecha cae en la temporada {temporada}: los precios incluyen un recargo de {recargo} %.":
-        "This date falls in the {temporada} season: prices include a {recargo} % surcharge.",
+    "Esta fecha cae en la temporada {temporada}: los precios incluyen un recargo de {recargo}.":
+        "This date falls in the {temporada} season: prices include a {recargo} surcharge.",
     "Pasajero": "Passenger",
     "Edad": "Age",
     "Precio": "Price",
@@ -228,10 +228,9 @@ EN = {
     "Apellidos": "Last names",
     "Documento": "ID document",
     "Número de documento": "Document number",
-    "País (código)": "Country (code)",
     "País": "Country",
-    "Empieza a escribir tu país y elígelo de la lista (Perú = PE).":
-        "Start typing your country and pick it from the list (Peru = PE).",
+    "Empieza a escribir tu país y elígelo de la lista.":
+        "Start typing your country and pick it from the list.",
     "Celular o WhatsApp": "Mobile or WhatsApp",
     "Celular peruano de 9 dígitos o con código de país (+33…).":
         "9-digit Peruvian mobile, or with your country code (+33…).",
@@ -277,7 +276,6 @@ EN = {
     "El DNI tiene 8 dígitos.": "A DNI has 8 digits.",
     "El carné de extranjería tiene 9 dígitos.": "A CE has 9 digits.",
     "El pasaporte tiene de 6 a 12 letras o números.": "A passport number has 6 to 12 letters or digits.",
-    "Elige un país de la lista (código de 2 letras).": "Choose a country from the list (2-letter code).",
     "Elige un país de la lista.": "Choose a country from the list.",
     "Celular peruano de 9 dígitos que empieza en 9, o +código del país.":
         "9-digit Peruvian mobile starting with 9, or +country code.",

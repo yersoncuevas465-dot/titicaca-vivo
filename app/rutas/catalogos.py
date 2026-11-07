@@ -122,7 +122,7 @@ CATALOGOS = {
         columnas=[("Nombre", lambda f: f["nombre"]),
                   ("Desde", lambda f: formato.fecha_corta(f["fecha_inicio"])),
                   ("Hasta", lambda f: formato.fecha_corta(f["fecha_fin"])),
-                  ("Recargo", lambda f: f"{f['recargo_porcentaje']} %"),
+                  ("Recargo", lambda f: formato.porcentaje(f["recargo_porcentaje"])),
                   ("En curso", lambda f: _si_no(f["en_curso"]))]),
     "tipos-pasajero": Catalogo(
         "Tipos de pasajero", "el tipo de pasajero", "Los 5 tipos los fija el enunciado: solo se "

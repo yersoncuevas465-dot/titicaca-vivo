@@ -20,6 +20,7 @@ from app.modelos import (
     exigir_rol,
     hospedaje,
 )
+from app.servicios import formato
 
 METODOS_MUELLE = ("efectivo_muelle", "pos", "transferencia")
 PATRON_OPERACION = re.compile(r"^[A-Za-z0-9-]{4,30}$")
@@ -266,8 +267,8 @@ def registrar_cobro(actor, codigo, metodo, monto, numero_operacion, ip=None):
         if saldo <= 0:
             raise EstadoNoPermite("Esta reserva ya está pagada.")
         if monto > saldo:
-            raise ErrorValidacion({"monto": f"Falta pagar S/ {saldo:.2f}: el monto no puede ser "
-                                            "mayor."})
+            raise ErrorValidacion({"monto": f"Falta pagar {formato.soles(saldo)}: el monto no "
+                                            "puede ser mayor."})
         try:
             cur.execute(
                 """

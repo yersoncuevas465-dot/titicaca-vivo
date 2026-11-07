@@ -38,7 +38,6 @@ def listar_activas():
     )
 
 
-
 def paradas(ruta_id):
     # Devuelve las paradas de una ruta en orden, con la comunidad, su idioma y si allí se duerme.
     return bd.consultar(
@@ -235,7 +234,7 @@ def guardar_parada(actor, ruta_id, parada_id, datos, ip=None):
             if not ruta["incluye_pernocte"]:
                 e["es_pernocte"] = "La ruta no incluye noche (márcalo en la ruta primero)."
             elif cur.fetchone()["otras"]:
-                e["es_pernocte"] = "La ruta ya tiene una parada donde se duerme (S-16: solo una)."
+                e["es_pernocte"] = "Ya hay una parada donde se duerme: solo puede haber una."
             elif comunidad and not comunidad["tiene_hospedaje"]:
                 e["es_pernocte"] = "Esa comunidad no recibe hospedaje vivencial."
         if e:
