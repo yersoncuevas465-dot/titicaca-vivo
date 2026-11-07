@@ -25,8 +25,7 @@ CARPETAS_FUERA = {".venv", "venv", "env", "__pycache__", ".pytest_cache", ".ruff
 # Archivos que no van: el .env (secretos), la cobertura y los guiones del video del equipo (son
 # para grabar la exposición, no parte del programa).
 ARCHIVOS_FUERA = {".env", ".coverage", "DIALOGO_VIDEO.txt", "GUION_VIDEO.md",
-                  "DEMO_BASE_DE_DATOS.txt", "TAREAS_EQUIPO.txt", "TAREAS_ZULEMA.txt",
-                  "TAREAS_SHANELL.txt"}
+                  "DEMO_BASE_DE_DATOS.txt"}
 EXTENSIONES_FUERA = {".pyc", ".pyo", ".log", ".zip"}
 SECRETOS = ("SECRET_KEY", "BD_CONTRASENA")
 
@@ -42,6 +41,8 @@ def archivos(raiz=RAIZ):
         if nombre in ARCHIVOS_FUERA or ruta.suffix in EXTENSIONES_FUERA:
             continue
         if nombre.startswith(".env") and nombre != ".env.example":     # .env.local, .env.prod…
+            continue
+        if nombre.startswith("TAREAS_") and ruta.suffix == ".txt":     # el reparto del equipo
             continue
         lista.append(relativa)
     return sorted(lista, key=lambda r: r.as_posix())
