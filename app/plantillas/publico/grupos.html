@@ -35,7 +35,7 @@
           <tr>
             <th scope="row">{{ r.nombre }}</th>
             <td>{{ r.duracion_horas | duracion }}{% if r.incluye_pernocte %} · {{ t('con noche') }}{% endif %}</td>
-            <td>{% if r.desde %}{{ t('desde') }} <strong>{{ r.desde | soles }}</strong>{% else %}—{% endif %}</td>
+            <td>{% if r.desde %}{{ t('Adulto desde') }} <strong>{{ r.desde | soles }}</strong>{% else %}—{% endif %}</td>
           </tr>
         {% endfor %}
       </tbody>

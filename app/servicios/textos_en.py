@@ -43,6 +43,7 @@ EN = {
     "El lago y sus rutas": "The lake and its routes",
     "incluye una noche con una familia": "includes a night with a family",
     "desde": "from",
+    "Adulto desde": "Adults from",
     "{n} familias anfitrionas": "{n} host families",
     "1 familia anfitriona": "1 host family",
     "Cómo reservar": "How to book",
