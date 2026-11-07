@@ -17,7 +17,8 @@ PATRON_CODIGO_RUTA = re.compile(r"^[A-Z0-9-]{3,12}$")
 
 
 def listar_activas():
-    # Devuelve las rutas activas con su precio base más bajo vigente hoy (el "desde S/").
+    # Devuelve las rutas activas con el precio de ADULTO más bajo vigente hoy (el "Adulto desde
+    # S/"), no el de niño ni el de estudiante (observación del docente, Práctica 9).
     # LEFT JOIN: una ruta sin tarifa vigente igual aparece (con "desde" en NULL).
     return bd.consultar(
         """
@@ -27,11 +28,15 @@ def listar_activas():
         LEFT JOIN tarifa t ON t.ruta_id = r.id
                           AND t.vigente_desde <= CURDATE()
                           AND (t.vigente_hasta IS NULL OR t.vigente_hasta >= CURDATE())
+                          AND t.tipo_pasajero_id IN (
+                              SELECT tp.id FROM tipo_pasajero tp
+                              WHERE tp.codigo IN ('adulto_nacional', 'adulto_extranjero'))
         WHERE r.activa = 1
         GROUP BY r.id, r.codigo, r.nombre, r.descripcion, r.duracion_horas, r.incluye_pernocte
         ORDER BY r.duracion_horas, r.nombre
         """
     )
+
 
 
 def paradas(ruta_id):
