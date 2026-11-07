@@ -132,7 +132,7 @@ def _validar_persona(persona, prefijo, errores):
     persona.apellidos = _limpiar_texto(persona.apellidos)
     persona.tipo_documento = (persona.tipo_documento or "").upper()
     persona.numero_documento = normalizar_documento(persona.numero_documento)
-    persona.nacionalidad = (persona.nacionalidad or "").strip().upper()
+    persona.nacionalidad = paises.codigo_de(persona.nacionalidad)    # «Perú» o «PE»: «PE»
 
     for campo, valor in (("nombres", persona.nombres), ("apellidos", persona.apellidos)):
         if not valor:
@@ -146,7 +146,7 @@ def _validar_persona(persona, prefijo, errores):
         if not patron.match(persona.numero_documento):
             errores[f"{prefijo}numero_documento"] = mensaje
     if not paises.es_valido(persona.nacionalidad):
-        errores[f"{prefijo}nacionalidad"] = "Elige un país de la lista (código de 2 letras)."
+        errores[f"{prefijo}nacionalidad"] = "Elige un país de la lista."
 
 
 def validar(solicitud):

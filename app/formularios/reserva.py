@@ -38,10 +38,10 @@ class FormularioPasajero(Form):
                           validators=[DataRequired("Escribe los nombres."), Length(max=80)])
     apellidos = StringField("Apellidos", filters=[_sin_espacios],
                             validators=[DataRequired("Escribe los apellidos."), Length(max=80)])
-    nacionalidad = StringField("País (código)", filters=[_sin_espacios],
-                               validators=[DataRequired("Elige el país."), Length(max=2)],
-                               render_kw={"list": "paises", "maxlength": 2,
-                                          "autocapitalize": "characters", "placeholder": "PE"})
+    nacionalidad = StringField("País", filters=[_sin_espacios],
+                               validators=[DataRequired("Elige el país."), Length(max=60)],
+                               render_kw={"list": "paises", "maxlength": 60,
+                                          "placeholder": "Perú"})
     tipo_pasajero_id = SelectField("Tipo de pasajero", coerce=int, validate_choice=False)
 
 
@@ -59,10 +59,10 @@ class FormularioReserva(FlaskForm):
         validators=[DataRequired("Escribe tus apellidos."), Length(max=80)],
         render_kw={"autocomplete": "family-name"})
     titular_nacionalidad = StringField(
-        "País (código)", filters=[_sin_espacios],
-        validators=[DataRequired("Elige tu país."), Length(max=2)],
-        render_kw={"list": "paises", "maxlength": 2, "autocapitalize": "characters",
-                   "placeholder": "PE"})
+        "País", filters=[_sin_espacios],
+        validators=[DataRequired("Elige tu país."), Length(max=60)],
+        render_kw={"list": "paises", "maxlength": 60, "autocomplete": "country-name",
+                   "placeholder": "Perú"})
     telefono = StringField("Celular o WhatsApp", filters=[_sin_espacios],
                            validators=[Optional(), Length(max=20)],
                            render_kw={"autocomplete": "tel", "inputmode": "tel"})

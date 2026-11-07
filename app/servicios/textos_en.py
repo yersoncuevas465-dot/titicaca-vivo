@@ -43,6 +43,7 @@ EN = {
     "El lago y sus rutas": "The lake and its routes",
     "incluye una noche con una familia": "includes a night with a family",
     "desde": "from",
+    "Adulto desde": "Adults from",
     "{n} familias anfitrionas": "{n} host families",
     "1 familia anfitriona": "1 host family",
     "Cómo reservar": "How to book",
@@ -228,6 +229,7 @@ EN = {
     "Documento": "ID document",
     "Número de documento": "Document number",
     "País (código)": "Country (code)",
+    "País": "Country",
     "Empieza a escribir tu país y elígelo de la lista (Perú = PE).":
         "Start typing your country and pick it from the list (Peru = PE).",
     "Celular o WhatsApp": "Mobile or WhatsApp",
@@ -276,6 +278,7 @@ EN = {
     "El carné de extranjería tiene 9 dígitos.": "A CE has 9 digits.",
     "El pasaporte tiene de 6 a 12 letras o números.": "A passport number has 6 to 12 letters or digits.",
     "Elige un país de la lista (código de 2 letras).": "Choose a country from the list (2-letter code).",
+    "Elige un país de la lista.": "Choose a country from the list.",
     "Celular peruano de 9 dígitos que empieza en 9, o +código del país.":
         "9-digit Peruvian mobile starting with 9, or +country code.",
     "Escribe un correo válido, por ejemplo nombre@correo.com.": "Enter a valid email, for example name@mail.com.",

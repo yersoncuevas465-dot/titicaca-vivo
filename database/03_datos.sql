@@ -110,7 +110,7 @@ INSERT INTO ruta (id, codigo, nombre, descripcion, duracion_horas, incluye_perno
 (1, 'URO-MD',      'Islas flotantes de los Uros',  'Medio día en las islas flotantes de totora.', 3.0, 0, 'Muelle de Puno', 1),
 (2, 'URO-TAQ',     'Uros y Taquile',               'Día completo: Uros por la mañana y Taquile con almuerzo comunitario.', 9.5, 0, 'Muelle de Puno', 1),
 (3, 'URO-AMA-TAQ', 'Uros, Amantaní y Taquile',     '2 días y 1 noche: Uros, noche con una familia de Amantaní y Taquile al volver.', 33.0, 1, 'Muelle de Puno', 1),
-(4, 'LLA-VIV',     'Llachón vivencial',            '2 días y 1 noche en Llachón, con parada en los Uros (itinerario por confirmar con la agencia).', 31.5, 1, 'Muelle de Puno', 1),
+(4, 'LLA-VIV',     'Llachón vivencial',            '2 días y 1 noche en Llachón, con parada en los Uros.', 31.5, 1, 'Muelle de Puno', 1),
 (5, 'URO-LUQ',     'Uros y Luquina Chico',         'Día completo: Uros y la comunidad aimara de Luquina Chico.', 8.0, 0, 'Muelle de Puno', 1);
 
 -- ---------------------------------------------------------------------

@@ -80,7 +80,10 @@ def test_la_cotizacion_llega_con_el_precio_referencial(app, cliente, buzon):
     respuesta = pedir(cliente)
     assert respuesta.status_code == 303 and respuesta.headers["Location"] == "/grupos"
     desde = consultar_valor(app, "SELECT MIN(t.precio_base) AS desde FROM tarifa t "
-                                 "JOIN ruta r ON r.id = t.ruta_id WHERE r.codigo = 'URO-TAQ' "
+                                 "JOIN ruta r ON r.id = t.ruta_id "
+                                 "JOIN tipo_pasajero tp ON tp.id = t.tipo_pasajero_id "
+                                 "WHERE r.codigo = 'URO-TAQ' "
+                                 "AND tp.codigo IN ('adulto_nacional', 'adulto_extranjero') "
                                  "AND t.vigente_desde <= CURDATE() "
                                  "AND (t.vigente_hasta IS NULL OR t.vigente_hasta >= CURDATE())")
     esperado = formato.soles(desde * 30)
