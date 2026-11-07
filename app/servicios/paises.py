@@ -4,6 +4,8 @@ Es un catálogo técnico de la norma ISO, no un dato del negocio de la agencia: 
 vive en el código y no en una tabla (las 20 tablas del enunciado no lo incluyen).
 """
 
+import unicodedata
+
 _LISTA = """
 AD Andorra
 AE Emiratos Árabes Unidos
@@ -271,3 +273,22 @@ def opciones():
     """Lista (código, nombre) ordenada por nombre, con Perú primero."""
     resto = sorted((c, n) for c, n in PAISES.items() if c != "PE")
     return [("PE", PAISES["PE"])] + sorted(resto, key=lambda par: par[1])
+
+
+def _sin_tildes(texto):
+    descompuesto = unicodedata.normalize("NFKD", texto)
+    return "".join(c for c in descompuesto if not unicodedata.combining(c)).lower()
+
+
+_POR_NOMBRE = {_sin_tildes(nombre): codigo for codigo, nombre in PAISES.items()}
+
+
+def codigo_de(texto):
+    """El código del país escrito por su nombre o por su código: «Perú», «peru» y «PE» dan «PE».
+
+    Si no es un país de la lista, devuelve el texto en mayúsculas (el modelo lo marca como error).
+    """
+    limpio = " ".join(str(texto or "").split())
+    if limpio.upper() in PAISES:
+        return limpio.upper()
+    return _POR_NOMBRE.get(_sin_tildes(limpio), limpio.upper())
