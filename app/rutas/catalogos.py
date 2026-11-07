@@ -95,7 +95,7 @@ CATALOGOS = {
                   ("Estado", lambda f: _activo(f["activa"]))],
         enlace_extra=("Paradas", "catalogos.paradas")),
     "embarcaciones": Catalogo(
-        "Lanchas", "la lancha", "RN-07: solo una lancha operativa puede salir, y el cupo de una "
+        "Lanchas", "la lancha", "Solo una lancha operativa puede salir, y el cupo de una "
         "salida no pasa su capacidad.",
         FormularioEmbarcacion, embarcacion.listar_panel, embarcacion.buscar_panel,
         embarcacion.guardar,
@@ -107,7 +107,7 @@ CATALOGOS = {
                    or "—"),
                   ("Salidas por venir", lambda f: f["salidas_por_venir"])]),
     "tarifas": Catalogo(
-        "Tarifas", "la tarifa", "RN-04: gana la tarifa vigente más reciente para la fecha de la "
+        "Tarifas", "la tarifa", "Gana la tarifa vigente más reciente para la fecha de la "
         "salida. Cambiar una tarifa no cambia las reservas ya hechas (el precio es una foto).",
         FormularioTarifa, tarifa.listar_panel, tarifa.buscar_panel, tarifa.guardar,
         columnas=[("Ruta", lambda f: f["ruta"]), ("Tipo", lambda f: f["tipo"]),
@@ -117,7 +117,7 @@ CATALOGOS = {
                   ("Vigente hoy", lambda f: _si_no(f["vigente_hoy"]))],
         opciones=_opciones_tarifa),
     "temporadas": Catalogo(
-        "Temporadas", "la temporada", "Recargo por fechas (RN-04). No se pueden solapar (S-14).",
+        "Temporadas", "la temporada", "Recargo por fechas. No se pueden solapar.",
         FormularioTemporada, temporada.listar, temporada.buscar, temporada.guardar,
         columnas=[("Nombre", lambda f: f["nombre"]),
                   ("Desde", lambda f: formato.fecha_corta(f["fecha_inicio"])),
@@ -144,7 +144,7 @@ CATALOGOS = {
                   ("Familias activas", lambda f: f["familias"]), ("Rutas", lambda f: f["rutas"]),
                   ("Estado", lambda f: _activo(f["activa"]))]),
     "familias": Catalogo(
-        "Familias anfitrionas", "la familia", "Reciben turistas por rotación justa (RN-10). "
+        "Familias anfitrionas", "la familia", "Reciben turistas por rotación justa. "
         "El responsable y el teléfono solo se ven en el panel.",
         FormularioFamilia, familia.listar_panel, familia.buscar_panel, familia.guardar,
         columnas=[("Familia", lambda f: f["nombre_familia"]),

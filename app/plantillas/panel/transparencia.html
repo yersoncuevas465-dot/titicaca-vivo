@@ -55,5 +55,5 @@
 {% else %}
   <p class="aviso aviso--info">Todavía no hay noches registradas.</p>
 {% endfor %}
-<p class="texto-suave">Generado desde la vista v_ingresos_familia. Monto por persona y noche: {{ config.PAGO_FAMILIA_PERSONA_NOCHE | soles }} (por confirmar con Giant Trip).</p>
+<p class="texto-suave">Monto por persona y noche: {{ config.PAGO_FAMILIA_PERSONA_NOCHE | soles }}.</p>
 {% endblock %}

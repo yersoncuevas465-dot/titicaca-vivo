@@ -7,7 +7,7 @@
 <p class="miga"><a href="{{ url_for('catalogos.lista', nombre='rutas') }}">← Rutas</a></p>
 <h1>Paradas de «{{ r.nombre }}»</h1>
 <p class="texto-suave">Orden de visita y minutos en cada comunidad.
-  {% if r.incluye_pernocte %}Esta ruta incluye una noche: marca UNA parada como pernocte (S-16).
+  {% if r.incluye_pernocte %}Esta ruta incluye una noche: marca UNA parada como pernocte.
   {% else %}Esta ruta no incluye noche.{% endif %}</p>
 
 <div class="tabla-desplazable" role="region" aria-labelledby="titulo-paradas" tabindex="0">
