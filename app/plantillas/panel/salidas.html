@@ -16,7 +16,7 @@
 {% call como_funciona() %}
   <li>Cambia de día con las flechas o con la fecha. La tabla muestra también las salidas canceladas.</li>
   <li><strong>Nueva salida</strong> (operador): ruta, día y hora, lancha, capitán, guía y cupo. El retorno se calcula con la duración de la ruta.</li>
-  <li>Al guardar se revisa RN-07: lancha operativa, cupo que no pasa su capacidad, capitán con licencia y ninguna otra salida de esa lancha que se cruce.</li>
+  <li>Al guardar se revisa: lancha operativa, cupo que no pasa su capacidad, capitán con licencia y ninguna otra salida de esa lancha que se cruce.</li>
   <li><strong>Pasajeros</strong> abre la salida: manifiesto en PDF, lista para imprimir o para WhatsApp, abordaje y zarpe.</li>
   {% if current_user.rol == 'operador' %}
     <li><strong>Vender</strong> registra la reserva de quien llega al muelle o escribe por WhatsApp: es el formulario del turista, con el canal, y queda a tu nombre en la bitácora.</li>

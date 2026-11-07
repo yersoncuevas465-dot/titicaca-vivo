@@ -46,7 +46,7 @@ def texto_de_la_hoja(hoja, encabezado):
     lineas += [
         f"Servicio contratado: {hoja['servicio']}"
         + (f" · Reserva {hoja['codigo_reserva']}" if hoja.get("codigo_reserva") else "")
-        + (f" · Monto reclamado: S/ {hoja['monto']}" if hoja.get("monto") else ""),
+        + (f" · Monto reclamado: {formato.soles(hoja['monto'])}" if hoja.get("monto") else ""),
         "", "Detalle:", hoja["detalle"], "", "Pedido:", hoja["pedido"], "",
         f"La agencia responde hasta el {formato.fecha_larga(hoja['vence_el'])} "
         f"({modelo_reclamacion.DIAS_HABILES_PARA_RESPONDER} días hábiles).",
