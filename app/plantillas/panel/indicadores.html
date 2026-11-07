@@ -33,14 +33,14 @@
         {% for r in ocupacion %}
           <tr><td>{{ r.puesto }}</td><th scope="row">{{ r.ruta_nombre }}</th><td>{{ r.salidas }}</td>
               <td>{{ r.ocupados }} / {{ r.cupo }}</td>
-              <td>{{ barra(r.ocupacion, 100) }} {{ r.ocupacion }} %</td></tr>
+              <td>{{ barra(r.ocupacion, 100) }} {{ r.ocupacion | porcentaje }}</td></tr>
         {% else %}<tr><td colspan="5">Sin salidas en el periodo.</td></tr>{% endfor %}
       </tbody>
     </table>
   </div>
   {% if poca %}
     <p class="aviso aviso--info">Rutas con menos de {{ umbral }} % de ocupación:
-      {% for r in poca %}<strong>{{ r.ruta_nombre }}</strong> ({{ r.ocupacion }} %){% if not loop.last %}, {% endif %}{% endfor %}.</p>
+      {% for r in poca %}<strong>{{ r.ruta_nombre }}</strong> ({{ r.ocupacion | porcentaje }}){% if not loop.last %}, {% endif %}{% endfor %}.</p>
   {% endif %}
 </section>
 
@@ -52,7 +52,7 @@
       <tbody>
         {% for m in metodos %}
           <tr><th scope="row">{{ m.metodo | metodo_pago }}</th><td>{{ m.pagos }}</td><td>{{ m.monto | soles }}</td>
-              <td>{{ barra(m.porcentaje, 100) }} {{ m.porcentaje }} %</td></tr>
+              <td>{{ barra(m.porcentaje, 100) }} {{ m.porcentaje | porcentaje }}</td></tr>
         {% else %}<tr><td colspan="4">Sin pagos verificados en el periodo.</td></tr>{% endfor %}
       </tbody>
     </table>
@@ -65,7 +65,7 @@
       <tbody>
         {% for p in paises %}
           <tr><th scope="row">{{ p.nacionalidad | pais }}</th><td>{{ p.pasajeros }}</td>
-              <td>{{ barra(p.porcentaje, 100) }} {{ p.porcentaje }} %</td></tr>
+              <td>{{ barra(p.porcentaje, 100) }} {{ p.porcentaje | porcentaje }}</td></tr>
         {% else %}<tr><td colspan="3">Sin pasajeros en el periodo.</td></tr>{% endfor %}
       </tbody>
     </table>
