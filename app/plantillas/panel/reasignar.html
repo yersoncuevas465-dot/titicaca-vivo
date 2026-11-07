@@ -11,7 +11,7 @@
   <p>Reserva <strong>{{ n.codigo }}</strong> · noche del {{ n.fecha_noche | fecha_larga }} · {{ n.personas }} persona(s)
     · {{ n.comunidad }}. Hoy la recibe la <strong>{{ n.nombre_familia }}</strong>.</p>
   {% if candidatas %}
-    <p class="texto-suave">Las familias libres esa noche y con capacidad para el grupo están en el orden de la rotación (RN-10):
+    <p class="texto-suave">Las familias libres esa noche y con capacidad para el grupo están en el orden de la rotación:
       la primera es la que toca. Puedes elegir otra si hay un motivo (por ejemplo, una familia se enfermó).</p>
     {{ resumen(f, sueltos, "Revisa la reasignación") }}
     <form method="post" novalidate>
