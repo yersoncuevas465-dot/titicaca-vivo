@@ -70,7 +70,7 @@ def test_la_constancia_solo_la_ve_quien_registro_la_hoja(app, cliente, buzon):
     respuesta = cliente.get(url)
     html = respuesta.get_data(True)
     assert "Hoja de reclamación N.º" in html and "Rosa Elena Quispe Prueba" in html
-    assert "Te respondemos por correo hasta el" in html and "S/ 80.00" in html
+    assert "Te respondemos por correo hasta el" in html and "S/ 80,00" in html
     assert respuesta.headers["Cache-Control"] == "no-store" and problemas(html) == []
     assert app.test_client().get(url).status_code == 404                 # otro navegador: no
 
