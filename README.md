@@ -105,7 +105,7 @@ El detalle está en [docs/fase-9-cuenta-y-marca.md](docs/fase-9-cuenta-y-marca.m
 
 - **¿Olvidaste tu contraseña?** (en `/entrar`): usuario o correo → un código de 6 dígitos al correo de la cuenta → contraseña nueva. Vence a los 15 minutos y sirve una sola vez.
 - **Sin correo de verdad** (`CORREO_SIMULAR=1`, el valor del `.env`): el código aparece en la ventana del servidor, en el bloque `[CORREO SIMULADO]`. Para enviarlo con Gmail se completa `SMTP_*` en el `.env` (ver `.env.example`) y se prueba con `flask correo probar tu@correo.com`.
-- **Mi cuenta** (en el menú del panel): tus datos, lo que hace y no hace tu rol, cambiar tu contraseña, tu correo y tu celular, y tus últimos movimientos.
+- **Mi cuenta** (en el menú del panel; el operador y el admin la tienen en «Más»): tus datos, lo que hace y no hace tu rol, cambiar tu contraseña, tu correo y tu celular, y tus últimos movimientos.
 - Se entra con el **usuario o con el correo**. La sesión se cierra sola tras **30 minutos sin actividad** (`SESION_INACTIVA_MIN`), con aviso 2 minutos antes. Si cambias tu contraseña, tus otras sesiones se cierran solas.
 - Una contraseña nueva necesita 10 caracteres o más, letras y números, sin espacios y sin el nombre de usuario.
 - El admin activa o desactiva cuentas con un clic (Usuarios) y descarga la bitácora en CSV (Bitácora).
@@ -118,7 +118,7 @@ El detalle está en [docs/fase-9-cuenta-y-marca.md](docs/fase-9-cuenta-y-marca.m
 
 ## Respaldos de la base (F9)
 
-En el panel del admin, **Respaldos**: «Crear respaldo ahora» guarda toda la base en `respaldos/respaldo_<fecha>.sql` (las 20 tablas con sus datos, las vistas, el procedimiento y los triggers), se descarga, y con el servidor encendido se crea uno **automático cada 24 horas**. Se guardan los 15 más nuevos. «Reporte general» baja reservas, pagos, salidas y hospedajes en CSV para Excel, sin documentos ni teléfonos.
+En el panel del admin, **Respaldos**: «Crear respaldo ahora» guarda toda la base en `respaldos/respaldo_<fecha>.sql` (las 21 tablas con sus datos, las vistas, el procedimiento y los triggers), se descarga, y con el servidor encendido se crea uno **automático cada 24 horas**. Se guardan los 15 más nuevos. «Reporte general» baja reservas, pagos, salidas y hospedajes en CSV para Excel, sin documentos ni teléfonos.
 
 ```powershell
 flask bd respaldar                                  # un respaldo ahora

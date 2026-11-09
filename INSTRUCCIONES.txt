@@ -63,8 +63,8 @@ PASO 5 - CREAR LAS TABLAS Y CARGAR LOS DATOS DE PRUEBA
 ------------------------------------------------------------
        flask bd reiniciar --si
 
-   Borra la base titicaca_vivo y la crea de nuevo: 20 tablas, 2 vistas,
-   4 triggers, 1 procedimiento y 269 filas de prueba, con las salidas
+   Borra la base titicaca_vivo y la crea de nuevo: 21 tablas, 2 vistas,
+   4 triggers, 1 procedimiento y 283 filas de prueba, con las salidas
    puestas en la fecha de HOY. (Borra las reservas que hayas hecho.)
 
        flask bd contar          muestra las filas de cada tabla
@@ -84,8 +84,8 @@ PASO 6 - ARRANCAR
        [ok] Dependencias instaladas (Flask 3.1.3, PyMySQL 1.2.3, waitress 3.0.2)
        [ok] Archivo .env con SECRET_KEY (entorno desarrollo)
        [ok] MySQL responde en 127.0.0.1:3306 (MariaDB 10.4.32)
-       [ok] Base titicaca_vivo: 20 tablas, 2 vistas, 4 triggers y 1 procedimiento
-       [ok] Datos: 269 filas - 3 salida(s) hoy - 9 de hoy en adelante
+       [ok] Base titicaca_vivo: 21 tablas, 2 vistas, 4 triggers y 1 procedimiento
+       [ok] Datos: 283 filas - 3 salida(s) hoy - 9 de hoy en adelante
        [ok] Puerto 8080 libre
 
    Si una linea sale con [X], abajo dice exactamente que hacer y el
@@ -173,12 +173,13 @@ ANTES DE GRABAR EL VIDEO O DE PRESENTAR
    2. Con el entorno activado:   flask bd reiniciar --si
       (las salidas de prueba quedan en la fecha de HOY)
    3. Doble clic en INICIAR.bat y revisa que todo salga [ok].
-   El guion completo, paso a paso y por integrante: GUION_VIDEO.md
+   El flujo completo para mostrar esta en USUARIOS_DEMO.txt.
 
 
 PRUEBAS AUTOMATICAS
 ------------------------------------------------------------
-       pytest                       todas (628, cerca de 2 minutos y medio)
+       pytest                       todas (848, cerca de 3 minutos)
+       pytest tests/unitarias       las 30 unitarias: no necesitan MariaDB
        pytest -v tests/test_concurrencia.py      8 personas por 1 lugar
        pytest -v -s tests/test_mutante.py        sin FOR UPDATE hay sobreventa
        pytest -v tests/test_trazabilidad.py      la matriz se verifica sola
@@ -220,11 +221,14 @@ PROBLEMAS COMUNES
        o usa otro puerto:  python servidor.py --puerto 8081
    "flask" no se reconoce como comando
        El entorno no esta activado (PASO 2).
+   "Una directiva de Control de aplicaciones bloqueo este archivo" (pip, flask)
+       Windows 11 bloquea los .exe del entorno. Antepon python -m:
+       python -m pip install -r requirements.txt  o  python -m flask bd reiniciar --si
    "Demasiados intentos" al entrar
        5 claves mal en 15 minutos desde esa PC. Espera o reinicia el servidor.
    El abordaje dice "abre 60 minutos antes del zarpe"
-       Es la regla RN-12. Para la demo, el guion crea una salida que zarpa
-       dentro de 30 minutos (GUION_VIDEO.md).
+       Es la regla RN-12. Para la demo, crea una salida que zarpe dentro
+       de 30 minutos (USUARIOS_DEMO.txt, paso 6).
    La pagina dice "No hay conexion con la base de datos"
        MySQL se apago mientras la app estaba abierta: Start en MySQL y
        recarga la pagina.
@@ -238,7 +242,6 @@ DONDE ESTA CADA COSA
    INSTRUCCIONES.txt     este archivo
    USUARIOS_DEMO.txt     usuarios, claves, reservas de prueba y flujo completo
    COMO_FUNCIONA.txt     el programa explicado en una pagina
-   GUION_VIDEO.md        el video: que muestra y que dice cada integrante
    README.md             todo el detalle tecnico
    docs/                 base de datos, consultas explicadas, trazabilidad,
                          marca, decisiones y evidencias de cada fase

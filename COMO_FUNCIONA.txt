@@ -10,6 +10,7 @@ QUE ES
 QUIEN LA USA
   - Turista: NO tiene cuenta. Reserva y vuelve a su reserva con su codigo.
   - Personal (tiene cuenta, la crea el admin): admin, operador, guia y capitan.
+  - Residentes de cada isla (tambien con cuenta): solo publican sus productos.
     Usuarios y claves de prueba: ver USUARIOS_DEMO.txt
 
 
@@ -38,11 +39,14 @@ QUIEN LA USA
   Operador: crea las salidas (lancha, capitan, guia, cupo), verifica los pagos,
             registra las alertas del lago (SENAMHI o Capitania) y suspende las
             salidas afectadas, asigna las familias anfitrionas y modera resenas.
+            En el menu ve 3 opciones a la vista (Salidas de hoy, Pagos por
+            verificar y Abordaje); lo demas esta en "Mas".
   Guia y capitan: ven SOLO sus salidas, la lista de pasajeros y leen el QR del
             boleto con la camara del celular para registrar quien subio.
             El capitan marca el zarpe.
   Admin:    usuarios y roles, bitacora (quien hizo que), catalogos e indicadores,
             y los RESPALDOS de la base (uno automatico cada 24 horas).
+  Residente: publica y edita SOLO sus productos (con precio y foto).
 
   Todos:    "Mi cuenta" en el menu: sus datos, lo que HACE y NO HACE su rol,
             cambiar su contrasena, su correo y celular, y sus ultimos ingresos.
@@ -73,7 +77,7 @@ QUIEN LA USA
     app/          la aplicacion (rutas, modelos, plantillas, estilos)
     database/     los scripts SQL: 00 usuario, 01 tablas, 02 vistas y
                   triggers, 03 datos de prueba, 99 consultas de prueba
-    tests/        628 pruebas automaticas (pytest)
+    tests/        848 pruebas automaticas (pytest); 30 corren sin MariaDB
     docs/         la documentacion (empiecen por consultas-explicadas.md)
     scripts/      ayudas (EXPLAIN, ZIP de entrega, fotos, claves)
 
@@ -84,7 +88,8 @@ QUIEN LA USA
   2) Activar el entorno virtual (ver README, paso 4).
   3) flask bd reiniciar --si        deja la base como nueva, con fechas de HOY
   4) python servidor.py             y abrir http://127.0.0.1:8080
-  5) (opcional) pytest              628 pruebas, cerca de 2 minutos y medio
+  5) (opcional) pytest              848 pruebas, cerca de 3 minutos
+     pytest tests/unitarias         solo las 30 unitarias, sin MariaDB
 
 
 6. DONDE ESTA CADA COSA PARA EXPLICARLA

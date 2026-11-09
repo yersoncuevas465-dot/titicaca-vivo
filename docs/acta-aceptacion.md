@@ -15,7 +15,7 @@ En cada caso la mesa marca **Pasó** o **No pasó**; si no pasó, anota qué vio
 |---|---|---|---|---|---|
 | 1 | una salida a los Uros con lugares libres | el turista reserva para 2 personas con sus datos | recibe un código TV-XXXX y la reserva queda «pendiente de pago» | | |
 | 2 | una salida con 2 lugares libres | el turista intenta reservar para 3 personas | el sistema no lo deja y le dice «Solo quedan 2 lugares en esta salida» | | |
-| 3 | una reserva pendiente de pago | el turista reporta su Yape con el número de operación y el operador lo verifica en «Pagos» | la reserva pasa a «pagada» y en «Mi reserva» aparece el boleto con QR | | |
+| 3 | una reserva pendiente de pago | el turista reporta su Yape con el número de operación y el operador lo verifica en «Pagos por verificar» | la reserva pasa a «pagada» y en «Mi reserva» aparece el boleto con QR | | |
 | 4 | la reserva TV-33VR del titular con DNI 40998812 | el turista entra a «Mi reserva» con ese código y ese DNI | ve su reserva pagada y su boleto con QR para el embarque | | |
 | 5 | salidas programadas que pasan por Amantaní | el operador registra una alerta roja de oleaje en Amantaní y pulsa «Suspender las salidas en un solo paso» | esas salidas quedan suspendidas y el turista ve el motivo y la opción de reprogramar o pedir la devolución | | |
 | 6 | la residente de Taquile con su cuenta (residente.juana) | publica un producto con su precio y su foto | el producto aparece en «Productos» de Taquile con su nombre y dónde encontrarlo | | |
