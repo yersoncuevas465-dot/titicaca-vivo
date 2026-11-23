@@ -8,6 +8,8 @@ Juntos: con un código adivinado faltan 5 dígitos del DNI (100 000 intentos) pa
 nombres, documentos, teléfono, correo y el boleto con QR de otra persona. El freno va en el servidor.
 """
 
+import re
+
 from tests.conftest import token_csrf
 
 CODIGO, DNI = "TV-33VR", "40998812"          # reserva pagada de la semilla (USUARIOS_DEMO.txt)
@@ -38,3 +40,12 @@ def test_ps03_el_freno_no_castiga_al_turista_que_acierta(cliente):
         respuesta = _intentar(cliente, DNI)
         assert respuesta.status_code == 303
         assert respuesta.headers["Location"].endswith(f"/reservas/{CODIGO}")
+
+
+def test_ps04_sin_identificarse_no_se_ve_ningun_digito_del_documento(app):
+    # El punto 2: con «•••••812» a la vista solo faltaban 5 dígitos. Ahora no se ve ninguno.
+    html = app.test_client().get(f"/reservas/{CODIGO}").get_data(True)
+    titular = re.findall(r"<dt>DNI</dt><dd>([^<]*)</dd>", html)
+    pasajeros = re.findall(r"<td>DNI ([^<]*)</td>", html)
+    assert titular and pasajeros
+    assert all(re.fullmatch("•+", dato) for dato in titular + pasajeros), (titular, pasajeros)
