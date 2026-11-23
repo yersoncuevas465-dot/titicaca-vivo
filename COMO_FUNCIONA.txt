@@ -77,7 +77,7 @@ QUIEN LA USA
     app/          la aplicacion (rutas, modelos, plantillas, estilos)
     database/     los scripts SQL: 00 usuario, 01 tablas, 02 vistas y
                   triggers, 03 datos de prueba, 99 consultas de prueba
-    tests/        851 pruebas automaticas (pytest); 30 corren sin MariaDB
+    tests/        859 pruebas automaticas (pytest); 30 corren sin MariaDB
     docs/         la documentacion (empiecen por consultas-explicadas.md)
     scripts/      ayudas (EXPLAIN, ZIP de entrega, fotos, claves)
 
@@ -88,7 +88,7 @@ QUIEN LA USA
   2) Activar el entorno virtual (ver README, paso 4).
   3) flask bd reiniciar --si        deja la base como nueva, con fechas de HOY
   4) python servidor.py             y abrir http://127.0.0.1:8080
-  5) (opcional) pytest              851 pruebas, entre 3 y 4 minutos
+  5) (opcional) pytest              859 pruebas, entre 3 y 4 minutos
      pytest tests/unitarias         solo las 30 unitarias, sin MariaDB
 
 

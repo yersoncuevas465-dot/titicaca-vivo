@@ -136,7 +136,12 @@ def test_paginas_publicas_pesan_menos_de_100_kb(cliente, url):
 @pytest.mark.parametrize("url", URLS_PUBLICAS)
 def test_paginas_publicas_sin_estilos_ni_scripts_en_linea(cliente, url):
     html = cliente.get(url).get_data(True)
-    assert " style=" not in html and "<style" not in html and "<script" not in html
+    assert " style=" not in html and "<style" not in html
+    # Práctica 13: la página lleva un script propio (js/app.js registra el service worker), pero
+    # ninguno en línea: cada <script> trae su src de /estaticos/ y nada adentro (la CSP no los deja).
+    scripts = re.findall(r"<script\b([^>]*)>(.*?)</script>", html, re.S)
+    assert html.count("<script") == len(scripts)
+    assert all('src="/estaticos/' in atributos and not adentro.strip() for atributos, adentro in scripts)
     assert '<html lang="es">' in html
 
 

@@ -30,6 +30,7 @@ def crear_app(config_clase=Config):
         publico,
         publico_experiencias,  # noqa: F401 (registra sus rutas en publico)
         publico_libro,  # noqa: F401 (registra sus rutas en publico)
+        publico_movil,  # noqa: F401 (registra sus rutas en publico)
         publico_productos,  # noqa: F401 (registra sus rutas en publico)
         reservas,
     )

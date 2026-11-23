@@ -132,7 +132,7 @@ flask bd restaurar respaldo_20261030_120000.sql     # BORRA la base y deja la de
 ## Pruebas y calidad
 
 ```powershell
-pytest                    # 851 pruebas (23/11/2026): primero las 30 unitarias y después las que usan
+pytest                    # 859 pruebas (23/11/2026): primero las 30 unitarias y después las que usan
                           # SOLO la base titicaca_vivo_pruebas (la borra y la crea al empezar)
 pytest tests/unitarias    # solo las unitarias: no necesitan MariaDB, corren en cualquier PC
 ruff check .      # estilo y seguridad
@@ -177,7 +177,7 @@ En el `.env` de producción van `ENTORNO=produccion` y `URL_PUBLICA=https://<tu 
 python scripts/empaquetar.py
 ```
 
-Esto arma `..\entrega\titicaca_vivo-2.9.1.zip`, fuera de la carpeta del proyecto. El ZIP:
+Esto arma `..\entrega\titicaca_vivo-2.10.0.zip`, fuera de la carpeta del proyecto. El ZIP:
 
 - no lleva `.env`, entornos virtuales, cachés, `logs/` ni `.coverage`;
 - **no se arma** si algún archivo contiene la `SECRET_KEY` o la `BD_CONTRASENA` del `.env`.
