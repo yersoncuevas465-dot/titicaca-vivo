@@ -178,7 +178,7 @@ ANTES DE GRABAR EL VIDEO O DE PRESENTAR
 
 PRUEBAS AUTOMATICAS
 ------------------------------------------------------------
-       pytest                       todas (848, cerca de 3 minutos)
+       pytest                       todas (851, entre 3 y 4 minutos)
        pytest tests/unitarias       las 30 unitarias: no necesitan MariaDB
        pytest -v tests/test_concurrencia.py      8 personas por 1 lugar
        pytest -v -s tests/test_mutante.py        sin FOR UPDATE hay sobreventa

@@ -33,7 +33,7 @@ from app.modelos import ErrorNegocio, ErrorValidacion, salida, tarifa
 from app.modelos import reprogramacion as modelo_reprogramacion
 from app.modelos import resena as modelo_resena
 from app.modelos import reserva as modelo_reserva
-from app.seguridad import ip_cliente
+from app.seguridad import ip_cliente, limitador
 from app.servicios import formato, paises, pdf, qr, reniec, textos, tipo_cambio
 from app.servicios.textos import mensaje, t, traducir_formulario
 
@@ -225,7 +225,15 @@ def ver(codigo):
     )
 
 
+def _acceso_fallido(respuesta):
+    # Solo cuentan para el freno los intentos con código o documento equivocados (401):
+    # el turista que acierta (303) puede volver a su reserva cuantas veces quiera.
+    return respuesta.status_code == 401
+
+
 @bp.route("/mi-reserva", methods=["GET", "POST"])
+@limitador.limit(lambda: current_app.config["LIMITE_INTENTOS_MI_RESERVA"], methods=["POST"],
+                 deduct_when=_acceso_fallido)
 def mi_reserva():
     formulario = FormularioMiReserva()
     if request.method == "GET" and request.args.get("codigo"):
