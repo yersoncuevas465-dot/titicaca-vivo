@@ -28,7 +28,7 @@
   8. si la ruta tiene noche y la reserva queda confirmada, **asigna la familia anfitriona por rotación justa** (RN-10). Con Yape/Plin solo revisa que haya una libre; la asignación llega al verificar el pago (F5);
   9. bitácora y **COMMIT**.
 - **Idempotencia (RN-03)**: si el token ya está, se devuelve la reserva existente. Además, el UNIQUE de `token_envio` atrapa el error 1062 como última red.
-- **`/reservas/<código>`**: estado, salida, titular, pasajeros, total, pagos y familia anfitriona. **Los datos personales se ven ocultos** (`R*** M**** Q*****`, `•••••081`) hasta que la persona se identifica.
+- **`/reservas/<código>`**: estado, salida, titular, pasajeros, total, pagos y familia anfitriona. **Los datos personales se ven ocultos** (`R*** M**** Q*****`, `••••••••`) hasta que la persona se identifica.
 - **`/mi-reserva`**: con el código y el documento del titular se habilita, en la sesión, ver los datos completos, el boleto y el formulario de pago. Si falla, responde 401 con el mismo mensaje sea el código o el documento lo que está mal.
 - **Boleto** `/reservas/<código>/boleto`:
   - en HTML tiene aspecto de pase de abordar, con un **QR en SVG** que guarda `/panel/abordaje/<código>` (la ruta que se programa en la F5);

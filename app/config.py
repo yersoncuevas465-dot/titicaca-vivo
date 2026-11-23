@@ -57,7 +57,8 @@ class Config:
     # Límite de intentos fallidos en /entrar (sección 11). Se guarda en memoria: vale por proceso.
     LIMITE_INTENTOS_ENTRAR = "5 per 15 minutes"
     # Práctica 12: código o documento equivocados en «Mi reserva», por IP (sin freno se podían
-    # probar los 100 000 DNI que faltan cuando la página deja ver sus últimos 3 dígitos).
+    # probar los 100 000 DNI que faltan cuando la página dejaba ver sus últimos 3 dígitos;
+    # ahora no muestra ninguno).
     LIMITE_INTENTOS_MI_RESERVA = "10 per 15 minutes"
     # D-110: la sesión del personal se cierra sola tras estos minutos sin actividad.
     SESION_INACTIVA_MIN = int(os.getenv("SESION_INACTIVA_MIN", "30"))

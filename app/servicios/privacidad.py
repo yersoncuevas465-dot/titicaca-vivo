@@ -14,11 +14,14 @@ def nombre(texto):
 
 
 def documento(texto):
-    """'41020304' → '•••••304' (solo se ven los 3 últimos caracteres)."""
+    """'41020304' → '••••••••' (no se ve ningún carácter, y todos miden lo mismo).
+
+    Práctica 12: con los 3 últimos dígitos a la vista, a un DNI le faltaban solo 5 (100 000
+    intentos) para entrar a «Mi reserva». Con 8 puntos fijos tampoco se sabe el largo.
+    """
     if not texto:
         return ""
-    texto = str(texto)
-    return "•" * max(len(texto) - 3, 0) + texto[-3:]
+    return "•" * 8
 
 
 def telefono(texto):
