@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block titulo %}{{ t('Sin conexión') }}{% endblock %}
+
+{# Práctica 13: el service worker la guarda al instalar y la muestra sin red en las páginas que no
+   se guardaron y en las de una persona (su reserva, el panel), que nunca se guardan. #}
+{% block contenido %}
+<article class="legal" aria-labelledby="titulo-sin-conexion">
+  <h1 id="titulo-sin-conexion">{{ t('Sin conexión') }}</h1>
+  <p>{{ t('No hay internet en este momento. Las salidas, las comunidades y los productos que ya abriste se pueden volver a ver.') }}</p>
+  <p>{{ t('Tu reserva, los pagos y el panel necesitan conexión: por tu seguridad no se guardan en el celular.') }}</p>
+  <p><a class="boton" href="{{ url_for('publico.inicio') }}">{{ t('Volver a intentar') }}</a></p>
+</article>
+{% endblock %}

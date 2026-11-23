@@ -229,6 +229,12 @@ EN = {
     "Documento": "ID document",
     "Número de documento": "Document number",
     "País": "Country",
+    "Sin conexión": "Offline",
+    "No hay internet en este momento. Las salidas, las comunidades y los productos que ya abriste se pueden volver a ver.":
+        "There is no internet right now. The departures, communities and products you already opened can still be seen.",
+    "Tu reserva, los pagos y el panel necesitan conexión: por tu seguridad no se guardan en el celular.":
+        "Your booking, payments and the staff panel need a connection: for your safety they are not stored on the phone.",
+    "Volver a intentar": "Try again",
     "Empieza a escribir tu país y elígelo de la lista.":
         "Start typing your country and pick it from the list.",
     "Celular o WhatsApp": "Mobile or WhatsApp",

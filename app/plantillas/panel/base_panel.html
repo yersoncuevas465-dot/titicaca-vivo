@@ -63,6 +63,7 @@
 {# D-110: avisa 2 minutos antes de que la sesión se cierre por inactividad y, mientras la
    persona escribe o hace clic, le avisa al servidor que sigue trabajando. #}
 {% block scripts %}
+<script src="{{ estatico('js/tablas.js') }}" defer></script>
 <script src="{{ estatico('js/sesion.js') }}" defer
         data-minutos="{{ config.SESION_INACTIVA_MIN }}" data-url="{{ url_for('panel.sesion_activa') }}"></script>
 {% endblock %}

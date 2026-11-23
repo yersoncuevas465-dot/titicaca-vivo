@@ -2,7 +2,7 @@
    En el celular la lista ocupa todo el ancho debajo del menú; en pantalla grande cae bajo «Más». */
 .subnav__fila { position: relative; }
 .subnav__mas > summary {
-  display: flex; align-items: center; gap: 0.4rem; min-height: 2.75rem; padding: 0.8rem 0.6rem;
+  display: flex; align-items: center; gap: 0.4rem; min-height: 3rem; padding: 0.8rem 0.6rem;
   color: var(--crema); cursor: pointer; list-style: none; white-space: nowrap;
 }
 .subnav__mas > summary::-webkit-details-marker { display: none; }
@@ -24,4 +24,19 @@
 @media (min-width: 48em) {
   .subnav__mas { position: relative; }
   .subnav__menu { right: auto; min-width: 14rem; border-radius: 0 0 var(--radio) var(--radio); }
+}
+
+/* Práctica 13: en el celular, cada fila de las tablas del panel es una tarjeta y cada dato lleva su
+   título (js/tablas.js lo copia del encabezado). Nada se esconde: el encabezado pasa a cada dato. */
+@media (max-width: 47.99em) {
+  .tabla--tarjetas thead { display: none; }      /* sus títulos ya van en cada dato */
+  .tabla--tarjetas caption { display: block; }
+  .tabla--tarjetas, .tabla--tarjetas tbody, .tabla--tarjetas tr, .tabla--tarjetas td,
+  .tabla--tarjetas tbody th { display: block; }
+  .tabla--tarjetas tr { border-top: 2px solid var(--arena); padding: 0.35rem 0; }
+  .tabla--tarjetas td, .tabla--tarjetas tbody th { border-top: 0; padding: 0.3rem 0.75rem; white-space: normal; }
+  .tabla--tarjetas [data-titulo]::before {
+    content: attr(data-titulo); display: block; font-size: 0.8rem; font-weight: 700; color: var(--ciruela);
+  }
+  .tabla--tarjetas td a, .tabla--tarjetas td .boton { display: inline-flex; align-items: center; min-height: 3rem; }
 }

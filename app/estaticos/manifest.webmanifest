@@ -1,0 +1,17 @@
+{
+  "name": "Titicaca Vivo · salidas en lancha por el lago",
+  "short_name": "Titicaca",
+  "description": "Salidas en lancha y turismo vivencial en el lago Titicaca, Puno.",
+  "lang": "es-PE",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#FEF9F3",
+  "theme_color": "#572B44",
+  "icons": [
+    {"src": "/estaticos/img/icono-192.png", "sizes": "192x192", "type": "image/png"},
+    {"src": "/estaticos/img/icono-512.png", "sizes": "512x512", "type": "image/png"},
+    {"src": "/estaticos/img/icono-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable"}
+  ]
+}
