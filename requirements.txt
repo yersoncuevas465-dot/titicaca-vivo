@@ -10,6 +10,7 @@ tzdata==2026.5
 qrcode[pil]==8.2
 reportlab==5.0.1
 waitress==3.0.2
+gunicorn==23.0.0        # Práctica 14: el servidor en la nube (Linux)
 # Pruebas y calidad
 pytest==9.1.1
 pytest-cov==7.1.0

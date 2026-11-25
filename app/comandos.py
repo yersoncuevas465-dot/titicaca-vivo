@@ -184,6 +184,24 @@ def usuarios_clave(nombre_usuario, contrasena):
                    "pueda entrar.")
 
 
+@grupo_usuarios.command("clave-demo")
+def usuarios_clave_demo():
+    """Práctica 14: pone la clave de la variable CLAVE_DEMO a todas las cuentas (en la nube)."""
+    import os
+
+    from app.modelos import ErrorNegocio, usuario
+
+    contrasena = os.environ.get("CLAVE_DEMO", "")
+    if not contrasena:
+        raise click.ClickException("Falta la variable CLAVE_DEMO: no se cambió ninguna clave.")
+    with _base_disponible():
+        try:
+            cuantas = usuario.poner_clave_demo(contrasena)
+        except ErrorNegocio as error:
+            raise click.ClickException(error.mensaje) from error
+    click.echo(f"Listo: {cuantas} cuentas usan la clave de CLAVE_DEMO.")
+
+
 @grupo_correo.command("probar")
 @click.argument("destino")
 def correo_probar(destino):

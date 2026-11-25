@@ -1,0 +1,27 @@
+# Práctica 14 · Titicaca Vivo en Render. Render lo lee con New → Blueprint → este repositorio.
+#
+# Hueco declarado: en el plan gratis no hay disco que dure. La base MariaDB vive dentro del
+# contenedor y vuelve a los datos de ejemplo en cada arranque; Render duerme el servicio tras
+# 15 minutos sin visitas y la primera visita después tarda cerca de un minuto. Las fotos que
+# suban los residentes y los respaldos tampoco duran. Para la demo alcanza; para guardar datos
+# de verdad hace falta una MySQL administrada que dure (es de pago).
+services:
+  - type: web
+    name: titicaca-vivo
+    runtime: docker
+    plan: free
+    healthCheckPath: /salud
+    autoDeploy: true
+    envVars:
+      - key: ENTORNO
+        value: produccion
+      - key: SECRET_KEY
+        generateValue: true          # Render la inventa; nadie la escribe
+      - key: PROXY_SALTOS
+        value: "1"                   # delante está el proxy https de Render
+      - key: CLAVE_DEMO
+        sync: false                  # la escribe el equipo en el panel; va al docente por privado
+      - key: RESPALDO_AUTOMATICO
+        value: "0"                   # el disco no dura: no tiene sentido respaldar ahí
+      - key: CORREO_SIMULAR
+        value: "1"

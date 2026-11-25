@@ -132,7 +132,7 @@ flask bd restaurar respaldo_20261030_120000.sql     # BORRA la base y deja la de
 ## Pruebas y calidad
 
 ```powershell
-pytest                    # 860 pruebas (23/11/2026): primero las 30 unitarias y después las que usan
+pytest                    # 868 pruebas (23/11/2026): primero las 30 unitarias y después las que usan
                           # SOLO la base titicaca_vivo_pruebas (la borra y la crea al empezar)
 pytest tests/unitarias    # solo las unitarias: no necesitan MariaDB, corren en cualquier PC
 ruff check .      # estilo y seguridad
@@ -156,6 +156,31 @@ BD_CONTRASENA=<la del usuario titicaca_app de ese servidor>
 Después se ejecuta `flask bd reiniciar --si`, y la app y las pruebas ya trabajan contra ese servidor. En ese servidor hay que crear el usuario para la IP de esta PC, no solo para `localhost`.
 
 El paso a paso para otra PC de la red, lo que cambia en MySQL 8 y la evidencia (479 pruebas en un segundo servidor) están en [docs/fase-8-entrega.md](docs/fase-8-entrega.md).
+
+---
+
+## En internet (Práctica 14): Render
+
+La app corre en **Render, plan gratis**, con Docker: la app y su MariaDB 10.11 van en el mismo
+contenedor (`Dockerfile`). El arranque (`scripts/nube_arrancar.sh`) enciende MariaDB, carga los
+datos de ejemplo, pone la clave de `CLAVE_DEMO` a las cuentas demo y abre gunicorn en
+`0.0.0.0:$PORT`. Render lo lee de `render.yaml` (New → Blueprint) y pregunta cada 30 s por `/salud`.
+
+Variables del panel: `ENTORNO=produccion` (cookie Secure y HSTS), `SECRET_KEY` (la genera Render),
+`CLAVE_DEMO` (la escribe el equipo; va al docente por privado), `PROXY_SALTOS=1` (la IP real de cada
+turista detrás del proxy de Render), `RESPALDO_AUTOMATICO=0` y `CORREO_SIMULAR=1`. `PORT` y
+`RENDER_EXTERNAL_URL` los pone Render.
+
+```powershell
+pytest tests/test_nube.py                                  # PN-01 a PN-08: lo que pide la nube
+python scripts/humo.py https://titicaca-vivo.onrender.com  # prueba de humo contra la dirección
+```
+
+**Hueco declarado:** en el plan gratis no hay disco que dure. La base vive dentro del contenedor y
+vuelve a los datos de ejemplo en cada arranque; Render duerme el servicio tras 15 minutos sin
+visitas y la primera visita después tarda cerca de un minuto. Las fotos que suban los residentes y
+los respaldos tampoco duran. Para la demo alcanza; para guardar datos de verdad hace falta una
+MySQL administrada que dure (es de pago).
 
 ---
 

@@ -62,6 +62,8 @@ class Config:
     LIMITE_INTENTOS_MI_RESERVA = "10 per 15 minutes"
     # D-110: la sesión del personal se cierra sola tras estos minutos sin actividad.
     SESION_INACTIVA_MIN = int(os.getenv("SESION_INACTIVA_MIN", "30"))
+    # Práctica 14: cuántos proxies hay delante (Render: 1). Con 0 no se cree en X-Forwarded-For.
+    PROXY_SALTOS = int(os.getenv("PROXY_SALTOS", "0"))
 
     # D-111: recuperar la contraseña con un código de 6 dígitos que llega por correo.
     MINUTOS_CODIGO_RECUPERACION = 15

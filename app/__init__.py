@@ -16,6 +16,13 @@ def crear_app(config_clase=Config):
     app.config.from_object(config_clase)
     if not app.config.get("SECRET_KEY"):
         raise RuntimeError("Falta SECRET_KEY en el archivo .env (ver .env.example).")
+    saltos = app.config.get("PROXY_SALTOS", 0)
+    if saltos:
+        # Práctica 14: detrás del proxy de Render, la IP y el https del turista vienen en
+        # X-Forwarded-For y X-Forwarded-Proto. Sin esto, el freno vería una sola IP para todos.
+        from werkzeug.middleware.proxy_fix import ProxyFix
+
+        app.wsgi_app = ProxyFix(app.wsgi_app, x_for=saltos, x_proto=saltos)
 
     from app import bd, comandos, errores, registro, seguridad
     from app.rutas import (

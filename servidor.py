@@ -15,6 +15,7 @@ en INSTRUCCIONES.txt.
 
 import argparse
 import importlib.util
+import os
 import re
 import secrets
 import shutil
@@ -28,6 +29,14 @@ from pathlib import Path
 
 RAIZ = Path(__file__).resolve().parent
 PYTHON_MINIMO = (3, 12)
+
+
+def puerto_de(env=None):
+    """Práctica 14: en la nube el puerto lo pone la plataforma (PORT); en la laptop, 8080."""
+    env = os.environ if env is None else env
+    return int(env.get("PORT") or env.get("PUERTO") or 8080)
+
+
 # Paquete de requirements.txt → módulo que se importa
 DEPENDENCIAS = {
     "Flask": "flask", "PyMySQL": "pymysql", "Flask-WTF": "flask_wtf", "Flask-Login": "flask_login",
@@ -231,7 +240,7 @@ def mostrar_aviso(opciones, config):
 def main(argv=None):
     argumentos = argparse.ArgumentParser(description="Servidor waitress de Titicaca Vivo")
     argumentos.add_argument("--host", default="127.0.0.1", help="0.0.0.0 para toda la red local")
-    argumentos.add_argument("--puerto", type=int, default=8080)
+    argumentos.add_argument("--puerto", type=int, default=puerto_de())
     argumentos.add_argument("--hilos", type=int, default=8)
     argumentos.add_argument("--abrir", action="store_true", help="abre el navegador al arrancar")
     argumentos.add_argument("--revisar", action="store_true",

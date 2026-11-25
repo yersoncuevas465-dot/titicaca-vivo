@@ -138,6 +138,9 @@ def agregar_cabeceras(respuesta):
     respuesta.headers["X-Content-Type-Options"] = "nosniff"
     respuesta.headers["Referrer-Policy"] = "same-origin"
     respuesta.headers["Permissions-Policy"] = "camera=(), microphone=(), geolocation=()"
+    if current_app.config.get("SESSION_COOKIE_SECURE"):
+        # Práctica 14: en producción (https) el navegador recuerda por un año que va solo con https.
+        respuesta.headers["Strict-Transport-Security"] = "max-age=31536000"
     # D-112: con la sesión abierta nada se guarda en la caché: tras «Salir», el botón «Atrás»
     # no vuelve a mostrar datos. g._login_user existe solo si la página ya leyó la sesión
     # (así un archivo estático no consulta la base).

@@ -336,6 +336,18 @@ def para_consola():
     )
 
 
+def poner_clave_demo(contrasena):
+    """Práctica 14: en internet, todas las cuentas de la semilla usan la clave de CLAVE_DEMO
+    (las de USUARIOS_DEMO.txt están en el repositorio). Un solo hash: bcrypt es lento en la
+    nube gratis. Devuelve cuántas cuentas cambió."""
+    error = cuenta.error_contrasena(contrasena)
+    if error:
+        raise ErrorNegocio(f"No se cambió nada: {error}")
+    with bd.transaccion() as cur:
+        cur.execute("UPDATE usuario SET hash_contrasena = %s", (cuenta.hash_de(contrasena),))
+        return cur.rowcount
+
+
 def cambiar_clave_desde_consola(nombre_usuario, contrasena):
     """D-111: el encargado del servidor pone una contraseña nueva sin entrar al panel (por
     ejemplo, si el admin olvidó la suya y no tiene correo). Devuelve si la cuenta está activa."""
