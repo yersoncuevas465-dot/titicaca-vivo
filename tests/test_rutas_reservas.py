@@ -21,7 +21,7 @@ def formulario(cliente, salida_id, acompanantes=0):
     return respuesta, token_csrf(respuesta), token
 
 
-def datos_validos(csrf, token, documento=None, metodo="muelle", acompanantes=()):
+def datos_validos(csrf, token, documento=None, metodo="muelle", acompanantes=(), declara=True):
     datos = {
         "csrf_token": csrf, "token_envio": token,
         "titular_nombres": "Lucía", "titular_apellidos": "Prueba Ruta",
@@ -29,6 +29,8 @@ def datos_validos(csrf, token, documento=None, metodo="muelle", acompanantes=())
         "titular_nacionalidad": "PE", "telefono": "987654321", "correo": "",
         "titular_viaja": "y", "titular_tipo_pasajero_id": "1", "metodo_pago": metodo,
     }
+    if declara:                       # «Declaro que cada pasajero tiene la edad de su tarifa»
+        datos["declara_tarifas"] = "y"
     for i, numero in enumerate(acompanantes):
         datos.update({f"acompanantes-{i}-nombres": "Mateo", f"acompanantes-{i}-apellidos": "Prueba Ruta",
                       f"acompanantes-{i}-tipo_documento": "DNI", f"acompanantes-{i}-numero_documento": numero,
