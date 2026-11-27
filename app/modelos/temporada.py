@@ -37,7 +37,8 @@ def guardar(actor, temporada_id, datos, ip=None):
     nombre = v.texto(datos, "nombre", e, 3, 60, nombre="el nombre")
     inicio = v.fecha(datos, "fecha_inicio", e)
     fin = v.fecha(datos, "fecha_fin", e)
-    recargo = v.decimal(datos, "recargo_porcentaje", e, 0, 100)
+    # Un recargo negativo es una promoción: −10 = 10 % menos (hasta −50 %).
+    recargo = v.decimal(datos, "recargo_porcentaje", e, -50, 100)
     if inicio and fin and fin < inicio:
         e["fecha_fin"] = "La fecha de fin no puede ser anterior a la de inicio."
     if e:

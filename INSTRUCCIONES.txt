@@ -64,7 +64,7 @@ PASO 5 - CREAR LAS TABLAS Y CARGAR LOS DATOS DE PRUEBA
        flask bd reiniciar --si
 
    Borra la base titicaca_vivo y la crea de nuevo: 21 tablas, 2 vistas,
-   4 triggers, 1 procedimiento y 283 filas de prueba, con las salidas
+   4 triggers, 1 procedimiento y 284 filas de prueba, con las salidas
    puestas en la fecha de HOY. (Borra las reservas que hayas hecho.)
 
        flask bd contar          muestra las filas de cada tabla
@@ -85,7 +85,7 @@ PASO 6 - ARRANCAR
        [ok] Archivo .env con SECRET_KEY (entorno desarrollo)
        [ok] MySQL responde en 127.0.0.1:3306 (MariaDB 10.4.32)
        [ok] Base titicaca_vivo: 21 tablas, 2 vistas, 4 triggers y 1 procedimiento
-       [ok] Datos: 283 filas - 3 salida(s) hoy - 9 de hoy en adelante
+       [ok] Datos: 284 filas - 3 salida(s) hoy - 9 de hoy en adelante
        [ok] Puerto 8080 libre
 
    Si una linea sale con [X], abajo dice exactamente que hacer y el
@@ -178,7 +178,7 @@ ANTES DE GRABAR EL VIDEO O DE PRESENTAR
 
 PRUEBAS AUTOMATICAS
 ------------------------------------------------------------
-       pytest                       todas (868, entre 3 y 4 minutos)
+       pytest                       todas (880, entre 3 y 4 minutos)
        pytest tests/unitarias       las 30 unitarias: no necesitan MariaDB
        pytest -v tests/test_concurrencia.py      8 personas por 1 lugar
        pytest -v -s tests/test_mutante.py        sin FOR UPDATE hay sobreventa

@@ -137,6 +137,9 @@ main:focus { outline: none; }
 .tarjeta--angosta { max-width: 28rem; margin: 1rem auto; }
 .tarjeta__sello { display: block; margin: 0 auto 1rem; }
 .tarjeta--angosta h1 { text-align: center; }
+.cobro-qr { display: flex; flex-wrap: wrap; gap: 1rem; justify-content: center; margin: 1rem 0; }
+.cobro-qr__item { margin: 0; text-align: center; }
+.cobro-qr img { display: block; width: 12.5rem; max-width: 100%; height: auto; margin: 0 auto 0.4rem; background: #fff; border-radius: 0.5rem; }
 
 /* --- Insignias de estado --- */
 .insignia {

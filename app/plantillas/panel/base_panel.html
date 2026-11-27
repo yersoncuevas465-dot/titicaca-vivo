@@ -30,6 +30,7 @@
   {% set principales = [salidas, pagos, reservas] %}
   {% set mas = [resumen] + gestion + [
        ('panel.usuarios', 'Usuarios', actual.startswith('panel.usuario')),
+       ('panel.cobro_qr', 'Cobro (Yape y Plin)', actual.startswith('panel.cobro_qr')),
        ('panel.bitacora', 'Bitácora', actual.startswith('panel.bitacora')),
        ('panel.respaldos', 'Respaldos', actual.startswith('panel.respaldo')), cuenta] %}
 {% elif rol == 'residente' %}

@@ -132,6 +132,7 @@ INSERT INTO temporada (nombre, fecha_inicio, fecha_fin, recargo_porcentaje) VALU
 ('Fiestas de fin de año',      '2026-12-24', '2027-01-02', 10.00),
 ('Virgen de la Candelaria 2027', '2027-02-01', '2027-02-15', 20.00),
 ('Semana Santa 2027',          '2027-03-25', '2027-03-28', 10.00),
+('Temporada baja 2027 (promoción)', '2027-04-12', '2027-05-31', -10.00),
 ('Temporada alta 2027',        '2027-06-15', '2027-08-31', 15.00);
 
 -- ---------------------------------------------------------------------

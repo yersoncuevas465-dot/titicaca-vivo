@@ -60,7 +60,8 @@ def buscar(actor, codigo):
     reserva["pasajeros"] = bd.consultar(
         """
         SELECT rp.id, rp.nombres, rp.apellidos, rp.tipo_documento, rp.numero_documento,
-               rp.nacionalidad, tp.nombre AS tipo, a.registrado_en AS abordo_en, a.metodo
+               rp.nacionalidad, tp.nombre AS tipo, tp.codigo AS tipo_codigo, tp.edad_minima,
+               tp.edad_maxima, a.registrado_en AS abordo_en, a.metodo
         FROM reserva_pasajero rp
         JOIN tipo_pasajero tp ON tp.id = rp.tipo_pasajero_id
         LEFT JOIN abordaje a  ON a.reserva_pasajero_id = rp.id AND a.salida_id = %s

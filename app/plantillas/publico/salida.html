@@ -69,7 +69,10 @@
     <h2 id="titulo-precios">{{ t('Precios por persona') }}</h2>
     {% if precios %}
       {% set temporada = precios[0].temporada %}
-      {% if temporada %}
+      {% if temporada and precios[0].recargo_porcentaje < 0 %}
+        <p class="aviso aviso--exito">{{ t('Esta fecha tiene la promoción {temporada}: los precios tienen un descuento de {descuento}.',
+          temporada=fuerte(temporada), descuento=(-precios[0].recargo_porcentaje) | porcentaje) }}</p>
+      {% elif temporada %}
         <p class="aviso aviso--info">{{ t('Esta fecha cae en la temporada {temporada}: los precios incluyen un recargo de {recargo}.',
           temporada=fuerte(temporada), recargo=precios[0].recargo_porcentaje | porcentaje) }}</p>
       {% endif %}

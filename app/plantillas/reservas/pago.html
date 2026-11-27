@@ -14,6 +14,16 @@
     {% if config.PLIN_NUMERO %}<div><dt>Plin</dt><dd>{{ config.PLIN_NUMERO }}</dd></div>{% endif %}
     {% if config.TITULAR_COBRO %}<div><dt>{{ t('A nombre de') }}</dt><dd>{{ config.TITULAR_COBRO }}</dd></div>{% endif %}
   </dl>
+  {% if hay_qr('yape') or hay_qr('plin') %}
+  <div class="cobro-qr">
+    {% for medio, nombre in [('yape', 'Yape'), ('plin', 'Plin')] if hay_qr(medio) %}
+    <figure class="cobro-qr__item">
+      <img src="{{ url_for('publico.qr_cobro_imagen', medio=medio) }}" alt="{{ t('Código QR de {medio} para pagar', medio=nombre) }}" width="200" height="200">
+      <figcaption>{{ t('Escanéalo con {medio}', medio=nombre) }}</figcaption>
+    </figure>
+    {% endfor %}
+  </div>
+  {% endif %}
   <p class="texto-suave">{{ t('Paga desde tu app y copia aquí el número de operación. La agencia lo verifica y tu reserva pasa a "Pagada".') }}</p>
 
   {{ resumen(f, errores_sueltos, "Revisa el pago") }}

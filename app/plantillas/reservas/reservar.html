@@ -104,6 +104,11 @@
     {% if cambio %}<p class="texto-suave">{{ t('En dólares, con el tipo de cambio de SUNAT del {fecha} (S/ {venta} por dólar). Es referencial: se paga en soles.', fecha=cambio.fecha | fecha_corta, venta=cambio.venta | numero) }}</p>{% endif %}
   </details>
 
+  {% if f.declara_tarifas.errors %}<p class="campo__error" id="declara_tarifas-error">{{ f.declara_tarifas.errors | join(' ') }}</p>{% endif %}
+  <div class="campo campo--check">
+    {{ f.declara_tarifas(**{'aria-invalid': 'true', 'aria-describedby': 'declara_tarifas-error'}) if f.declara_tarifas.errors else f.declara_tarifas() }} {{ f.declara_tarifas.label() }}
+  </div>
+
   {{ f.enviar(class_='boton boton--ancho') }}
 </form>
 

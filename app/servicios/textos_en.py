@@ -107,6 +107,16 @@ EN = {
     "Precios por persona": "Prices per person",
     "Esta fecha cae en la temporada {temporada}: los precios incluyen un recargo de {recargo}.":
         "This date falls in the {temporada} season: prices include a {recargo} surcharge.",
+    "Esta fecha tiene la promoción {temporada}: los precios tienen un descuento de {descuento}.":
+        "This date has the {temporada} promotion: prices are {descuento} off.",
+    "Declaro que cada pasajero tiene la edad de su tarifa (o su carné, si es estudiante). "
+    "Al embarcar se revisa el documento: si no corresponde, se paga la diferencia o no se aborda.":
+        "I declare that each passenger is the age of their fare (or has a student ID). Documents are "
+        "checked at boarding: if it does not match, the difference is paid or the passenger stays.",
+    "Marca la declaración: hay pasajeros con tarifa de niño, estudiante o adulto mayor.":
+        "Check the declaration: some passengers have a child, student or senior fare.",
+    "Código QR de {medio} para pagar": "{medio} QR code to pay",
+    "Escanéalo con {medio}": "Scan it with {medio}",
     "Pasajero": "Passenger",
     "Edad": "Age",
     "Precio": "Price",

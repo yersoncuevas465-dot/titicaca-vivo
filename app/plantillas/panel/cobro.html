@@ -1,0 +1,44 @@
+{% extends "panel/base_panel.html" %}
+{% from "macros.html" import campo, resumen_errores %}
+{% from "panel/_macros.html" import como_funciona %}
+{% block titulo %}Cobro con Yape y Plin{% endblock %}
+
+{% block contenido %}
+<h1>Cobro con Yape y Plin</h1>
+<p class="texto-suave">El QR que subas aquí sale en la página «Reportar mi pago» para que el turista lo escanee con su celular.</p>
+
+{% call como_funciona() %}
+  <li>Sube la <strong>captura del QR</strong> de la cuenta de la agencia (en Yape: «Mi QR»). Se guarda con fondo blanco y sin datos de la foto.</li>
+  <li>El sistema <strong>no entra a la cuenta</strong>: el turista paga con el QR, copia el número de operación y la agencia lo verifica en <strong>Pagos por verificar</strong>, como siempre.</li>
+  <li>Número y titular: {% if config.YAPE_NUMERO or config.PLIN_NUMERO or config.TITULAR_COBRO %}Yape {{ config.YAPE_NUMERO or '—' }} · Plin {{ config.PLIN_NUMERO or '—' }} · a nombre de {{ config.TITULAR_COBRO or '—' }}{% else %}no están puestos{% endif %}. Se cambian en las variables del servidor (YAPE_NUMERO, PLIN_NUMERO, TITULAR_COBRO).</li>
+  <li>Cada QR que se sube o se quita queda en la <strong>Bitácora</strong>: cambiar el QR cambia a dónde va la plata.</li>
+{% endcall %}
+
+<div class="cobro-qr">
+  {% for medio, nombre in medios.items() %}
+  <section class="tarjeta cobro-qr__item" aria-labelledby="titulo-{{ medio }}">
+    <h2 id="titulo-{{ medio }}">{{ nombre }}</h2>
+    {% if hay[medio] %}
+      <img src="{{ url_for('publico.qr_cobro_imagen', medio=medio) }}" alt="QR de {{ nombre }} que ve el turista" width="200" height="200">
+      <form method="post" action="{{ url_for('panel.cobro_qr_quitar', medio=medio) }}">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <button class="boton boton--secundario boton--chico" type="submit">Quitar el QR de {{ nombre }}</button>
+      </form>
+    {% else %}
+      <p>Todavía no hay QR de {{ nombre }}: la página de pago solo muestra el número.</p>
+    {% endif %}
+  </section>
+  {% endfor %}
+</div>
+
+<section class="tarjeta tarjeta--angosta" aria-labelledby="titulo-subir">
+  <h2 id="titulo-subir">Subir o cambiar un QR</h2>
+  {{ resumen_errores(f) }}
+  <form method="post" enctype="multipart/form-data" novalidate>
+    {{ f.csrf_token }}
+    {{ campo(f.qr_yape, ayuda='JPG, PNG o WebP. Deja vacío para no cambiarlo.') }}
+    {{ campo(f.qr_plin, ayuda='JPG, PNG o WebP. Deja vacío para no cambiarlo.') }}
+    {{ f.enviar(class_='boton boton--ancho') }}
+  </form>
+</section>
+{% endblock %}

@@ -132,7 +132,7 @@ flask bd restaurar respaldo_20261030_120000.sql     # BORRA la base y deja la de
 ## Pruebas y calidad
 
 ```powershell
-pytest                    # 868 pruebas (23/11/2026): primero las 30 unitarias y después las que usan
+pytest                    # 880 pruebas (23/11/2026): primero las 30 unitarias y después las que usan
                           # SOLO la base titicaca_vivo_pruebas (la borra y la crea al empezar)
 pytest tests/unitarias    # solo las unitarias: no necesitan MariaDB, corren en cualquier PC
 ruff check .      # estilo y seguridad
@@ -181,6 +181,12 @@ vuelve a los datos de ejemplo en cada arranque; Render duerme el servicio tras 1
 visitas y la primera visita después tarda cerca de un minuto. Las fotos que suban los residentes y
 los respaldos tampoco duran. Para la demo alcanza; para guardar datos de verdad hace falta una
 MySQL administrada que dure (es de pago).
+**En Railway la base sí dura.** Al servicio se le pone un volumen montado en `/data` y estas variables:
+`MARIADB_DATOS=/data/mysql`, `SUBIDAS_CARPETA=/data/subidas`, `RESPALDOS_CARPETA=/data/respaldos` y
+`RESPALDO_AUTOMATICO=1`. La primera vez el arranque carga los datos de ejemplo; en los arranques
+siguientes dice «La base ya tiene sus datos: no se vuelve a cargar» y las reservas, los usuarios nuevos,
+las fotos subidas y los respaldos se quedan. Railway no duerme el servicio (cuesta 5 USD al mes como
+mínimo después de la prueba). Render gratis sigue como demostración que se reinicia.
 
 ---
 

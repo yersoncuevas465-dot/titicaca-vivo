@@ -29,6 +29,7 @@ def crear_app(config_clase=Config):
         apis,
         autenticacion,
         catalogos,
+        cobro,  # noqa: F401 (registra sus rutas en el panel y en publico)
         panel,
         panel_libro,  # noqa: F401 (registra sus rutas en el panel)
         panel_productos,  # noqa: F401 (registra sus rutas en el panel)
@@ -41,7 +42,7 @@ def crear_app(config_clase=Config):
         publico_productos,  # noqa: F401 (registra sus rutas en publico)
         reservas,
     )
-    from app.servicios import formato, fotos, imagenes, textos, whatsapp
+    from app.servicios import formato, fotos, imagenes, qr_cobro, textos, whatsapp
 
     registro.configurar(app)
     bd.init_app(app)
@@ -84,7 +85,8 @@ def crear_app(config_clase=Config):
                                  fondo_de_pagina=imagenes.fondo_de_pagina,
                                  estado_visible=formato.estado_visible,
                                  t=textos.t, fuerte=textos.fuerte, idioma_actual=textos.idioma,
-                                 anio_actual=anio_actual, whatsapp_agencia=whatsapp_agencia)
+                                 anio_actual=anio_actual, whatsapp_agencia=whatsapp_agencia,
+                                 hay_qr=qr_cobro.hay)
 
     @app.before_request
     def fijar_idioma():

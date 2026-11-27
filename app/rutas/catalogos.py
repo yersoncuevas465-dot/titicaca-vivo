@@ -117,12 +117,13 @@ CATALOGOS = {
                   ("Vigente hoy", lambda f: _si_no(f["vigente_hoy"]))],
         opciones=_opciones_tarifa),
     "temporadas": Catalogo(
-        "Temporadas", "la temporada", "Recargo por fechas. No se pueden solapar.",
+        "Temporadas", "la temporada", "Recargo por fechas (la Candelaria sube el precio). Con un "
+        "número negativo es una promoción: −10 = 10 % menos. No se pueden solapar.",
         FormularioTemporada, temporada.listar, temporada.buscar, temporada.guardar,
         columnas=[("Nombre", lambda f: f["nombre"]),
                   ("Desde", lambda f: formato.fecha_corta(f["fecha_inicio"])),
                   ("Hasta", lambda f: formato.fecha_corta(f["fecha_fin"])),
-                  ("Recargo", lambda f: formato.porcentaje(f["recargo_porcentaje"])),
+                  ("Recargo o promoción", lambda f: formato.porcentaje(f["recargo_porcentaje"])),
                   ("En curso", lambda f: _si_no(f["en_curso"]))]),
     "tipos-pasajero": Catalogo(
         "Tipos de pasajero", "el tipo de pasajero", "Los 5 tipos los fija el enunciado: solo se "

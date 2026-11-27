@@ -121,7 +121,9 @@ class FormularioTemporada(FormularioBase):
     nombre = _texto("Nombre", 60)
     fecha_inicio = DateField("Desde", validators=[InputRequired("Elige la fecha.")])
     fecha_fin = DateField("Hasta", validators=[InputRequired("Elige la fecha.")])
-    recargo_porcentaje = DecimalField("Recargo (%)", places=2,
+    recargo_porcentaje = DecimalField("Recargo o descuento (%)", places=2,
+                                      description="Positivo sube el precio (Candelaria: 20). "
+                                                  "Negativo es una promoción (−10 = 10 % menos).",
                                       validators=[InputRequired("Escribe el recargo.")],
                                       render_kw={"step": "0.01"})
     enviar = SubmitField("Guardar temporada")

@@ -22,6 +22,15 @@ def listar(actor):
     )
 
 
+ADULTOS = ("adulto_nacional", "adulto_extranjero")
+
+
+def ids_con_descuento():
+    """Los tipos con tarifa rebajada (niño, estudiante, adulto mayor): se revisan al embarcar."""
+    filas = bd.consultar("SELECT id FROM tipo_pasajero WHERE codigo NOT IN (%s, %s)", ADULTOS)
+    return {fila["id"] for fila in filas}
+
+
 def buscar(actor, tipo_id):
     exigir_rol(actor, *ROLES_CATALOGO)
     # Devuelve un tipo de pasajero para editarlo.

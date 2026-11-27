@@ -38,14 +38,15 @@
         {% else %}
           <input type="checkbox" name="pasajero" value="{{ p.id }}" id="pasajero-{{ p.id }}"
                  {% if not r.motivo_no %}checked{% else %}disabled{% endif %}>
-          <label for="pasajero-{{ p.id }}">{{ p.nombres }} {{ p.apellidos }} · {{ p.tipo_documento }} {{ p.numero_documento }} · {{ p.tipo }}</label>
+          <label for="pasajero-{{ p.id }}">{{ p.nombres }} {{ p.apellidos }} · {{ p.tipo_documento }} {{ p.numero_documento }} · {{ p.tipo }}
+            {%- if p.tipo_codigo not in ('adulto_nacional', 'adulto_extranjero') %} · <strong>Verifica {% if p.tipo_codigo == 'estudiante' %}su carné de estudiante{% elif p.edad_maxima is not none %}que tenga de {{ p.edad_minima }} a {{ p.edad_maxima }} años{% else %}que tenga {{ p.edad_minima }} años o más{% endif %}</strong>{% endif %}</label>
         {% endif %}
       </div>
     {% endfor %}
   </fieldset>
   {% if not r.motivo_no %}
     {{ f.enviar(class_='boton boton--ancho') }}
-    <p class="texto-suave">Revisa el documento de cada persona. Desmarca a quien todavía no llegó.</p>
+    <p class="texto-suave">Revisa el documento de cada persona. Desmarca a quien todavía no llegó, o a quien no le corresponde su tarifa (un adulto con tarifa de niño): primero se cobra la diferencia.</p>
   {% endif %}
 </form>
 

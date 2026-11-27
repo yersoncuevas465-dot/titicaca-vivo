@@ -160,6 +160,7 @@ CREATE TABLE ruta_parada (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish_ci;
 
 -- 8. temporada: recargos por rango de fechas. Se cruza con salida por FECHA, no por FK.
+--    Un recargo negativo es una promoción (temporada baja): −10 = 10 % menos. Tope: −50 %.
 CREATE TABLE temporada (
   id                 INT UNSIGNED NOT NULL AUTO_INCREMENT,
   nombre             VARCHAR(60)  NOT NULL,
@@ -169,7 +170,7 @@ CREATE TABLE temporada (
   PRIMARY KEY (id),
   KEY ix_temporada_fechas (fecha_inicio, fecha_fin),
   CONSTRAINT ck_temporada_fechas CHECK (fecha_fin >= fecha_inicio),
-  CONSTRAINT ck_temporada_recargo CHECK (recargo_porcentaje BETWEEN 0 AND 100)
+  CONSTRAINT ck_temporada_recargo CHECK (recargo_porcentaje BETWEEN -50 AND 100)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish_ci;
 
 -- 9. tipo_pasajero: define qué tarifa paga cada pasajero.

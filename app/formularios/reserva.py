@@ -17,7 +17,7 @@ from wtforms import (
     SubmitField,
     TextAreaField,
 )
-from wtforms.validators import DataRequired, Length, Optional, Regexp
+from wtforms.validators import DataRequired, Length, Optional, Regexp, ValidationError
 
 TIPOS_DOCUMENTO = [("DNI", "DNI"), ("CE", "Carné de extranjería"), ("PASAPORTE", "Pasaporte")]
 SIN_ELEGIR = (0, "— Elige —")
@@ -77,7 +77,24 @@ class FormularioReserva(FlaskForm):
         choices=[("yape", "Yape"), ("plin", "Plin"), ("muelle", "En el muelle, antes de subir")],
         validators=[DataRequired("Elige cómo vas a pagar.")],
     )
+    declara_tarifas = BooleanField(
+        "Declaro que cada pasajero tiene la edad de su tarifa (o su carné, si es estudiante). "
+        "Al embarcar se revisa el documento: si no corresponde, se paga la diferencia o no "
+        "se aborda.")
     enviar = SubmitField("Confirmar reserva")
+
+    def validate_declara_tarifas(self, campo):
+        """Observación del docente (27/11): un adulto que marca «niño» para pagar menos. El DNI no
+        dice la edad, así que el sistema no la conoce: con una tarifa de niño, estudiante o adulto
+        mayor se declara aquí, y en el abordaje el panel pide revisar el documento."""
+        from app.modelos import tipo_pasajero
+
+        con_descuento = tipo_pasajero.ids_con_descuento()
+        elegidos = [self.titular_tipo_pasajero_id.data] if self.titular_viaja.data else []
+        elegidos += [entrada.tipo_pasajero_id.data for entrada in self.acompanantes]
+        if not campo.data and any(tipo in con_descuento for tipo in elegidos):
+            raise ValidationError("Marca la declaración: hay pasajeros con tarifa de niño, "
+                                  "estudiante o adulto mayor.")
 
 
 class FormularioMiReserva(FlaskForm):
